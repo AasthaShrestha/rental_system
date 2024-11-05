@@ -1,0 +1,67 @@
+[
+    {
+        "id":1,
+        "name":"Single Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-12.jpeg?raw=true"
+    },
+    {
+        "id":2,
+        "name":"BMW Motorcycle",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://imgs.search.brave.com/rf-1knzQ_gLwwFVjLhT5k_2oUws37t3ER-Hk54-r4NA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAxNi8w/NC8wNy8wNi81My9i/bXctMTMxMzM0M182/NDAuanBn"
+    },
+    {
+        "id":3,
+        "name":"Double Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-10.jpeg?raw=true"
+    },
+    {
+        "id":4,
+        "name":"Deluxe Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-6.jpeg?raw=true"
+    },
+    {
+        "id":5,
+        "name":"Main Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-3.jpeg?raw=true"
+    },
+    {
+        "id":6,
+        "name":"Double Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-10.jpeg?raw=true"
+    },
+    {
+        "id":7,
+        "name":"Double Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-8.jpeg?raw=true"
+    },
+    {
+        "id":8,
+        "name":"Single Room",
+        "title":"Experience comfort at your fingertips   with our dedicated room service.",
+        "price":0,
+        "category":"Featured",
+        "image":"https://github.com/john-smilga/setup-files-react-beach-resort/blob/master/images/room-11.jpeg?raw=true"
+    }
+   
+]
