@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import main0 from "../assets/main0.jpeg";
+import { FaFacebook, FaGoogle } from "react-icons/fa";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -7,29 +7,31 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add login logic here
     console.log("Email:", email, "Password:", password);
   };
 
+  const handleFacebookLogin = () => {
+    console.log("Continue with Facebook");
+  };
+
+  const handleGoogleLogin = () => {
+    console.log("Continue with Google");
+  };
+
   return (
-    <div
-      className="flex items-center justify-center  min-h-screen bg-cover bg-center "
-      style={{
-        backgroundImage: `url(${main0})`,
-      }}
-    >
-      <div className="w-full max-w-md p-8 space-y-8 bg-opacity-60 bg-yellow-100 rounded-2xl shadow-lg transform transition-all duration-300 hover:scale-105">
-        <h2 className="text-3xl font-bold text-center text-gray-800">
+
+      <div className="w-full max-w-sm p-6 space-y-6 bg-opacity-60 bg-yellow-100 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-semibold text-center text-gray-800">
           Welcome Back
         </h2>
-        <p className="text-center text-gray-800">
+        <p className="text-center text-sm text-gray-700">
           Log in to access your account
         </p>
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-xs font-medium text-gray-800"
             >
               Email
             </label>
@@ -39,14 +41,14 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full p-3 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full p-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-400 text-sm"
               placeholder="yourname@example.com"
             />
           </div>
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-800"
+              className="block text-xs font-medium text-gray-800"
             >
               Password
             </label>
@@ -56,25 +58,49 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full p-3 mt-1 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full p-2 mt-1 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-indigo-400 text-sm"
               placeholder="••••••••"
             />
           </div>
           <button
             type="submit"
-            className="w-full py-3 font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg shadow-md hover:from-indigo-600 hover:to-purple-600 focus:outline-none transform transition duration-200 ease-in-out hover:scale-105"
+            className="w-full py-2 text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-md shadow-md hover:from-indigo-600 hover:to-purple-600 transition-transform transform hover:scale-105"
           >
             Log In
           </button>
         </form>
-        <p className="text-center text-sm text-gray-500">
+        {/* OR Separator */}
+      <div className="flex items-center justify-center space-x-2">
+        <div className="border-t border-gray-300 w-full"></div>
+        <span className="text-xs text-gray-600">OR</span>
+        <div className="border-t border-gray-300 w-full"></div>
+      </div>
+
+        <div className="flex flex-col space-y-2">
+          <button
+            onClick={handleFacebookLogin}
+            className="flex items-center justify-center w-full py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700"
+          >
+            <FaFacebook className="mr-2" />
+            Continue with Facebook
+          </button>
+          <button
+            onClick={handleGoogleLogin}
+            className="flex items-center justify-center w-full py-2 text-sm font-semibold text-white bg-red-500 rounded-md shadow-md hover:bg-red-600"
+          >
+            <FaGoogle className="mr-2" />
+            Continue with Google
+          </button>
+        </div>
+
+        <p className="text-center text-xs text-gray-500">
           Don't have an account?{" "}
           <a href="/signup" className="text-indigo-500 hover:underline">
             Sign up
           </a>
         </p>
       </div>
-    </div>
+    
   );
 };
 
