@@ -78,7 +78,7 @@ function Navbar() {
             >
               ✕
             </button>
-            <Login /> {/* Render only the Login form component */}
+            <Login /> 
           </div>
         </div>
       )}
