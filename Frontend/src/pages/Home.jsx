@@ -1,14 +1,21 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import Banner from '../components/Banner';
+import main0 from "../assets/main0.jpeg";
 import Footer from '../components/Footer';
 import Featured from '../components/Featured';
+import Flex from '../components/Flex';
 
 function Home() {
   return (
     <>
       <Navbar />
-      <Banner />
+      <Flex
+        title="Hello, welcome to YatriKuti!"
+        subtitle="Whether you're looking for a cozy place to stay or the  perfect ride for your adventure, we have you covered. Explore our range of rooms and vehicles designed to fit your lifestyle and make your journey
+        unforgettable."
+        image={main0}
+        children="Start your Journey"
+      />
       <Featured />
       <Footer />
     </>

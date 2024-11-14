@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Login from "./Login";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [sticky, setSticky] = useState(false);
@@ -31,10 +30,6 @@ function Navbar() {
       </li>
     </>
   );
-  const navigate = useNavigate();
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
 
   return (
     <div
@@ -65,7 +60,10 @@ function Navbar() {
                 />
               </svg>
             </button>
-            <ul className="dropdown-content menu menu-sm bg-base-100 rounded-box mt-3 w-52 p-2 shadow z-10">
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-base-100 rounded-box mt-3 w-52 p-2 shadow z-[1]"
+            >
               {navItems}
             </ul>
           </div>
@@ -75,12 +73,12 @@ function Navbar() {
           <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
         </div>
         <div className="navbar-end">
-          <button
-            onClick={handleLoginClick}
+          <Link
+           to="/login"
             className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
           >
             Login
-          </button>
+          </Link>
         </div>
       </div>
     </div>
