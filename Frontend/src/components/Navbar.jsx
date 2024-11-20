@@ -1,13 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate for redirection
 import { FaPlus } from "react-icons/fa";
-import Login from "./Login";
-import SignUp from "./SignUp";
+import SignUpModal from "./modal/signupmodal";
+import LoginModal from "./modal/loginmodal";
+import { auth } from "../firebase/firebase.jsx";
+import { onAuthStateChanged } from "firebase/auth";
+import Profile from "./profile.jsx";
 
 function Navbar() {
   const [sticky, setSticky] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const navigate = useNavigate(); // Initialize navigate for redirection
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,12 +25,21 @@ function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser); // Firebase automatically handles user state
+    });
+    return () => unsubscribe();
+  }, []);
+
   const handleLoginClick = () => {
     setShowLoginModal(true);
+    setShowSignUpModal(false);
   };
 
   const handleSignUpClick = () => {
     setShowSignUpModal(true);
+    setShowLoginModal(false);
   };
 
   const handleCloseModal = () => {
@@ -32,71 +47,78 @@ function Navbar() {
     setShowSignUpModal(false);
   };
 
+  const handleLogout = () => {
+    auth.signOut(); // Sign out the user
+    setUser(null); // Clear the user state
+  };
+
+  const handlePostForFreeClick = () => {
+    if (user) {
+      navigate("/postforfree"); // Navigate to PostForFree page if logged in
+    } else {
+      setShowLoginModal(true); // Show login modal if not logged in
+    }
+  };
+
   return (
     <>
       <div
         className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
-        ${sticky ? "bg-base-200 shadow-md transition duration-300" : "bg-base-100"}
-        dark:bg-slate-50 dark:text-black`}
+        ${sticky ? "bg-base-200 shadow-md transition duration-300" : "bg-base-100"}`}
       >
         <div className="navbar flex items-center justify-between">
           <a className="text-2xl font-bold cursor-pointer">YatriKuti</a>
 
           <div className="flex items-center space-x-4">
-            <ul className="menu menu-horizontal px-1 space-x-4">
+            <ul className="menu menu-horizontal px-1 space-x-4 flex items-center text-white hover:text-gray-300 transition duration-300">
               <li><Link to="/">Home</Link></li>
-              <li><Link to="/postforfree"><FaPlus className="text-black" /> Post for free</Link></li>
+              <li>
+                <button
+                  className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
+                  onClick={handlePostForFreeClick}
+                >
+                  <FaPlus />
+                  <span>Post for free</span>
+                </button>
+              </li>
               <li><Link to="/rooms">Rooms</Link></li>
               <li><Link to="/vehicles">Vehicles</Link></li>
             </ul>
 
-            <button
-              onClick={handleLoginClick}
-              className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-            >
-              Login
-            </button>
-            
-            <button
-              onClick={handleSignUpClick}
-              className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-            >
-              Sign Up
-            </button>
+            {!user ? (
+              <>
+                <button
+                  onClick={handleLoginClick}
+                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={handleSignUpClick}
+                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
+                >
+                  Sign Up
+                </button>
+              </>
+            ) : (
+              <Profile user={user} onLogout={handleLogout} />
+            )}
           </div>
         </div>
       </div>
 
-      {/* Login Modal */}
+      {/* Modals */}
       {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-4 relative max-w-md w-full">
-            
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-0 right-0 text-gray-600 hover:text-gray-800"
-            >
-              ✕
-            </button>
-            <Login /> 
-          </div>
-        </div>
+        <LoginModal
+          onClose={handleCloseModal}
+          onSwitchToSignUp={handleSignUpClick}
+        />
       )}
-
-      {/* SignUp Modal */}
       {showSignUpModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-4 relative max-w-md w-full">
-
-            <button
-              onClick={handleCloseModal}
-              className="absolute top-0 right-0 text-gray-600 hover:text-gray-800"
-            >
-              ✕
-            </button>
-            <SignUp /> {/* Render only the SignUp form component */}
-          </div>
-        </div>
+        <SignUpModal
+          onClose={handleCloseModal}
+          onSwitchToLogin={handleLoginClick}
+        />
       )}
     </>
   );

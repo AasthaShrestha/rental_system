@@ -4,9 +4,11 @@ import Error from "../pages/Error";
 import Home from "../pages/Home";
 import Rooms from "../pages/Rooms";
 import Vehicles from "../pages/Vehicles";
-import Login from "../components/Login";
 import PostFree from "../pages/PostFree";
-import SignUp from "../components/SignUp.jsx";
+import LoginWithModal from "../components/modal/loginmodal.jsx";
+import SignUpWithModal from "../components/modal/signupmodal.jsx";
+import ProfileDetails from "../components/ProfileDetailPage.jsx";
+import Profile from "../components/profile.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -29,13 +31,23 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/login",
-    element: <Login />,
+    path: "/loginmodal",
+    element: <LoginWithModal />,
     errorElement: <Error />,
   },
   {
-    path: "/signup",
-    element: <SignUp />,
+    path: "/signupmodal",
+    element: <SignUpWithModal />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/Profile",
+    element: <Profile />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/ProfileDetailPage",
+    element: <ProfileDetails />,
     errorElement: <Error />,
   },
 ]);

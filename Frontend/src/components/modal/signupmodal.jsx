@@ -1,33 +1,74 @@
 import React, { useState } from "react";
-import main0 from "../assets/main0.jpeg";
-import { Link } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/firebase.jsx"; // Path to your firebase.jsx
 
-const SignUp = () => {
+const SignUpWithModal = ({ onClose, onSwitchToLogin }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
-    setError(""); // Reset error message if passwords match
-    console.log("Name:", name, "Email:", email, "Password:", password);
-    // Add sign-up logic here
+
+    try {
+      // Sign up the user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("User created:", userCredential.user);
+
+      setSuccess("Account created successfully!");
+      setError(""); // Clear any previous errors
+
+      // Optionally, handle user profile updates or redirection here
+      onClose(); // Close the modal after success
+    } catch (err) {
+      console.error("Sign-up failed:", err.message);
+
+      // Handle errors from Firebase
+      if (err.code === "auth/email-already-in-use") {
+        setError("This email is already registered.");
+      } else if (err.code === "auth/invalid-email") {
+        setError("Invalid email address.");
+      } else if (err.code === "auth/weak-password") {
+        setError("Password should be at least 6 characters.");
+      } else {
+        setError("An error occurred. Please try again.");
+      }
+    }
   };
 
   return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="w-full max-w-sm p-6 space-y-4 bg-opacity-75 bg-yellow-100 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-semibold text-center text-gray-800">
-          Create an Account
-        </h2>
+        {/* Modal header */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-center text-gray-800 flex-grow">
+            Create an Account
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            ✕
+          </button>
+        </div>
         <p className="text-center text-sm text-gray-700">Sign up to get started</p>
         <form onSubmit={handleSignUp} className="space-y-3">
           {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+          {success && (
+            <p className="text-green-500 text-center text-sm">{success}</p>
+          )}
           <div>
             <label
               htmlFor="name"
@@ -103,15 +144,18 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-gray-500 mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="text-indigo-500 hover:underline">
+          <button
+            onClick={onSwitchToLogin}
+            className="text-indigo-500 hover:underline"
+          >
             Log in
-          </Link>
+          </button>
         </p>
       </div>
-    
+    </div>
   );
 };
 
-export default SignUp;
+export default SignUpWithModal;
