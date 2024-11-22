@@ -9,11 +9,17 @@ import LoginWithModal from "../components/modal/loginmodal.jsx";
 import SignUpWithModal from "../components/modal/signupmodal.jsx";
 import ProfileDetails from "../components/ProfileDetailPage.jsx";
 import Profile from "../components/profile.jsx";
+import PostDetails from "../components/PostDetails.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
     errorElement: <Error />,
+  },
+  {
+    path:"/post/:id",
+    element:<PostDetails/>,
+    errorElement:<Error/>
   },
   {
     path: "/rooms",

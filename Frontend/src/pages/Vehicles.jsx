@@ -1,29 +1,34 @@
-import React from "react";
-import { useLocation } from "react-router-dom";
-
-const Vehicles = () => {
-  const location = useLocation();
-  const newPost = location.state?.newPost;
-
+import React from 'react'
+import Navbar from '../components/Navbar'
+import img from '../assets/masterVehicle.webp'
+import Flex from '../components/Flex';
+import Footer from '../components/Footer';
+import list from "../list.json";
+import { Link } from 'react-router-dom';
+import Cards from '../components/Cards';
+function Vehicles() {
+  const filterData = list.filter((data) => data.type === "vehicles");
   return (
-    <div className="p-6 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Vehicles</h1>
-      {newPost ? (
-        <div className="bg-gray-100 p-4 rounded">
-          <img
-            src={newPost.photo}
-            alt={newPost.title}
-            className="w-full h-64 object-cover rounded mb-4"
-          />
-          <h2 className="text-lg font-semibold">{newPost.title}</h2>
-          <p className="text-gray-600">{newPost.description}</p>
-          <p className="text-blue-500 font-bold mt-2">${newPost.price}</p>
-        </div>
-      ) : (
-        <p>No posts available.</p>
-      )}
-    </div>
+    <>
+      <Navbar />
+      <Flex
+        title="Our Vehicles"
+        subtitle="Eperience Comfort with our services."
+        image={img}
+        children="Back"
+      />
+      <div className="mt-12 grid grid-cols-1 md:grid-cols-4">
+        {filterData.map((item) => (
+          <div key={item.id} className="px-2 sm:px-4">
+            <Link to={`/post/${item.id}`}>
+              <Cards item={item} />
+            </Link>
+          </div>
+        ))}
+      </div>
+      <Footer />
+    </>
   );
-};
+}
 
 export default Vehicles;
