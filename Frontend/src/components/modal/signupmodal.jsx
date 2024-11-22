@@ -10,8 +10,20 @@ const SignUpWithModal = ({ onClose, onSwitchToLogin }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  // Function to validate email format
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailPattern.test(email);
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    // Check if email is valid
+    if (!isValidEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Passwords do not match.");

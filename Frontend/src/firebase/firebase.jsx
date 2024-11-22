@@ -3,7 +3,7 @@
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, sendPasswordResetEmail, signInWithPopup } from "firebase/auth";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDLPNrfcIKk3Lbu8vgpEVq5no4casg9n60",
@@ -20,6 +20,5 @@ const app = initializeApp(firebaseConfig);
 const auth =getAuth(app);
 
 const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
 
-export { auth, googleProvider, facebookProvider, signInWithEmailAndPassword, signInWithPopup };
+export { auth, googleProvider,  signInWithEmailAndPassword, sendPasswordResetEmail,signInWithPopup };
