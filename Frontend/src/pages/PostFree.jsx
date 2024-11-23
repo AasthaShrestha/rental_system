@@ -30,7 +30,7 @@ function PostFree() {
 
   // Load Google Maps
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY", // Replace with your API Key
+    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI", // Replace with your API Key
     libraries: ["places"],
     version: "weekly",
   });
