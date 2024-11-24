@@ -64,25 +64,25 @@ function Navbar() {
     <>
       <div
         className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
-        ${sticky ? "bg-base-200 shadow-md transition duration-300" : "bg-base-100"}`}
+        ${sticky ? "bg-gray-800 shadow-lg" : "bg-gray-900"} text-white transition duration-300`}
       >
         <div className="navbar flex items-center justify-between">
           <a className="text-2xl font-bold cursor-pointer">YatriKuti</a>
 
           <div className="flex items-center space-x-4">
-            <ul className="menu menu-horizontal px-1 space-x-4 flex items-center text-white hover:text-gray-300 transition duration-300">
-              <li><Link to="/">Home</Link></li>
+            <ul className="menu menu-horizontal px-1 space-x-4 flex items-center">
+              <li><Link to="/" className="hover:text-gray-400 transition duration-300">Home</Link></li>
               <li>
                 <button
-                  className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
+                  className="flex items-center space-x-1 hover:text-gray-400 transition duration-300"
                   onClick={handlePostForFreeClick}
                 >
                   <FaPlus />
                   <span>Post for free</span>
                 </button>
               </li>
-              <li><Link to="/rooms">Rooms</Link></li>
-              <li><Link to="/vehicles">Vehicles</Link></li>
+              <li><Link to="/rooms" className="hover:text-gray-400 transition duration-300">Rooms</Link></li>
+              <li><Link to="/vehicles" className="hover:text-gray-400 transition duration-300">Vehicles</Link></li>
             </ul>
 
             {!user ? (

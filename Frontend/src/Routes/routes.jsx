@@ -10,6 +10,9 @@ import SignUpWithModal from "../components/modal/signupmodal.jsx";
 import ProfileDetails from "../components/ProfileDetailPage.jsx";
 import Profile from "../components/profile.jsx";
 import PostDetails from "../components/PostDetails.jsx";
+import AboutUs from "../pages/AboutUs.jsx";
+import Objectives from "../components/Objectives.jsx";
+import ContactUs from "../pages/ContactUs.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -54,6 +57,26 @@ const router = createBrowserRouter([
   {
     path: "/ProfileDetailPage",
     element: <ProfileDetails />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/aboutus",
+    element: <AboutUs/>,
+    errorElement: <Error />,
+  },
+  {
+    path: "/contactus",
+    element: <ContactUs/>,
+    errorElement: <Error />,
+  },
+  {
+    path: "/presskit",
+    element: <AboutUs/>,
+    errorElement: <Error />,
+  },
+  {
+    path: "/objectives",
+    element: <Objectives/>,
     errorElement: <Error />,
   },
 ]);
