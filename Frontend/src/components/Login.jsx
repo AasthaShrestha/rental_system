@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import main0 from "../assets/main0.jpeg";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -7,7 +8,6 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add login logic here
     console.log("Email:", email, "Password:", password);
   };
 
@@ -18,10 +18,17 @@ const Login = () => {
         backgroundImage: `url(${main0})`,
       }}
     >
-      <div className="w-full max-w-md p-8 space-y-8 bg-opacity-60 bg-yellow-100 rounded-2xl shadow-lg transform transition-all duration-300 hover:scale-105">
+      <div className="w-full max-w-md p-5 space-y-8 bg-opacity-60 bg-yellow-100 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105">
+        <Link
+          to="/"
+          className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2 text-xl font-bold text-gray-800 hover:text-red-600"
+        >
+          ✕
+        </Link>
         <h2 className="text-3xl font-bold text-center text-gray-800">
           Welcome Back
         </h2>
+
         <p className="text-center text-gray-800">
           Log in to access your account
         </p>

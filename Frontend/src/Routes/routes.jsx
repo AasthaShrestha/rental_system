@@ -7,11 +7,17 @@ import Vehicles from "../pages/Vehicles";
 import Login from "../components/Login";
 import PostFree from "../pages/PostFree";
 import SignUp from "../components/SignUp.jsx";
+import PostDetails from "../components/PostDetails.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Home />,
     errorElement: <Error />,
+  },
+  {
+    path:"/post/:id",
+    element:<PostDetails/>,
+    errorElement:<Error/>
   },
   {
     path: "/rooms",

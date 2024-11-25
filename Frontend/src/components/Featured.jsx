@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import list from "../list.json";
 import Cards from "./Cards";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Featured() {
-  const filterData = list.filter((data) => data.category === "Featured");
+   const [rental, setRental] = useState([]);
+   useEffect(() => {
+     const getRental = async () => {
+       try {
+         const res = await axios.get("http://localhost:4001/rental");
+         console.log(res.data);
+         setRental(res.data);
+       } catch (error) {
+         console.log(error);
+       }
+     };
+     getRental();
+   }, []);
+  const filterData = rental.filter((data) => data.category === "Featured");
 
   const settings = {
     dots: true,
@@ -51,14 +65,17 @@ function Featured() {
           Featured Rooms & Vehicles
         </h1>
         <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
-          Discover the most popular rooms and vehicles tailored just for you, with comfort and style at every step.
+          Discover the most popular rooms and vehicles tailored just for you,
+          with comfort and style at every step.
         </p>
       </div>
       <div className="slider-container relative">
         <Slider {...settings}>
           {filterData.map((item) => (
             <div key={item.id} className="px-2 sm:px-4">
-              <Cards item={item} />
+              <Link to={`/post/${item.id}`}>
+                <Cards item={item} />
+              </Link>
             </div>
           ))}
         </Slider>
