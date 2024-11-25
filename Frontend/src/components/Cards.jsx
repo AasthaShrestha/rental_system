@@ -19,10 +19,10 @@ function Cards({ item }) {
           <p className="text-sm text-gray-600 mb-4">{item.title}</p>
           <div className="card-actions flex justify-between items-center">
             <div className="badge badge-outline text-lg font-semibold">
-              ${item.price}
+              रु {item.price}
             </div>
             <button className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out">
-              Buy Now
+              Book Now
             </button>
           </div>
         </div>
