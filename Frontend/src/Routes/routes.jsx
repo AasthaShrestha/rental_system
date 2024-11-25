@@ -13,6 +13,8 @@ import PostDetails from "../components/PostDetails.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
 import Objectives from "../components/Objectives.jsx";
 import ContactUs from "../pages/ContactUs.jsx";
+import Blog from "../pages/Blog.jsx";
+import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,8 +72,12 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/presskit",
-    element: <AboutUs/>,
+    path: "/blog",
+    element: <Blog/>,
+    errorElement: <Error />,
+  }, {
+    path: "/blog/:id",
+    element: <BlogDetailsPage/>,
     errorElement: <Error />,
   },
   {

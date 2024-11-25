@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import SupportImage from "../assets/customer-support.jpg";
+import SupportImage from "../assets/customer-support.jpg"; // Make sure this path is correct
 import { FaPhoneAlt, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
 
 function ContactUs() {
@@ -47,9 +47,10 @@ function ContactUs() {
   return (
     <div>
       <Navbar />
-      <div className="relative flex flex-col md:flex-row h-screen pt-[50px]">
+      <div className="relative flex flex-col md:flex-row min-h-screen pt-[50px]">
+        {/* Contact Form */}
         <div
-          className="flex flex-col justify-center items-center md:w-1/2 px-8 py-12"
+          className="flex flex-col justify-center items-center md:w-1/2 px-8 py-12 bg-purple-600 md:clip-path-polygon"
           style={{
             backgroundColor: "#7A4DAB",
             clipPath: "polygon(0 0, 100% 0, 90% 100%, 0% 100%)",
@@ -138,11 +139,12 @@ function ContactUs() {
           </form>
         </div>
 
-        <div className="flex flex-col justify-center items-center bg-white md:w-1/2">
+        {/* Support Image Section */}
+        <div className="flex flex-col justify-center items-center bg-white md:w-1/2 p-8">
           <img
             src={SupportImage}
             alt="Support Professional"
-            className="w-3/4 md:w-2/3"
+            className="w-full h-48 object-cover md:w-3/4 md:h-auto"
           />
           <h2 className="mt-4 text-2xl font-bold text-gray-800">
             We're here to help!
@@ -153,12 +155,13 @@ function ContactUs() {
         </div>
       </div>
 
+      {/* Contact Information Section */}
       <div className="bg-gray-100 py-12">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-around items-center space-y-6 md:space-y-0">
           <div className="flex flex-col items-center space-y-2 text-center md:text-left">
             <FaMapMarkerAlt className="text-3xl text-purple-600" />
             <h3 className="text-xl font-semibold text-gray-800">Our Address</h3>
-            <p className="text-gray-600">Lokanthali,Bhaktapur</p>
+            <p className="text-gray-600">Lokanthali, Bhaktapur</p>
           </div>
 
           <div className="flex flex-col items-center space-y-2 text-center md:text-left">
