@@ -15,6 +15,7 @@ import Objectives from "../components/Objectives.jsx";
 import ContactUs from "../pages/ContactUs.jsx";
 import Blog from "../pages/Blog.jsx";
 import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
+import PostDetails from "../components/PostDetails.jsx";
 const router = createBrowserRouter([
   {
     path: "/",

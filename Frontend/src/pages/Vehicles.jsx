@@ -1,13 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import img from '../assets/masterVehicle.webp'
 import Flex from '../components/Flex';
 import Footer from '../components/Footer';
-import list from "../list.json";
 import { Link } from 'react-router-dom';
 import Cards from '../components/Cards';
+import axios from "axios";
+
 function Vehicles() {
-  const filterData = list.filter((data) => data.type === "vehicles");
+  const [rental, setRental] = useState([]);
+  useEffect(() => {
+    const getRental = async () => {
+      try {
+        const res = await axios.get("http://localhost:4001/rental");
+        console.log(res.data);
+        setRental(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getRental();
+  }, []);
+  const filterData = rental.filter((data) => data.type === "vehicles");
   return (
     <>
       <Navbar />
