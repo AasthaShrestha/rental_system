@@ -6,14 +6,18 @@ function PostFree() {
   const [images, setImages] = useState([]);
   const [location, setLocation] = useState({ lat: 27.7172, lng: 85.3240 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
-  const [parentCategory, setParentCategory] = useState(""); // For Real Estate / Vehicles
-  const [subCategory, setSubCategory] = useState(""); // For dependent sub-categories
+  const [category, setParentCategory] = useState(""); // For Real Estate / Vehicles
+  const [subcategory, setSubCategory] = useState(""); // For dependent sub-categories
   const [features, setFeatures] = useState({
     kitchen: false,
     bathroom: false,
     balcony: false,
     parking: false,
-  }); // State for Real Estate features
+    airConditioning: false,
+    abs: false,
+    sunroof: false,
+    bluetooth: false,
+  }); // State for features
   const autocompleteRef = useRef(null); // Ref for the Autocomplete component
 
   // Handle image upload
@@ -38,7 +42,6 @@ function PostFree() {
   // Handle place selection from Autocomplete
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current.getPlace();
-
     if (place && place.geometry) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
@@ -66,7 +69,7 @@ function PostFree() {
   }
 
   return (
-    <div className="flex justify-center items-center p-6 bg-gray-100 ">
+    <div className="flex justify-center items-center p-6 bg-gray-100">
       <div className="w-full max-w-lg bg-white border border-gray-300 rounded-lg shadow-lg p-6">
         <form className="flex flex-col space-y-6">
           {/* Image Upload Section */}
@@ -118,7 +121,7 @@ function PostFree() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Enter Address"
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 w-full"
               />
             </Autocomplete>
           </div>
@@ -140,12 +143,21 @@ function PostFree() {
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Category</label>
               <select
-                name="parentCategory"
-                value={parentCategory}
+                name="category"
+                value={category}
                 onChange={(e) => {
                   setParentCategory(e.target.value);
                   setSubCategory(""); // Reset sub-category when parent changes
-                  setFeatures({ kitchen: false, bathroom: false, balcony: false, parking: false }); // Reset features
+                  setFeatures({
+                    kitchen: false,
+                    bathroom: false,
+                    balcony: false,
+                    parking: false,
+                    airConditioning: false,
+                    abs: false,
+                    sunroof: false,
+                    bluetooth: false,
+                  }); // Reset features
                 }}
                 className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
               >
@@ -164,17 +176,17 @@ function PostFree() {
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Sub-Category</label>
               <select
-                name="subCategory"
-                value={subCategory}
+                name="subcategory"
+                value={subcategory}
                 onChange={(e) => setSubCategory(e.target.value)}
-                disabled={!parentCategory} // Disable if no parent is selected
+                disabled={!category} // Disable if no parent is selected
                 className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
               >
                 <option value="" disabled>
                   Select Sub-Category
                 </option>
-                {parentCategory &&
-                  categoryOptions[parentCategory].map((sub) => (
+                {category &&
+                  categoryOptions[category].map((sub) => (
                     <option key={sub} value={sub}>
                       {sub}
                     </option>
@@ -184,11 +196,11 @@ function PostFree() {
           </div>
 
           {/* Real Estate Features */}
-          {parentCategory === "Real Estate" && (
+          {category === "Real Estate" && (
             <div className="flex flex-col">
               <label className="text-gray-700 font-medium">Features</label>
               <div className="flex flex-wrap gap-4 mt-2">
-                {Object.keys(features).map((feature) => (
+                {["kitchen", "bathroom", "balcony", "parking"].map((feature) => (
                   <label key={feature} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
@@ -196,7 +208,35 @@ function PostFree() {
                       onChange={() => handleFeatureChange(feature)}
                       className="form-checkbox"
                     />
-                    <span className="text-gray-600">{feature.charAt(0).toUpperCase() + feature.slice(1)}</span>
+                    <span className="text-gray-600">
+                      {feature.charAt(0).toUpperCase() + feature.slice(1)}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Vehicle Features */}
+          {category === "Vehicles" && (
+            <div className="flex flex-col">
+              <label className="text-gray-700 font-medium">Features</label>
+              <div className="flex flex-wrap gap-4 mt-2">
+                {["airConditioning", "abs", "sunroof", "bluetooth"].map((feature) => (
+                  <label key={feature} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={features[feature]}
+                      onChange={() => handleFeatureChange(feature)}
+                      className="form-checkbox"
+                    />
+                    <span className="text-gray-600">
+                      {feature
+                        .replace(/([A-Z])/g, " $1")
+                        .charAt(0)
+                        .toUpperCase() +
+                        feature.replace(/([A-Z])/g, " $1").slice(1)}
+                    </span>
                   </label>
                 ))}
               </div>
@@ -209,7 +249,7 @@ function PostFree() {
             <input
               type="number"
               name="price"
-              placeholder="Rs.1000"
+              placeholder="Type Here"
               className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
             />
           </div>
@@ -217,9 +257,9 @@ function PostFree() {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md font-medium hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-200"
+            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
           >
-            POST
+            Submit
           </button>
         </form>
       </div>
