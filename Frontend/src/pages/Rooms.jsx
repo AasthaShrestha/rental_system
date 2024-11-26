@@ -1,14 +1,29 @@
 import React from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import main1 from "../assets/masterRoom.webp";
 import Flex from "../components/Flex";
 import Cards from "../components/Cards";
 import Footer from "../components/Footer";
-import list from "../list.json";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Rooms() {
-  const filterData = list.filter((data) => data.type === "rooms");
+  const [rental,setRental] = useState([]);
+  useEffect(()=>{
+    const getRental = async () => {
+      try{
+        const res = await axios.get("http://localhost:4001/rental");
+        console.log(res.data);
+        setRental(res.data);
+      }catch(error){
+        console.log(error);
+      }
+    };
+    getRental();
+  },[]);
+
+  const filterData = rental.filter((data) => data.type === "rooms");
   return (
     <div>
       <Navbar />

@@ -13,8 +13,8 @@ function Footer() {
           <Link to="/contactus" className="link link-hover">
             Contact
           </Link>
-          <Link to="/presskit" className="link link-hover">
-            Press kit
+          <Link to="/blog" className="link link-hover">
+            Blog
           </Link>
         </nav>
         <nav>

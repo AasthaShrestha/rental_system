@@ -1,26 +1,43 @@
 import React, { useState, useRef } from "react";
 import upload_icon from "../assets/upload_image.png";
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from "@react-google-maps/api";
+import { useNavigate } from "react-router-dom";
+import backgroundImage from "../assets/yatrikuti.jpg";
 
 function PostFree() {
-  const [images, setImages] = useState([]);
-  const [location, setLocation] = useState({ lat: 27.7172, lng: 85.3240 }); // Default location (Kathmandu)
-  const [address, setAddress] = useState("");
-  const [category, setParentCategory] = useState(""); // For Real Estate / Vehicles
-  const [subcategory, setSubCategory] = useState(""); // For dependent sub-categories
-  const [features, setFeatures] = useState({
-    kitchen: false,
-    bathroom: false,
-    balcony: false,
-    parking: false,
-    airConditioning: false,
-    abs: false,
-    sunroof: false,
-    bluetooth: false,
-  }); // State for features
-  const autocompleteRef = useRef(null); // Ref for the Autocomplete component
 
-  // Handle image upload
+  const [images, setImages] = useState([]);
+  const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
+  const [address, setAddress] = useState("");
+  const [category, setCategory] = useState(""); // Main category
+  const [subcategory, setSubCategory] = useState(""); // Sub-category dependent on main category
+  const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [area, setArea] = useState(""); // Textbox for area
+  const [productName, setProductName] = useState("");
+  const [productDescription, setProductDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [condition, setCondition] = useState(""); // Condition for vehicles
+  const autocompleteRef = useRef(null);
+  const navigate = useNavigate();
+
+  const subcategories = {
+    "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
+    Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
+  };
+
+  const categoryFeatures = {
+    "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
+    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
+  };
+
+  const handleFeatureToggle = (feature) => {
+    setSelectedFeatures((prevFeatures) =>
+      prevFeatures.includes(feature)
+        ? prevFeatures.filter((f) => f !== feature)
+        : [...prevFeatures, feature]
+    );
+  };
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -32,36 +49,20 @@ function PostFree() {
     }
   };
 
-  // Load Google Maps
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI", // Replace with your API Key
+    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
     libraries: ["places"],
     version: "weekly",
   });
 
-  // Handle place selection from Autocomplete
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current.getPlace();
     if (place && place.geometry) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
-      setLocation({ lat, lng }); // Update map center
-      setAddress(place.formatted_address || ""); // Update address input
+      setLocation({ lat, lng });
+      setAddress(place.formatted_address || "");
     }
-  };
-
-  // Options for categories and sub-categories
-  const categoryOptions = {
-    "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
-    Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
-  };
-
-  // Handle feature toggles
-  const handleFeatureChange = (feature) => {
-    setFeatures((prevFeatures) => ({
-      ...prevFeatures,
-      [feature]: !prevFeatures[feature],
-    }));
   };
 
   if (!isLoaded) {
@@ -69,8 +70,19 @@ function PostFree() {
   }
 
   return (
-    <div className="flex justify-center items-center p-6 bg-gray-100">
-      <div className="w-full max-w-lg bg-white border border-gray-300 rounded-lg shadow-lg p-6">
+    <div className="flex justify-center items-center p-6 bg-gray-100 min-h-screen" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+      <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-lg p-6">
+        <div className="flex justify-between mb-6">
+          {/* Back Button */}
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="px-6 py-2 bg-pink-400 text-gray-700 rounded-md hover:bg-gray-300 transition"
+          >
+            Back
+          </button>
+        </div>
+
         <form className="flex flex-col space-y-6">
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
@@ -98,20 +110,154 @@ function PostFree() {
             </label>
           </div>
 
-          {/* Product Name Section */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Product Name</label>
+          {/* Product Name */}
+          <div>
+            <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+              Product Name
+            </label>
             <input
               type="text"
-              name="name"
-              placeholder="Type Here"
-              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+              id="productName"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
             />
           </div>
 
-          {/* Address Input Section */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Address</label>
+          {/* Product Description */}
+          <div>
+            <label htmlFor="productDescription" className="block text-sm font-medium text-gray-700">
+              Product Description
+            </label>
+            <textarea
+              id="productDescription"
+              value={productDescription}
+              onChange={(e) => setProductDescription(e.target.value)}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+            />
+          </div>
+
+          {/* Price */}
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+              Price (in Rs.)
+            </label>
+            <input
+              type="number"
+              id="price"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+            />
+          </div>
+
+          {/* Category Selection */}
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              Category
+            </label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setSubCategory(""); // Reset subcategory when category is changed
+              }}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+            >
+              <option value="" disabled={category !== ""}>
+                Select Category
+              </option>
+              {Object.keys(subcategories).map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Subcategory Selection */}
+          {category && (
+            <div>
+              <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700">
+                Subcategory
+              </label>
+              <select
+                id="subcategory"
+                value={subcategory}
+                onChange={(e) => setSubCategory(e.target.value)}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+              >
+                <option value="" disabled={subcategory !== ""}>
+                  Select Subcategory
+                </option>
+                {subcategories[category].map((subcat) => (
+                  <option key={subcat} value={subcat}>
+                    {subcat}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Dynamic Features */}
+          {category && categoryFeatures[category] && (
+            <div>
+              <h3 className="text-md font-medium text-gray-700 mb-2">Features</h3>
+              {categoryFeatures[category].map((feature) =>
+                feature === "Area" || feature === "Condition" ? (
+                  feature === "Condition" && category === "Vehicles" ? (
+                    <div key={feature} className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {feature}
+                      </label>
+                      <select
+                        value={condition}
+                        onChange={(e) => setCondition(e.target.value)}
+                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+                      >
+                        <option value="" disabled={condition !== ""}>
+                          Select Category
+                        </option>
+                        <option value="New">New</option>
+                        <option value="Old">Old</option>
+                      </select>
+                    </div>
+                  ) : (
+                    <div key={feature} className="mb-3">
+                      <label className="block text-sm font-medium text-gray-700">
+                        {feature} (in Sq. Ft.)
+                      </label>
+                      <input
+                        type="number"
+                        value={area}
+                        onChange={(e) => setArea(e.target.value)}
+                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
+                      />
+                    </div>
+                  )
+                ) : (
+                  <div key={feature} className="mb-3">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedFeatures.includes(feature)}
+                        onChange={() => handleFeatureToggle(feature)}
+                        className="mr-2"
+                      />
+                      {feature}
+                    </label>
+                  </div>
+                )
+              )}
+            </div>
+          )}
+
+          {/* Location */}
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+              Location
+            </label>
             <Autocomplete
               onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
               onPlaceChanged={handlePlaceSelect}
@@ -120,146 +266,25 @@ function PostFree() {
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter Address"
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200 w-full"
+                placeholder="Enter address"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500 mb-6"
               />
             </Autocomplete>
-          </div>
-
-          {/* Google Map Section */}
-          <div className="h-60 w-full mb-4">
             <GoogleMap
+              mapContainerStyle={{ height: "400px", width: "100%" }}
               center={location}
-              zoom={14}
-              mapContainerStyle={{ width: "100%", height: "100%" }}
+              zoom={15}
             >
               <Marker position={location} />
             </GoogleMap>
           </div>
 
-          {/* Category Selection Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* Parent Category */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-medium">Category</label>
-              <select
-                name="category"
-                value={category}
-                onChange={(e) => {
-                  setParentCategory(e.target.value);
-                  setSubCategory(""); // Reset sub-category when parent changes
-                  setFeatures({
-                    kitchen: false,
-                    bathroom: false,
-                    balcony: false,
-                    parking: false,
-                    airConditioning: false,
-                    abs: false,
-                    sunroof: false,
-                    bluetooth: false,
-                  }); // Reset features
-                }}
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-              >
-                <option value="" disabled>
-                  Select Category
-                </option>
-                {Object.keys(categoryOptions).map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sub-Category */}
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-medium">Sub-Category</label>
-              <select
-                name="subcategory"
-                value={subcategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-                disabled={!category} // Disable if no parent is selected
-                className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-              >
-                <option value="" disabled>
-                  Select Sub-Category
-                </option>
-                {category &&
-                  categoryOptions[category].map((sub) => (
-                    <option key={sub} value={sub}>
-                      {sub}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          </div>
-
-          {/* Real Estate Features */}
-          {category === "Real Estate" && (
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-medium">Features</label>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {["kitchen", "bathroom", "balcony", "parking"].map((feature) => (
-                  <label key={feature} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={features[feature]}
-                      onChange={() => handleFeatureChange(feature)}
-                      className="form-checkbox"
-                    />
-                    <span className="text-gray-600">
-                      {feature.charAt(0).toUpperCase() + feature.slice(1)}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Vehicle Features */}
-          {category === "Vehicles" && (
-            <div className="flex flex-col">
-              <label className="text-gray-700 font-medium">Features</label>
-              <div className="flex flex-wrap gap-4 mt-2">
-                {["airConditioning", "abs", "sunroof", "bluetooth"].map((feature) => (
-                  <label key={feature} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={features[feature]}
-                      onChange={() => handleFeatureChange(feature)}
-                      className="form-checkbox"
-                    />
-                    <span className="text-gray-600">
-                      {feature
-                        .replace(/([A-Z])/g, " $1")
-                        .charAt(0)
-                        .toUpperCase() +
-                        feature.replace(/([A-Z])/g, " $1").slice(1)}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Product Price Section */}
-          <div className="flex flex-col">
-            <label className="text-gray-700 font-medium">Product Price</label>
-            <input
-              type="number"
-              name="price"
-              placeholder="Type Here"
-              className="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
-            />
-          </div>
-
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="mt-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition"
           >
-            Submit
+            Post
           </button>
         </form>
       </div>
