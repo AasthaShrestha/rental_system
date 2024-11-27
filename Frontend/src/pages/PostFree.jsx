@@ -3,7 +3,7 @@ import upload_icon from "../assets/upload_image.png";
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/yatrikuti.jpg";
-
+import axios from "axios";
 function PostFree() {
 
   const [images, setImages] = useState([]);
@@ -48,9 +48,10 @@ function PostFree() {
       reader.readAsDataURL(file);
     }
   };
-
+  console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
+    
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
     libraries: ["places"],
     version: "weekly",
   });
@@ -68,7 +69,34 @@ function PostFree() {
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const rentalData = {
+      productName,
+      productDescription,
+      price,
+      category,
+      subcategory,
+      selectedFeatures,
+      area,
+      condition,
+      address,
+      location,
+      images,
+    };
+  
+    try {
+      const response = await axios.post("http://localhost:4001/rental", rentalData);
+      console.log(response.data);
+      alert("Rental posted successfully!");
+      navigate("/"); // Navigate to the home page or another page
+    } catch (error) {
+      console.error("Error posting rental:", error.response || error.message);
+      alert("Failed to post rental. Please try again.");
+    }
+  };
+  
   return (
     <div className="flex justify-center items-center p-6 bg-gray-100 min-h-screen" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-lg p-6">
@@ -83,7 +111,7 @@ function PostFree() {
           </button>
         </div>
 
-        <form className="flex flex-col space-y-6">
+        <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
             {images.map((image, index) => (

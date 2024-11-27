@@ -1,7 +1,13 @@
 import express from "express";
-import {getRental} from "../controller/rental.controller.js";
+
+import { createRental, getAllRentals } from "../controller/rentalController.js";
 
 const router = express.Router();
 
-router.get("/",getRental);
- export default router;
+// Route to create a rental
+router.post("/", createRental);
+
+// Route to get all rentals
+router.get("/", getAllRentals);
+
+module.exports = router;
