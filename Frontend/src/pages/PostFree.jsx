@@ -15,15 +15,24 @@ const PostFree = () => {
     const { name, value, files } = e.target;
     setFormData({
       ...formData,
-      [name]: files ? files[0] : value,
+      [name]: files ? files[0] : value, // Handle file input
     });
   };
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.photo) {
+      alert("Please upload a photo.");
+      return;
+    }
+
     console.log("Form Data Submitted: ", formData);
+
+    // Simulate form submission, you would typically send this data to a backend service
     alert("Form submitted successfully!");
+
+    // Reset form data
     setFormData({
       title: "",
       photo: null,

@@ -8,13 +8,14 @@ import PostFree from "../pages/PostFree";
 import LoginWithModal from "../components/modal/loginmodal.jsx";
 import SignUpWithModal from "../components/modal/signupmodal.jsx";
 import ProfileDetails from "../components/ProfileDetailPage.jsx";
-import Profile from "../components/profile.jsx";
 import PostDetails from "../components/PostDetails.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
 import Objectives from "../components/Objectives.jsx";
 import ContactUs from "../pages/ContactUs.jsx";
 import Blog from "../pages/Blog.jsx";
 import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
+import Profile from "../components/Profile.jsx";
+import ProtectedRoute from "../components/modal/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,9 +24,9 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/post/:id",
-    element:<PostDetails/>,
-    errorElement:<Error/>
+    path: "/post/:id",
+    element: <PostDetails />,
+    errorElement: <Error />,
   },
   {
     path: "/rooms",
@@ -39,7 +40,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/postforfree",
-    element: <PostFree />,
+    element: (
+      <ProtectedRoute>
+        <PostFree />
+      </ProtectedRoute>
+    ),
     errorElement: <Error />,
   },
   {
@@ -64,26 +69,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/aboutus",
-    element: <AboutUs/>,
+    element: <AboutUs />,
     errorElement: <Error />,
   },
   {
     path: "/contactus",
-    element: <ContactUs/>,
+    element: <ContactUs />,
     errorElement: <Error />,
   },
   {
     path: "/blog",
-    element: <Blog/>,
+    element: <Blog />,
     errorElement: <Error />,
-  }, {
+  },
+  {
     path: "/blog/:id",
-    element: <BlogDetailsPage/>,
+    element: <BlogDetailsPage />,
     errorElement: <Error />,
   },
   {
     path: "/objectives",
-    element: <Objectives/>,
+    element: <Objectives />,
     errorElement: <Error />,
   },
 ]);

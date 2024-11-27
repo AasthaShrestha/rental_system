@@ -5,7 +5,7 @@ import SignUpModal from "./modal/signupmodal";
 import LoginModal from "./modal/loginmodal";
 import { auth } from "../firebase/firebase.jsx";
 import { onAuthStateChanged } from "firebase/auth";
-import Profile from "./profile.jsx";
+import Profile from "./Profile.jsx";
 
 function Navbar() {
   const [sticky, setSticky] = useState(false);
@@ -70,10 +70,10 @@ function Navbar() {
     <>
       <div
         className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
-        ${sticky ? "bg-base-200 shadow-md transition duration-300" : "bg-base-100"}`}
+        ${sticky ? "bg-black shadow-md transition duration-300" : "bg-black"}`}
       >
-        <div className="navbar flex items-center justify-between">
-          <a className="text-2xl font-bold cursor-pointer">YatriKuti</a>
+        <div className="navbar flex items-center justify-between py-4">
+          <a className="text-2xl font-bold text-white cursor-pointer">YatriKuti</a>
 
           {/* Hamburger Icon for Small Screens */}
           <button
