@@ -50,7 +50,10 @@ function Rooms() {
       />
       <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-4">
         {posts.map((item) => (
-          <div key={item._id} className="bg-white border rounded-lg shadow-lg p-4">
+          <div
+            key={item._id}
+            className="bg-white border rounded-lg shadow-lg p-4"
+          >
             <Link to={`/post/${item._id}`}>
               <img
                 src={item.images[0]}
@@ -61,6 +64,13 @@ function Rooms() {
               <p className="text-sm text-gray-600">{item.address}</p>
               <p className="text-lg font-bold">Rs. {item.price}</p>
             </Link>
+            <button
+              type="button"
+              // onClick={handleBuyNow}
+              className="mt-4 w-20 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition duration-300 transform hover:scale-105 shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-400"
+            >
+              Buy Now
+            </button>
           </div>
         ))}
       </div>

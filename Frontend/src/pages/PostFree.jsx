@@ -18,7 +18,7 @@ function PostFree() {
   const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
-  const [subcategory, setSubCategory] = useState(""); // Sub-category dependent on main category
+  const [subcategory, setSubCategory] = useState("");
   const [selectedFeatures, setSelectedFeatures] = useState([]);
   const [area, setArea] = useState(""); // Textbox for area
   const [productName, setProductName] = useState("");
@@ -27,7 +27,7 @@ function PostFree() {
   const [condition, setCondition] = useState(""); // Condition for vehicles
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
-
+  const [file, setFile] = useState(null); 
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
@@ -46,39 +46,53 @@ function PostFree() {
     );
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      name: productName,
-      title: productDescription,
-      address: address,
-      price: price,
-      parentCategory: category,
-      subCategory: subcategory,
-      image:images,
-    };
-    console.log("payload images", images);
-    try {
-      const resp = await axios.post("http://localhost:4001/api/posts", payload);
-      console.log(resp.data);
-      toast.success("Post successful!");
-    } catch (err) {
-      alert("err");
-      console.log(err.response);
-      toast.error("Failed to post. Please try again!");
-    }
-  };
+ const handleSubmit = async (e) => {
+   e.preventDefault();
 
- const handleImageUpload = (e) => {
-   const files = Array.from(e.target.files); 
-   files.forEach((file) => {
-     const reader = new FileReader();
-     reader.onload = () => {
-       setImages((prevImages) => [...prevImages, reader.result]);
-     };
-     reader.readAsDataURL(file);
+   const formData = new FormData(); // Use FormData for file upload
+   formData.append("name", productName);
+   formData.append("title", productDescription);
+   formData.append("address", address);
+   formData.append("price", price);
+   formData.append("parentCategory", category);
+   formData.append("subCategory", subcategory);
+
+   // Append all images to the FormData
+   images.forEach((image) => {
+     formData.append(`images`, image); // Ensure these are File objects
    });
+
+   try {
+     const response = await axios.post(
+       "http://localhost:4001/api/posts",
+       formData,
+       {
+         headers: { "Content-Type": "multipart/form-data" },
+       }
+     );
+      toast.success("Post submitted successfully!");
+     console.log("Response:", response.data);
+   } catch (error) {
+        console.error("Error:", error.response?.data || error.message);
+        toast.error("Error submitting post.");
+   }
  };
+
+const handleImageUpload = (e) => {
+  const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
+  if (uploadedFiles.length > 0) {
+    setFile(uploadedFiles); // Save all files to state
+
+    // Loop over each file and read them
+    uploadedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
+      };
+      reader.readAsDataURL(file); // Read each file as data URL
+    });
+  }
+};
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
@@ -100,6 +114,7 @@ function PostFree() {
     return <div>Loading...</div>;
   }
 
+
   return (
     <div
       className="flex justify-center items-center p-6 bg-gray-100 min-h-screen"
@@ -120,7 +135,12 @@ function PostFree() {
           <FaTimes size={20} />
         </button>
 
-        <form className="flex flex-col space-y-6">
+        <form
+          action="http://localhost:4001/api/posts"
+          method="POST"
+          enctype="multipart/form-data"
+          className="flex flex-col space-y-6"
+        >
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
             {images.map((image, index) => (
@@ -141,6 +161,7 @@ function PostFree() {
               <input
                 type="file"
                 id="image"
+                name="image"
                 onChange={handleImageUpload}
                 hidden
               />

@@ -12,7 +12,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.json({limit:"50mb"}));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // const server = http.createServer(app);
 // const io = new Server(server, {
 //   cors: {
@@ -52,6 +52,10 @@ mongoose
 
 app.use("/api/posts", router);
 app.use("/user", userRoute);
+
+app.use("/uploads", express.static("uploads"));
+
+
 app.listen(PORT, () => {
   console.log(`App is listening on port ${PORT}`);
 });
