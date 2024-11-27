@@ -1,43 +1,50 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import main1 from "../assets/masterRoom.webp";
 import Flex from "../components/Flex";
-import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
 function Rooms() {
-  const [rental,setRental] = useState([]);
-  useEffect(()=>{
+  const [rental, setRental] = useState([]);
+
+  useEffect(() => {
     const getRental = async () => {
-      try{
+      try {
         const res = await axios.get("http://localhost:4001/rental");
-        console.log(res.data);
         setRental(res.data);
-      }catch(error){
-        console.log(error);
+      } catch (error) {
+        console.error("Error fetching rental data:", error);
+        alert("Failed to load room data. Please try again later.");
       }
     };
     getRental();
-  },[]);
+  }, []);
 
   const filterData = rental.filter((data) => data.type === "rooms");
+
   return (
     <div>
       <Navbar />
       <Flex
         title="Our Rooms"
-        subtitle="Eperience Comfort with our services."
+        subtitle="Experience Comfort with our services."
         image={main1}
         children="Back"
       />
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-4">
+      <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 px-4">
         {filterData.map((item) => (
-          <div key={item.id} className="px-2 sm:px-4">
-            <Link to={`/post/${item.id}`}>
-              <Cards item={item} />
+          <div key={item._id} className="bg-white border rounded-lg shadow-lg p-4">
+            <Link to={`/post/${item._id}`}>
+              <img
+                src={item.images[0]}
+                alt={item.name}
+                className="w-full h-40 object-cover rounded-lg"
+              />
+              <h2 className="font-semibold mt-2">{item.name}</h2>
+              <p className="text-sm text-gray-600">{item.address}</p>
+              <p className="text-lg font-bold">Rs. {item.price}</p>
             </Link>
           </div>
         ))}

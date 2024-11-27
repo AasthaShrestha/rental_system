@@ -86,6 +86,11 @@ const router = createBrowserRouter([
     element: <Objectives/>,
     errorElement: <Error />,
   },
+  // {
+  //   path: "/chatsection",
+  //   element: <ChatSection />,
+  //   errorElement: <Error />,
+  // },
 ]);
 
 export default router;

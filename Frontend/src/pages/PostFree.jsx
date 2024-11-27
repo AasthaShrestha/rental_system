@@ -1,13 +1,16 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import upload_icon from "../assets/upload_image.png";
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
-import backgroundImage from "../assets/yatrikuti.jpg";
+import backgroundImage from "../assets/hero1.jpg";
 import axios from "axios";
-function PostFree() {
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FaTimes } from "react-icons/fa";
 
+function PostFree() {
   const [images, setImages] = useState([]);
-  const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
+  //const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState(""); // Sub-category dependent on main category
@@ -17,7 +20,11 @@ function PostFree() {
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
   const [condition, setCondition] = useState(""); // Condition for vehicles
+  const [bathroom, setBathroom] = useState(false);
+  const [parking, setParking] = useState(false);
+  const [furnished, setFurnished] = useState(false);
   const autocompleteRef = useRef(null);
+  const currentUserId ="User12234555";
   const navigate = useNavigate();
 
   const subcategories = {
@@ -26,7 +33,7 @@ function PostFree() {
   };
 
   const categoryFeatures = {
-    "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
+    "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
     Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
   };
 
@@ -37,21 +44,85 @@ function PostFree() {
         : [...prevFeatures, feature]
     );
   };
+  const resetForm = () => {
+    setProductName("");
+    setProductDescription("");
+    setPrice("");
+    setCategory("");
+    setSubCategory("");
+    setImages([]);
+    setAddress("");
+    //setLocation({ lat: 27.7172, lng: 85.324 });
+    setSelectedFeatures([]);
+    setArea("");
+    setCondition("");
+    setBathroom(false);
+    setParking(false);
+    setFurnished(false);
+  };
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const rentalData = {
+        name: productName,
+        description: productDescription,
+        images: images,
+        address: address,
+        parentCategory: category,
+        subCategory: subcategory,
+        features: {
+          area: area,
+          furnished,
+          bathroom,
+          parking,
+          condition,
+          abs: selectedFeatures.includes("ABS"),
+        airbags: selectedFeatures.includes("Airbags"),
+        electric: selectedFeatures.includes("Electric"),
+        },
+        price: price,
+        userId: currentUserId, // Include the userId field
+      };
+
+      const response = await axios.post("http://localhost:4001/api/posts", rentalData);
+      // console.log(response.data);
+      // console.log("Rental posted successfully:", response.data);
+      toast.success("Post successful!");
+      resetForm();
+      navigate("/");
+    } catch (error) {
+      alert("Error");
+      console.error("Error posting rental:", error.response);
+      toast.error("Failed to post. Please try again!");
+    }
+  };
+
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+  
+    files.forEach((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only JPG, PNG, and JPEG files are allowed.");
+        return;
+      }
+      if (file.size > maxSize) {
+        toast.error("File size should not exceed 5MB.");
+        return;
+      }
       const reader = new FileReader();
       reader.onload = () => {
         setImages((prevImages) => [...prevImages, reader.result]);
       };
       reader.readAsDataURL(file);
-    }
+    });
   };
-  console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
+  
   const { isLoaded } = useJsApiLoader({
-    
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
     libraries: ["places"],
     version: "weekly",
   });
@@ -69,49 +140,28 @@ function PostFree() {
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const rentalData = {
-      productName,
-      productDescription,
-      price,
-      category,
-      subcategory,
-      selectedFeatures,
-      area,
-      condition,
-      address,
-      location,
-      images,
-    };
-  
-    try {
-      const response = await axios.post("http://localhost:4001/rental", rentalData);
-      console.log(response.data);
-      alert("Rental posted successfully!");
-      navigate("/"); // Navigate to the home page or another page
-    } catch (error) {
-      console.error("Error posting rental:", error.response || error.message);
-      alert("Failed to post rental. Please try again.");
-    }
-  };
-  
-  return (
-    <div className="flex justify-center items-center p-6 bg-gray-100 min-h-screen" style={{ backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-      <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-lg p-6">
-        <div className="flex justify-between mb-6">
-          {/* Back Button */}
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="px-6 py-2 bg-pink-400 text-gray-700 rounded-md hover:bg-gray-300 transition"
-          >
-            Back
-          </button>
-        </div>
 
-        <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
+  return (
+    <div
+      className="flex justify-center items-center p-6 bg-gray-100 min-h-screen"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <ToastContainer />
+      <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-lg p-6 relative">
+        {/* Cross Arrow */}
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="absolute top-4 right-4 text-gray-500 hover:text-pink-500 transition"
+        >
+          <FaTimes size={20} />
+        </button>
+
+        <form className="flex flex-col space-y-6">
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
             {images.map((image, index) => (
@@ -140,7 +190,10 @@ function PostFree() {
 
           {/* Product Name */}
           <div>
-            <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="productName"
+              className="block text-sm font-medium text-gray-700"
+            >
               Product Name
             </label>
             <input
@@ -154,7 +207,10 @@ function PostFree() {
 
           {/* Product Description */}
           <div>
-            <label htmlFor="productDescription" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="productDescription"
+              className="block text-sm font-medium text-gray-700"
+            >
               Product Description
             </label>
             <textarea
@@ -167,7 +223,10 @@ function PostFree() {
 
           {/* Price */}
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-700"
+            >
               Price (in Rs.)
             </label>
             <input
@@ -181,7 +240,10 @@ function PostFree() {
 
           {/* Category Selection */}
           <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-gray-700"
+            >
               Category
             </label>
             <select
@@ -207,7 +269,10 @@ function PostFree() {
           {/* Subcategory Selection */}
           {category && (
             <div>
-              <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subcategory"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subcategory
               </label>
               <select
@@ -231,7 +296,9 @@ function PostFree() {
           {/* Dynamic Features */}
           {category && categoryFeatures[category] && (
             <div>
-              <h3 className="text-md font-medium text-gray-700 mb-2">Features</h3>
+              <h3 className="text-md font-medium text-gray-700 mb-2">
+                Features
+              </h3>
               {categoryFeatures[category].map((feature) =>
                 feature === "Area" || feature === "Condition" ? (
                   feature === "Condition" && category === "Vehicles" ? (
@@ -283,11 +350,16 @@ function PostFree() {
 
           {/* Location */}
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="address"
+              className="block text-sm font-medium text-gray-700"
+            >
               Location
             </label>
             <Autocomplete
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+              onLoad={(autocomplete) =>
+                (autocompleteRef.current = autocomplete)
+              }
               onPlaceChanged={handlePlaceSelect}
             >
               <input
@@ -310,6 +382,7 @@ function PostFree() {
           {/* Submit Button */}
           <button
             type="submit"
+            onClick={(e) => handleSubmit(e)}
             className="mt-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition"
           >
             Post
