@@ -1,13 +1,13 @@
 import React from "react";
 
 function Cards({ post }) {
-  console.log(post)
+  console.log(post);
   return (
     <div className="p-4 flex justify-center">
       <div className="card bg-base-100 max-w-sm w-full shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
         <figure>
           <img
-            src={post.image}
+            src={`http://localhost:4001/${post.images[0]}`}
             alt="post image"
             className="h-64 w-full object-cover"
           />

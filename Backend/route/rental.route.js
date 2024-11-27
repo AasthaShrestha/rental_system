@@ -7,7 +7,7 @@ const router = express.Router();
 // Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "../uploads"); // Define the directory for uploads
+    cb(null, "./uploads"); 
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`); 
@@ -16,13 +16,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage:storage });
 
-router.post("/", upload.array("image",5), async (req, res) => {
+router.post("/", upload.array("images",5), async (req, res) => {
   try {
-    console.log(req.files);
     const filePaths = req.files.map((file) => file.path);
+    console.log(filePaths);
+    console.log(req.file);
     const postData = {
       ...req.body,
-      image: filePaths,
+      images: filePaths,
     };
 
     const post = new Rental(postData);
@@ -37,6 +38,30 @@ router.post("/", upload.array("image",5), async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const posts = await Rental.find();
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+router.get("/vehicles", async (req, res) => {
+  try {
+    const posts = await Rental.find({parentCategory:"Vehicles"});
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+router.get("/rooms", async (req, res) => {
+  try {
+    const posts = await Rental.find({parentCategory:"Real Estate"});
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+router.get("/latest", async (req, res) => {
+  try {
+    const posts = await Rental.find().sort({ createdAt: -1 }).limit(4);
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });

@@ -27,7 +27,7 @@ function PostFree() {
   const [condition, setCondition] = useState(""); // Condition for vehicles
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
-  const [file, setFile] = useState(null); 
+  const [file, setFile] = useState(null);
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
@@ -46,53 +46,53 @@ function PostFree() {
   //   );
   // };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-   const formData = new FormData(); // Use FormData for file upload
-   formData.append("name", productName);
-   formData.append("description", productDescription);
-   formData.append("address", address);
-   formData.append("price", price);
-   formData.append("parentCategory", category);
-   formData.append("subCategory", subcategory);
+    const formData = new FormData(); // Use FormData for file upload
+    formData.append("name", productName);
+    formData.append("description", productDescription);
+    formData.append("address", address);
+    formData.append("price", price);
+    formData.append("parentCategory", category);
+    formData.append("subCategory", subcategory);
 
-   // Append all images to the FormData
-   images.forEach((image) => {
-     formData.append(`images`, image); // Ensure these are File objects
-   });
-
-   try {
-     const response = await axios.post(
-       "http://localhost:4001/api/posts",
-       formData,
-       {
-         headers: { "Content-Type": "multipart/form-data" },
-       }
-     );
-      toast.success("Post submitted successfully!");
-     console.log("Response:", response.data);
-   } catch (error) {
-        console.error("Error:", error.response?.data || error.message);
-        toast.error("Error submitting post.");
-   }
- };
-
-const handleImageUpload = (e) => {
-  const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
-  if (uploadedFiles.length > 0) {
-    setFile(uploadedFiles); // Save all files to state
-
-    // Loop over each file and read them
-    uploadedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
-      };
-      reader.readAsDataURL(file); // Read each file as data URL
+    // Append all images to the FormData
+    file.forEach((image) => {
+      formData.append(`images`, image); // Ensure these are File objects
     });
-  }
-};
+
+    try {
+      const response = await axios.post(
+        "http://localhost:4001/api/posts",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      toast.success("Post submitted successfully!");
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("Error submitting post.");
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
+    if (uploadedFiles.length > 0) {
+      setFile(uploadedFiles); // Save all files to state
+
+      // Loop over each file and read them
+      uploadedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
+        };
+        reader.readAsDataURL(file); // Read each file as data URL
+      });
+    }
+  };
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
@@ -113,7 +113,6 @@ const handleImageUpload = (e) => {
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
-
 
   return (
     <div
@@ -161,7 +160,7 @@ const handleImageUpload = (e) => {
               <input
                 type="file"
                 id="image"
-                name="image"
+                name="images"
                 onChange={handleImageUpload}
                 hidden
               />

@@ -12,7 +12,7 @@ const [posts, setPosts] = useState([]);
 useEffect(() => {
   const fetchPosts = async () => {
     try {
-      const response = await axios.get("http://localhost:4001/api/posts");
+      const response = await axios.get("http://localhost:4001/api/posts/rooms");
       if (response.data.success) {
         setPosts(response.data.data);
       }

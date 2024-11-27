@@ -13,7 +13,9 @@ function Vehicles() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get("http://localhost:4001/api/posts");
+        const response = await axios.get(
+          "http://localhost:4001/api/posts/vehicles"
+        );
         if (response.data.success) {
           setPosts(response.data.data);
         }

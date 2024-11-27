@@ -2,13 +2,12 @@ import mongoose from "mongoose";
 
 const rentalSchema = mongoose.Schema({
   name: { type: String, required: true },
-  images: { type: [String], required: true }, 
+  images:[ 
+    {
+      type:String,required:true
+    }, ],
   address: { type: String, required: true },
   description: { type: String, required: true },
-  // location: {
-  //   lat: { type: Number, required: true },
-  //   lng: { type: Number, required: true },
-  // },
   parentCategory: { type: String, required: true },
   subCategory: { type: String, required: true },
   features: {
