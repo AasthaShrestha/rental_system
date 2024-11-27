@@ -8,7 +8,7 @@ import Login from "../components/Login";
 import PostFree from "../pages/PostFree";
 import SignUp from "../components/SignUp.jsx";
 import PostDetails from "../components/PostDetails.jsx";
-import ChatSection from "../components/ChatSection.jsx";
+// import ChatSection from "../components/ChatSection.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -45,11 +45,11 @@ const router = createBrowserRouter([
     element: <SignUp />,
     errorElement: <Error />,
   },
-  {
-    path: "/chatsection",
-    element: <ChatSection />,
-    errorElement: <Error />,
-  },
+  // {
+  //   path: "/chatsection",
+  //   element: <ChatSection />,
+  //   errorElement: <Error />,
+  // },
 ]);
 
 export default router;

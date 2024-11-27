@@ -1,22 +1,58 @@
 import React, { useState } from "react";
 import main0 from "../assets/main0.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Email:", email, "Password:", password);
+
+    // Basic form validation
+    if (!email || !password) {
+      toast.error("Please enter both email and password.");
+      return;
+    }
+
+    // Prepare user info for login
+    const userInfo = { email, password };
+
+    try {
+      const res = await axios.post(
+        "http://localhost:4001/user/login",
+        userInfo
+      );
+      console.log(res.data);
+
+      if (res.data?.user) {
+        // If login is successful
+        toast.success("Logged in successfully!");
+        localStorage.setItem("Users", JSON.stringify(res.data.user));
+
+        // Redirect to home page after login
+        navigate("/", { replace: true });
+      } else {
+        toast.error("Invalid credentials. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data) {
+        toast.error("Error: " + err.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+    }
   };
 
   return (
     <div
-      className="flex items-center justify-center  min-h-screen bg-cover bg-center "
-      style={{
-        backgroundImage: `url(${main0})`,
-      }}
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{ backgroundImage: `url(${main0})` }}
     >
       <div className="w-full max-w-md p-5 space-y-8 bg-opacity-60 bg-yellow-100 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105">
         <Link
@@ -28,7 +64,6 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-center text-gray-800">
           Welcome Back
         </h2>
-
         <p className="text-center text-gray-800">
           Log in to access your account
         </p>
@@ -76,9 +111,9 @@ const Login = () => {
         </form>
         <p className="text-center text-sm text-gray-500">
           Don't have an account?{" "}
-          <a href="/signup" className="text-indigo-500 hover:underline">
+          <Link to="/signup" className="text-indigo-500 hover:underline">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
