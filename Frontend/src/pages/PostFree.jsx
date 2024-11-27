@@ -19,8 +19,8 @@ function PostFree() {
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
-  const [selectedFeatures, setSelectedFeatures] = useState([]);
-  const [area, setArea] = useState(""); // Textbox for area
+  // const [selectedFeatures, setSelectedFeatures] = useState([]);
+  // const [area, setArea] = useState(""); // Textbox for area
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -33,25 +33,25 @@ function PostFree() {
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
   };
 
-  const categoryFeatures = {
-    "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
-    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
-  };
+  // const categoryFeatures = {
+  //   "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
+  //   Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
+  // };
 
-  const handleFeatureToggle = (feature) => {
-    setSelectedFeatures((prevFeatures) =>
-      prevFeatures.includes(feature)
-        ? prevFeatures.filter((f) => f !== feature)
-        : [...prevFeatures, feature]
-    );
-  };
+  // const handleFeatureToggle = (feature) => {
+  //   setSelectedFeatures((prevFeatures) =>
+  //     prevFeatures.includes(feature)
+  //       ? prevFeatures.filter((f) => f !== feature)
+  //       : [...prevFeatures, feature]
+  //   );
+  // };
 
  const handleSubmit = async (e) => {
    e.preventDefault();
 
    const formData = new FormData(); // Use FormData for file upload
    formData.append("name", productName);
-   formData.append("title", productDescription);
+   formData.append("description", productDescription);
    formData.append("address", address);
    formData.append("price", price);
    formData.append("parentCategory", category);
@@ -270,61 +270,6 @@ const handleImageUpload = (e) => {
                   </option>
                 ))}
               </select>
-            </div>
-          )}
-
-          {/* Dynamic Features */}
-          {category && categoryFeatures[category] && (
-            <div>
-              <h3 className="text-md font-medium text-gray-700 mb-2">
-                Features
-              </h3>
-              {categoryFeatures[category].map((feature) =>
-                feature === "Area" || feature === "Condition" ? (
-                  feature === "Condition" && category === "Vehicles" ? (
-                    <div key={feature} className="mb-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        {feature}
-                      </label>
-                      <select
-                        value={condition}
-                        onChange={(e) => setCondition(e.target.value)}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
-                      >
-                        <option value="" disabled={condition !== ""}>
-                          Select Category
-                        </option>
-                        <option value="New">New</option>
-                        <option value="Old">Old</option>
-                      </select>
-                    </div>
-                  ) : (
-                    <div key={feature} className="mb-3">
-                      <label className="block text-sm font-medium text-gray-700">
-                        {feature} (in Sq. Ft.)
-                      </label>
-                      <input
-                        type="number"
-                        value={area}
-                        onChange={(e) => setArea(e.target.value)}
-                        className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
-                      />
-                    </div>
-                  )
-                ) : (
-                  <div key={feature} className="mb-3">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={selectedFeatures.includes(feature)}
-                        onChange={() => handleFeatureToggle(feature)}
-                        className="mr-2"
-                      />
-                      {feature}
-                    </label>
-                  </div>
-                )
-              )}
             </div>
           )}
 

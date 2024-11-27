@@ -7,7 +7,7 @@ const router = express.Router();
 // Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Define the directory for uploads
+    cb(null, "../uploads"); // Define the directory for uploads
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`); 
@@ -18,7 +18,7 @@ const upload = multer({ storage:storage });
 
 router.post("/", upload.array("image",5), async (req, res) => {
   try {
-    console.log(req.file);
+    console.log(req.files);
     const filePaths = req.files.map((file) => file.path);
     const postData = {
       ...req.body,
@@ -42,5 +42,19 @@ router.get("/", async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 });
+
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const post = await Rental.findById(req.params.id);
+//     if (!post) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Post not found" });
+//     }
+//     res.status(200).json({ success: true, data: post });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: "Error fetching post" });
+//   }
+// });
 
 export default router;

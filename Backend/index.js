@@ -51,6 +51,7 @@ mongoose
 //define route
 
 app.use("/api/posts", router);
+
 app.use("/user", userRoute);
 
 app.use("/uploads", express.static("uploads"));
