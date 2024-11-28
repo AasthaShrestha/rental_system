@@ -25,7 +25,7 @@ export default function Flex({ children, title, subtitle, image }) {
 
         {/* Button */}
         <Link 
-          to="/"
+          to="/" 
           className="inline-block bg-pink-600 text-white py-3 px-10 rounded-full text-lg font-medium shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300"
         >
           {children}

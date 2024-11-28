@@ -1,16 +1,17 @@
+import { useEffect, useState } from "react";
 import React from "react";
 
-function Cards({ item }) {
-
+function Esewa() {
   const [orders, setOrders] = useState([]);
   const [amount, setAmount] = useState(""); // State to store dynamic amount
   const [product, setProduct] = useState(""); // State to store dynamic product
 
-  const handlePayment = async () => {
+  const handlePayment = async (payment_method) => {
     const url = "http://localhost:4001/api/orders/create";
     const data = {
       amount: parseFloat(amount), // Use user-provided amount
       products: [{ product, amount: parseFloat(amount), quantity: 1 }], // Use user-provided product
+      payment_method,
     };
 
     try {
@@ -25,7 +26,9 @@ function Cards({ item }) {
       if (response.ok) {
         const responseData = await response.json();
         console.log(responseData);
-        esewaCall(responseData.formData);
+        if (responseData.payment_method === "esewa") {
+          esewaCall(responseData.formData);
+        }
       } else {
         console.error("Failed to fetch:", response.status, response.statusText);
       }
@@ -83,34 +86,40 @@ function Cards({ item }) {
     };
     getOrders();
   }, []);
+
   return (
-    <div className="p-4 flex justify-center">
-      <div className="card bg-base-100 max-w-sm w-full shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
-        <figure>
-          <img
-            src={item.image}
-            alt="item image"
-            className="h-64 w-full object-cover"
+    <div>
+      <h1>Esewa Test</h1>
+      <div style={{ marginBottom: "20px" }}>
+        <label>
+          Amount:
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Enter amount"
+            style={{ marginLeft: "10px", marginRight: "20px" }}
           />
-        </figure>
-        <div className="card-body p-4">
-          <h2 className="card-title text-lg font-semibold mb-2 flex items-center">
-            {item.name}
-            <div className="badge badge-secondary ml-2">NEW</div>
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">{item.title}</p>
-          <div className="card-actions flex justify-between items-center">
-            <div className="badge badge-outline text-lg font-semibold">
-              रु {item.price}
-            </div>
-            <button className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out">
-              Buy Now onClick={() => handlePayment()}
-            </button>
-          </div>
-        </div>
+        </label>
+        <label>
+          Product:
+          <input
+            type="text"
+            value={product}
+            onChange={(e) => setProduct(e.target.value)}
+            placeholder="Enter product"
+            style={{ marginLeft: "10px" }}
+          />
+        </label>
       </div>
+      <button
+        style={{ background: "#55aa33", margin: 10 }}
+        onClick={() => handlePayment("esewa")}
+      >
+        Handle Esewa Payment
+      </button>
     </div>
   );
 }
 
-export default Cards;
+export default Esewa;

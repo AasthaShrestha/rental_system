@@ -1,46 +1,62 @@
 import express from "express";
-import multer from "multer";
-import Rental from "../model/rental.model.js";
+import {getRental} from "../controller/rental.controller.js";
+import {Rental} from "../model/rental.model.js"
 
 const router = express.Router();
 
-// Multer setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); // Define the directory for uploads
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); 
-  },
+router.get("/",getRental);
+
+router.get("/rents", async (req, res) => {
+	try {
+		const page = parseInt(req.query.page) - 1 || 0;
+		const limit = parseInt(req.query.limit) || 5;
+		const search = req.query.search || "";
+		let sort = req.query.sort || "parentCategory";
+		let subCategory = req.query.subCategory|| "All";
+
+		const subCategoryOptions= [
+			
+		];
+
+		subCategory === "All"
+			? (subCategory = [...subCategoryOptions])
+			: (subCategory = req.query.subCategory.split(","));
+		req.query.sort ? (sort = req.query.sort.split(",")) : (sort = [sort]);
+
+		let sortBy = {};
+		if (sort[1]) {
+			sortBy[sort[0]] = sort[1];
+		} else {
+			sortBy[sort[0]] = "asc";
+		}
+
+		const movies = await Movie.find({ name: { $regex: search, $options: "i" } })
+			.where("genre")
+			.in([...genre])
+			.sort(sortBy)
+			.skip(page * limit)
+			.limit(limit);
+
+		const total = await Movie.countDocuments({
+			genre: { $in: [...genre] },
+			name: { $regex: search, $options: "i" },
+		});
+
+		const response = {
+			error: false,
+			total,
+			page: page + 1,
+			limit,
+			genres: genreOptions,
+			movies,
+		};
+
+		res.status(200).json(response);
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ error: true, message: "Internal Server Error" });
+	}
 });
 
-const upload = multer({ storage:storage });
-
-router.post("/", upload.array("image",5), async (req, res) => {
-  try {
-    console.log(req.file);
-    const filePaths = req.files.map((file) => file.path);
-    const postData = {
-      ...req.body,
-      image: filePaths,
-    };
-
-    const post = new Rental(postData);
-    await post.save();
-    res.status(201).json({ success: true, data: post });
-  } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
-  }
-});
-
-// Fetch all posts
-router.get("/", async (req, res) => {
-  try {
-    const posts = await Rental.find();
-    res.status(200).json({ success: true, data: posts });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-});
 
 export default router;
