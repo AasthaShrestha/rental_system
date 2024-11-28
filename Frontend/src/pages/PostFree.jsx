@@ -24,7 +24,6 @@ function PostFree() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [condition, setCondition] = useState(""); // Condition for vehicles
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
