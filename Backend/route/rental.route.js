@@ -68,18 +68,18 @@ router.get("/latest", async (req, res) => {
   }
 });
 
-// router.get("/:id", async (req, res) => {
-//   try {
-//     const post = await Rental.findById(req.params.id);
-//     if (!post) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Post not found" });
-//     }
-//     res.status(200).json({ success: true, data: post });
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: "Error fetching post" });
-//   }
-// });
+router.get("/:id", async (req, res) => {
+  try {
+    const post = await Rental.findById(req.params.id);
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+    res.status(200).json({ success: true, data: post });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error fetching post" });
+  }
+});
 
 export default router;
