@@ -2,53 +2,45 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import http from "http";
-import { Server } from "socket.io";
-import rentalRoute from "./route/rental.route.js";
+import bodyParser from "body-parser";
+import router from "./route/rental.route.js"; // Rental system routes
+import suggestionRoute from "./route/suggestion.route.js";
+import orderRoutes from "./route/order.route.js"; // Order routes
+import esewaRoutes from "./route/esewa.route.js"; // eSewa routes
+
+dotenv.config(); // Load environment variables
 
 const app = express();
 
+// Middleware
 app.use(cors());
 
-const server = http.createServer(app);
-const io = new Server(server,{
-  cors:{
-    origin: "http://localhost:5173",
-    methods:["GET","POST"],
-  },
-});
+app.use(express.json({limit:"50mb"}));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-io.on("connection",(socket)=>{
-  console.log(`User Connected: ${socket.id}`);
-
-  socket.on("join_room", (data) => {
-    socket.join(data);
-    console.log(`User with ID: ${socket.id} joined room: ${data}`);
-  });
-
-  socket.on("disconnect",()=>{
-    console.log("User Disconnected",socket.id);
-  })
-})
-
-dotenv.config();
-
+// Database connection
 const PORT = process.env.PORT || 4000;
-const URI = process.env.MongoDBURI;
+const URI = process.env.MongoDBURI || process.env.DB_URL;
 
 mongoose
   .connect(URI)
   .then(() => {
-    console.log("Connected to mongoose successfully");
+    console.log("Connected to MongoDB successfully");
   })
-  .catch(() => {
-    console.log(err);
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
   });
 
 //define route
 
-app.use("/rental", rentalRoute);
+app.use("/api/posts", router);
+app.use(suggestionRoute);
+app.use("/api/orders", orderRoutes); // Order management routes
+app.use("/api/esewa", esewaRoutes); // eSewa payment routes
+
+app.use("/uploads", express.static("uploads"));
+
 
 app.listen(PORT, () => {
-  console.log(`App is listening on port ${PORT}`);
+  console.log(`Server running at http://127.0.0.1:${PORT}/`);
 });

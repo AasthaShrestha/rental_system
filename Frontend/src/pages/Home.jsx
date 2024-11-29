@@ -4,6 +4,7 @@ import main0 from "../assets/main0.jpeg";
 import Footer from '../components/Footer';
 import Featured from '../components/Featured';
 import Flex from '../components/Flex';
+import Objectives from '../components/Objectives';
 
 function Home() {
   return (
@@ -17,6 +18,7 @@ function Home() {
         children="Start your Journey"
       />
       <Featured />
+      <Objectives/>
       <Footer />
     </>
   );

@@ -1,44 +1,42 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import main1 from "../assets/masterRoom.webp";
+import img from "../assets/main1.jpeg";
 import Flex from "../components/Flex";
-import Cards from "../components/Cards";
 import Footer from "../components/Footer";
-import axios from "axios";
 import { Link } from "react-router-dom";
-
+import axios from "axios";
+import Cards from "../components/Cards";
 function Rooms() {
-  const [rental,setRental] = useState([]);
-  useEffect(()=>{
-    const getRental = async () => {
-      try{
-        const res = await axios.get("http://localhost:4001/rental");
-        console.log(res.data);
-        setRental(res.data);
-      }catch(error){
-        console.log(error);
-      }
-    };
-    getRental();
-  },[]);
+const [posts, setPosts] = useState([]);
 
-  const filterData = rental.filter((data) => data.type === "rooms");
+useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get("http://localhost:4001/api/posts/rooms");
+      if (response.data.success) {
+        setPosts(response.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  fetchPosts();
+}, []);
   return (
     <div>
       <Navbar />
       <Flex
         title="Our Rooms"
-        subtitle="Eperience Comfort with our services."
-        image={main1}
+        subtitle="Experience Comfort with our services."
+        image={img}
         children="Back"
       />
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-4">
-        {filterData.map((item) => (
-          <div key={item.id} className="px-2 sm:px-4">
-            <Link to={`/post/${item.id}`}>
-              <Cards item={item} />
-            </Link>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {posts.map((post) => (
+          <Link to={`/post/${post._id}`} key={post._id}>
+            <Cards post={post} />
+          </Link>
         ))}
       </div>
       <Footer />
