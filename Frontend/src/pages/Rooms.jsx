@@ -1,7 +1,7 @@
   import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import main1 from "../assets/masterRoom.webp";
 import Flex from "../components/Flex";
+import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import axios from "axios";

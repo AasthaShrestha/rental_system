@@ -24,7 +24,7 @@ function Cards({ post }) {
               रु {post.price}
             </div>
             <button className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out">
-              Book Now
+              Buy Now onClick={() => handlePayment()}
             </button>
           </div>
         </div>

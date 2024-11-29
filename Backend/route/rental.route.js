@@ -1,6 +1,6 @@
 import express from "express";
-import multer from "multer";
-import Rental from "../model/rental.model.js";
+import {getRental} from "../controller/rental.controller.js";
+import {Rental} from "../model/rental.model.js"
 
 const router = express.Router();
 

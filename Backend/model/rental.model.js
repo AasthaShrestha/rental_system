@@ -10,12 +10,11 @@ const rentalSchema = mongoose.Schema({
   description: { type: String, required: true },
   parentCategory: { type: String, required: true },
   subCategory: { type: String, required: true },
-  features: {
-    kitchen: { type: Boolean, default: false },
-    bathroom: { type: Boolean, default: false },
-    balcony: { type: Boolean, default: false },
-    parking: { type: Boolean, default: false },
-  },
+//   features: {
+//     bathroom: { type: Boolean, default: false },
+//     furnished: { type: Boolean, default: false },
+//     parking: { type: Boolean, default: false },
+//   },
   price: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
 });

@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import upload_icon from "../assets/upload_image.png";
-import {
-  GoogleMap,
-  useJsApiLoader,
-  Marker,
-  Autocomplete,
-} from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/hero1.jpg";
 import axios from "axios";
@@ -15,7 +10,7 @@ import { FaTimes } from "react-icons/fa";
 
 function PostFree() {
   const [images, setImages] = useState([]);
-  const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
+  //const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
@@ -24,7 +19,12 @@ function PostFree() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [condition, setCondition] = useState(""); // Condition for vehicles
+  const [bathroom, setBathroom] = useState(false);
+  const [parking, setParking] = useState(false);
+  const [furnished, setFurnished] = useState(false);
   const autocompleteRef = useRef(null);
+  const currentUserId ="User12234555";
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const subcategories = {
@@ -32,6 +32,10 @@ function PostFree() {
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
   };
 
+  const categoryFeatures = {
+    "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
+    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
+  };
   // const categoryFeatures = {
   //   "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
   //   Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
