@@ -1,6 +1,6 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import upload_icon from "../assets/upload_image.png";
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
+import { GoogleMap, useJsApiLoader, Marker, Autocomplete } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/hero1.jpg";
 import axios from "axios";
@@ -10,49 +10,25 @@ import { FaTimes } from "react-icons/fa";
 
 function PostFree() {
   const [images, setImages] = useState([]);
-  //const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
-  const [category, setCategory] = useState(""); // Main category
+  const [category, setCategory] = useState("");
   const [subcategory, setSubCategory] = useState("");
-  // const [selectedFeatures, setSelectedFeatures] = useState([]);
-  // const [area, setArea] = useState(""); // Textbox for area
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [condition, setCondition] = useState(""); // Condition for vehicles
-  const [bathroom, setBathroom] = useState(false);
-  const [parking, setParking] = useState(false);
-  const [furnished, setFurnished] = useState(false);
-  const autocompleteRef = useRef(null);
-  const currentUserId ="User12234555";
-  const navigate = useNavigate();
   const [file, setFile] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 27.7172, lng: 85.324 }); // Default map center
+  const autocompleteRef = useRef(null);
+  const navigate = useNavigate();
+
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
   };
 
-  const categoryFeatures = {
-    "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
-    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
-  };
-  // const categoryFeatures = {
-  //   "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
-  //   Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
-  // };
-
-  // const handleFeatureToggle = (feature) => {
-  //   setSelectedFeatures((prevFeatures) =>
-  //     prevFeatures.includes(feature)
-  //       ? prevFeatures.filter((f) => f !== feature)
-  //       : [...prevFeatures, feature]
-  //   );
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData(); // Use FormData for file upload
+    const formData = new FormData();
     formData.append("name", productName);
     formData.append("description", productDescription);
     formData.append("address", address);
@@ -60,9 +36,8 @@ function PostFree() {
     formData.append("parentCategory", category);
     formData.append("subCategory", subcategory);
 
-    // Append all images to the FormData
-    file.forEach((image) => {
-      formData.append(`images`, image); // Ensure these are File objects
+    file?.forEach((image) => {
+      formData.append("images", image);
     });
 
     try {
@@ -75,6 +50,9 @@ function PostFree() {
       );
       toast.success("Post submitted successfully!");
       console.log("Response:", response.data);
+
+      // Redirect to the home page after success
+      navigate("/");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       toast.error("Error submitting post.");
@@ -82,34 +60,31 @@ function PostFree() {
   };
 
   const handleImageUpload = (e) => {
-    const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
-    if (uploadedFiles.length > 0) {
-      setFile(uploadedFiles); // Save all files to state
-
-      // Loop over each file and read them
-      uploadedFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
-        };
-        reader.readAsDataURL(file); // Read each file as data URL
-      });
-    }
+    const uploadedFiles = Array.from(e.target.files);
+    setFile(uploadedFiles);
+    uploadedFiles.forEach((file) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImages((prevImages) => [...prevImages, reader.result]);
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
+    googleMapsApiKey: "AIzaSyDVsrErMhEQtr1gSWj0MyIGQzbkslWb4zY",
     libraries: ["places"],
-    version: "weekly",
   });
 
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current.getPlace();
-    if (place && place.geometry) {
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      setLocation({ lat, lng });
+    if (place?.geometry) {
+      // Set the address and center map to the selected place
       setAddress(place.formatted_address || "");
+      setMapCenter({
+        lat: place.geometry.location.lat(),
+        lng: place.geometry.location.lng(),
+      });
     }
   };
 
@@ -128,7 +103,6 @@ function PostFree() {
     >
       <ToastContainer />
       <div className="w-full max-w-2xl bg-white border border-gray-300 rounded-lg shadow-lg p-6 relative">
-        {/* Cross Arrow */}
         <button
           type="button"
           onClick={() => navigate(-1)}
@@ -137,12 +111,7 @@ function PostFree() {
           <FaTimes size={20} />
         </button>
 
-        <form
-          action="http://localhost:4001/api/posts"
-          method="POST"
-          enctype="multipart/form-data"
-          className="flex flex-col space-y-6"
-        >
+        <form className="flex flex-col space-y-6">
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
             {images.map((image, index) => (
@@ -233,7 +202,7 @@ function PostFree() {
               value={category}
               onChange={(e) => {
                 setCategory(e.target.value);
-                setSubCategory(""); // Reset subcategory when category is changed
+                setSubCategory("");
               }}
               className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
             >
@@ -293,26 +262,30 @@ function PostFree() {
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter address"
-                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500 mb-6"
+                placeholder="Enter an address"
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500"
               />
             </Autocomplete>
+          </div>
+
+          {/* Map */}
+          <div className="mt-4">
             <GoogleMap
-              mapContainerStyle={{ height: "400px", width: "100%" }}
-              center={location}
+              mapContainerStyle={{ width: "100%", height: "300px" }}
+              center={mapCenter}
               zoom={15}
             >
-              <Marker position={location} />
+              <Marker position={mapCenter} />
             </GoogleMap>
           </div>
 
           {/* Submit Button */}
           <button
             type="submit"
-            onClick={(e) => handleSubmit(e)}
-            className="mt-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition"
+            onClick={handleSubmit}
+            className="w-full mt-4 bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-600 transition"
           >
-            Post
+            Submit Post
           </button>
         </form>
       </div>

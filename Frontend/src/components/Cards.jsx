@@ -1,4 +1,5 @@
 import React from "react";
+import { FaHeart, FaCommentDots } from "react-icons/fa"; // Import icons from React Icons
 
 function Cards({ post }) {
   console.log(post);
@@ -18,14 +19,15 @@ function Cards({ post }) {
             <div className="badge badge-secondary ml-2">NEW</div>
           </h2>
           <p className="text-sm text-gray-600 mb-4">{post.description}</p>
-          <p className="text-sm text-gray-600 mb-4">Location:{post.address}</p>
+          <p className="text-sm text-gray-600 mb-4">Location: {post.address}</p>
+          <p className="text-sm text-gray-600 mb-4">SubCategory: {post.subCategory}</p>
+
           <div className="card-actions flex justify-between items-center">
             <div className="badge badge-outline text-lg font-semibold">
               रु {post.price}
             </div>
             <button
               className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out"
-              onClick={() => handlePayment()}
             >
               Book Now
             </button>

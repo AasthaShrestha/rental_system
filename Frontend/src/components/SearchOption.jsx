@@ -87,13 +87,16 @@ const SearchOption = ({ setSearch, search }) => {
       {isDropdownVisible && results.length > 0 && (
         <div className="absolute top-full left-0 w-full bg-white rounded-md shadow-md mt-1 z-10">
           {results.map((result) => (
+            <Link key={result._id}to={`/post/${result._id}`}>
             <div
-              key={result._id}
+              
               className="p-2 hover:bg-gray-200 cursor-pointer"
-              onClick={() => handleResultClick(result)}
+              
             >
-              <Link to={`/post/${result._id}`}>{result.name}</Link>
+              
+              {result.name}
             </div>
+            </Link>
           ))}
         </div>
       )}

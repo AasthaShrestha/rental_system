@@ -66,7 +66,7 @@ function Featured() {
     <div className="max-w-screen-xl mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
       <div className="text-center mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-          Featured Rooms & Vehicles
+          Latest Rooms & Vehicles
         </h1>
         <p className="text-gray-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto">
           Discover the most popular rooms and vehicles tailored just for you,

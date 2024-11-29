@@ -9,8 +9,9 @@ const ProtectedRoute = ({ children }) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      // If user is not logged in, redirect to home page 
-      navigate("/", { replace: true });
+      // Show an alert if the user is not logged in
+      alert("You must be logged in to access this page.");
+      navigate("/", { replace: true }); // Redirect to home page after the alert
     }
   }, [loading, user, navigate]);
 
