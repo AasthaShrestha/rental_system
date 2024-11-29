@@ -11,6 +11,9 @@ export default function Flex({ children, title, subtitle, image }) {
         alt="background"
       />
 
+      {/* Light Blur Overlay */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-30 backdrop-blur-sm -z-5"></div>
+
       {/* Content */}
       <div className="flex flex-col items-center justify-center h-full text-center px-6 md:px-12 space-y-8">
         {/* Title */}
@@ -26,7 +29,7 @@ export default function Flex({ children, title, subtitle, image }) {
         {/* Button */}
         <Link
           to="/"
-          className="inline-block bg-pink-600 text-white py-3 px-8 sm:px-10 rounded-full text-base sm:text-lg font-medium shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300"
+          className="relative inline-block bg-pink-600 text-white py-3 px-8 sm:px-10 rounded-full text-base sm:text-lg font-medium shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-300 z-10"
         >
           {children}
         </Link>

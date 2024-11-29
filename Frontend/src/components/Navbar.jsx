@@ -6,12 +6,14 @@ import LoginModal from "./modal/loginmodal";
 import { auth } from "../firebase/firebase.jsx";
 import { onAuthStateChanged } from "firebase/auth";
 import Profile from "./Profile.jsx";
+import SearchOption from "./SearchOption.jsx";
 
 function Navbar() {
   const [sticky, setSticky] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [user, setUser] = useState(null);
+  const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
 
@@ -149,6 +151,11 @@ function Navbar() {
           {/* Navbar Center */}
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
+            <div className="flex-1 mx-6">
+              <div className="w-full bg-blue-400 rounded-md shadow-sm">
+                <SearchOption setSearch={setSearch} search={search} />
+              </div>
+            </div>
           </div>
 
           {/* Navbar End */}

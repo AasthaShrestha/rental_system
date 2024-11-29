@@ -7,20 +7,24 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function Featured() {
-   const [rental, setRental] = useState([]);
+   const [posts, setPosts] = useState([]);
+
    useEffect(() => {
-     const getRental = async () => {
+     const fetchPosts = async () => {
        try {
-         const res = await axios.get("http://localhost:4001/rental");
-         console.log(res.data);
-         setRental(res.data);
+         const response = await axios.get(
+           "http://localhost:4001/api/posts/latest"
+         );
+         if (response.data.success) {
+           setPosts(response.data.data);
+         }
        } catch (error) {
-         console.log(error);
+         console.error("Error fetching posts:", error);
        }
      };
-     getRental();
+
+     fetchPosts();
    }, []);
-  const filterData = rental.filter((data) => data.category === "Featured");
 
   const settings = {
     dots: true,
@@ -71,12 +75,10 @@ function Featured() {
       </div>
       <div className="slider-container relative">
         <Slider {...settings}>
-          {filterData.map((item) => (
-            <div key={item.id} className="px-2 sm:px-4">
-              <Link to={`/post/${item.id}`}>
-                <Cards item={item} />
-              </Link>
-            </div>
+          {posts.map((post) => (
+            <Link to={`/post/${post._id}`} key={post._id}>
+              <Cards post={post} />
+            </Link>
           ))}
         </Slider>
       </div>
