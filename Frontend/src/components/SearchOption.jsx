@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import SinglePost from "./SinglePost";
 
 const SearchOption = ({ setSearch, search }) => {
   const { id } = useParams(); // Get the ID from the URL, now inside the component

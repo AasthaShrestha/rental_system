@@ -1,6 +1,6 @@
 import express from "express";
 // import {getRental} from "../controller/rental.controller.js";
-import Rental from "../model/rental.model.js"
+import Rental from "../model/rental.model.js";
 import multer from "multer";
 
 const router = express.Router();
@@ -11,7 +11,8 @@ const storage = multer.diskStorage({
     cb(null, "./uploads");
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    const sanitizedFilename = file.originalname.replace(/\s/g, "_");
+    cb(null, `${Date.now()}-${sanitizedFilename}`);
   },
 });
 
@@ -20,7 +21,7 @@ const upload = multer({ storage: storage });
 router.post("/", upload.array("images", 5), async (req, res) => {
   try {
     const filePaths = req.files.map((file) => file.path);
-    console.log(filePaths);
+    console.log("filePaths", filePaths);
     console.log(req.file);
     const postData = {
       ...req.body,
@@ -86,7 +87,6 @@ router.post("/", upload.array("images", 5), async (req, res) => {
 //   }
 // });
 
-
 router.get("/searchSection", async (req, res) => {
   try {
     const search = req.query.search || "";
@@ -111,8 +111,6 @@ router.get("/searchSection", async (req, res) => {
     res.status(500).json({ success: false, message: "Error fetching results" });
   }
 });
-
-
 
 // Fetch all posts
 router.get("/", async (req, res) => {
@@ -142,6 +140,7 @@ router.get("/rooms", async (req, res) => {
 router.get("/latest", async (req, res) => {
   try {
     const posts = await Rental.find().sort({ createdAt: -1 }).limit(4);
+    console.log(posts);
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
