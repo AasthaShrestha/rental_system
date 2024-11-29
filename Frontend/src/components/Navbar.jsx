@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaPlus, FaBars } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
 import SignUpModal from "./modal/signupmodal";
 import LoginModal from "./modal/loginmodal";
 import { auth } from "../firebase/firebase.jsx";
@@ -12,7 +12,6 @@ function Navbar() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [user, setUser] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false); // State to track if the menu is open
 
   const navigate = useNavigate();
 
@@ -61,10 +60,55 @@ function Navbar() {
     }
   };
 
-  // Toggle the menu for small screens
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const navItems = (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/rooms"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Rooms
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/vehicles"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Vehicles
+        </NavLink>
+      </li>
+      <li>
+        <button
+          onClick={handlePostForFreeClick}
+          className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
+        >
+          <FaPlus />
+          <span>Post for free</span>
+        </button>
+      </li>
+    </>
+  );
 
   return (
     <>
@@ -72,36 +116,43 @@ function Navbar() {
         className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
         ${sticky ? "bg-black shadow-md transition duration-300" : "bg-black"}`}
       >
-        <div className="navbar flex items-center justify-between py-4">
-          <a className="text-2xl font-bold text-white cursor-pointer">YatriKuti</a>
-
-          {/* Hamburger Icon for Small Screens */}
-          <button
-            className="md:hidden text-white"
-            onClick={toggleMenu}
-          >
-            <FaBars />
-          </button>
-
-          {/* Navigation Links */}
-          <div
-            className={`flex items-center space-x-4 ${menuOpen ? "block" : "hidden"} md:flex`}
-          >
-            <ul className="menu menu-horizontal px-1 space-x-4 flex items-center text-white hover:text-gray-300 transition duration-300">
-              <li><Link to="/">Home</Link></li>
-              <li>
-                <button
-                  className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
-                  onClick={handlePostForFreeClick}
+        <div className="navbar">
+          {/* Navbar Start */}
+          <div className="navbar-start">
+            <div className="dropdown">
+              <button tabIndex={0} className="btn btn-ghost lg:hidden">
+                <svg
+                  className="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  <FaPlus />
-                  <span>Post for free</span>
-                </button>
-              </li>
-              <li><Link to="/rooms">Rooms</Link></li>
-              <li><Link to="/vehicles">Vehicles</Link></li>
-            </ul>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h8m-8 6h16"
+                  />
+                </svg>
+              </button>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-black rounded-box mt-3 w-52 p-2 shadow z-[1]"
+              >
+                {navItems}
+              </ul>
+            </div>
+            <a className="text-2xl font-bold text-pink-600 cursor-pointer">YatriKuti</a>
+          </div>
 
+          {/* Navbar Center */}
+          <div className="navbar-center hidden lg:flex">
+            <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
+          </div>
+
+          {/* Navbar End */}
+          <div className="navbar-end flex items-center space-x-4">
             {!user ? (
               <>
                 <button

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase/firebase.jsx"; // Path to your firebase.jsx
+import { setDoc, doc } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebase.jsx"; // Ensure firebase.js exports `db`
 
 const SignUpWithModal = ({ onClose, onSwitchToLogin }) => {
   const [name, setName] = useState("");
@@ -19,7 +20,7 @@ const SignUpWithModal = ({ onClose, onSwitchToLogin }) => {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    // Check if email is valid
+    // Validate input
     if (!isValidEmail(email)) {
       setError("Please enter a valid email address.");
       return;
@@ -31,23 +32,33 @@ const SignUpWithModal = ({ onClose, onSwitchToLogin }) => {
     }
 
     try {
-      // Sign up the user
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Save user data to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name,
         email,
-        password
-      );
-      console.log("User created:", userCredential.user);
+        uid: user.uid,
+        createdAt: new Date().toISOString(),
+      });
 
       setSuccess("Account created successfully!");
       setError(""); // Clear any previous errors
 
-      // Optionally, handle user profile updates or redirection here
-      onClose(); // Close the modal after success
-    } catch (err) {
-      console.error("Sign-up failed:", err.message);
+      // Log success to console
+      console.log("User created and data saved to Firestore:", user);
 
-      // Handle errors from Firebase
+      // Delay modal close slightly to show success message
+      setTimeout(() => {
+        onClose(); // Close modal after success
+      }, 500); // Delay of 500ms to show success message
+
+    } catch (err) {
+      console.error("Sign-up failed:", err);
+
+      // Handle Firebase-specific errors
       if (err.code === "auth/email-already-in-use") {
         setError("This email is already registered.");
       } else if (err.code === "auth/invalid-email") {
