@@ -1,59 +1,9 @@
 import express from "express";
-import {getRental} from "../controller/rental.controller.js";
-import {Rental} from "../model/rental.model.js"
+// import {getRental} from "../controller/rental.controller.js";
+import Rental from "../model/rental.model.js"
+import multer from "multer";
 
 const router = express.Router();
-
-router.get("/searchSection", async (req, res) => {
-  try {
-    const page = parseInt(req.query.page) - 1 || 0;
-    const limit = parseInt(req.query.limit) || 5;
-    const search = req.query.search || "";
-    let sort = req.query.sort || "price";
-    let subCategory = req.query.subCategory || "All";
-
-    const RealEstate = ["Single Room", "Double Room", "Flat", "House"];
-    subCategory === "All"
-      ? (subCategory = [...RealEstate])
-      : (subCategory = req.query.subCategory.split(","));
-
-    sort = req.query.sort ? req.query.sort.split(",") : [sort];
-    let sortBy = {};
-    sortBy[sort[0]] = sort[1] || "asc";
-
-    console.log("Query Parameters:", req.query); // Debugging
-    console.log("Filters:", {
-      name: { $regex: search, $options: "i" },
-      subCategory: { $in: [...subCategory] },
-    });
-
-    const posts = await Rental.find({
-      name: { $regex: search, $options: "i" },
-    })
-      .where("subCategory")
-      .in([...subCategory])
-      .sort(sortBy)
-      .skip(page * limit)
-      .limit(limit);
-
-    const total = await Rental.countDocuments({
-      name: { $regex: search, $options: "i" },
-      subCategory: { $in: [...subCategory] },
-    });
-
-    res.status(200).json({
-      success: true,
-      total,
-      page: page + 1,
-      limit,
-      subCategory: RealEstate,
-      posts,
-    });
-  } catch (err) {
-    console.error("Error fetching posts:", err.message);
-    res.status(500).json({ success: false, message: "Error fetching post" });
-  }
-});
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -84,6 +34,85 @@ router.post("/", upload.array("images", 5), async (req, res) => {
     res.status(400).json({ success: false, error: error.message });
   }
 });
+
+// router.get("/searchSection", async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) - 1 || 0;
+//     const limit = parseInt(req.query.limit) || 5;
+//     const search = req.query.search || "";
+//     let sort = req.query.sort || "price";
+//     let subCategory = req.query.subCategory || "All";
+
+//     const RealEstate = ["Single Room", "Double Room", "Flat", "House"];
+//     subCategory === "All"
+//       ? (subCategory = [...RealEstate])
+//       : (subCategory = req.query.subCategory.split(","));
+
+//     sort = req.query.sort ? req.query.sort.split(",") : [sort];
+//     let sortBy = {};
+//     sortBy[sort[0]] = sort[1] || "asc";
+
+//     console.log("Query Parameters:", req.query); // Debugging
+//     console.log("Filters:", {
+//       name: { $regex: search, $options: "i" },
+//       subCategory: { $in: [...subCategory] },
+//     });
+
+//     const posts = await Rental.find({
+//       name: { $regex: search, $options: "i" },
+//     })
+//       .where("subCategory")
+//       .in([...subCategory])
+//       .sort(sortBy)
+//       .skip(page * limit)
+//       .limit(limit);
+
+//     const total = await Rental.countDocuments({
+//       name: { $regex: search, $options: "i" },
+//       subCategory: { $in: [...subCategory] },
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       total,
+//       page: page + 1,
+//       limit,
+//       subCategory: RealEstate,
+//       posts,
+//     });
+//   } catch (err) {
+//     console.error("Error fetching posts:", err.message);
+//     res.status(500).json({ success: false, message: "Error fetching post" });
+//   }
+// });
+
+
+router.get("/searchSection", async (req, res) => {
+  try {
+    const search = req.query.search || "";
+    const subCategory = req.query.subCategory || "All";
+
+    const filters = {
+      name: { $regex: search, $options: "i" }, // Case-insensitive search
+    };
+
+    if (subCategory !== "All") {
+      filters.subCategory = subCategory.split(",");
+    }
+
+    const rooms = await Rental.find(filters).limit(10); // Limit to 10 results for performance
+
+    res.status(200).json({
+      success: true,
+      rooms,
+    });
+  } catch (err) {
+    console.error("Error fetching search results:", err.message);
+    res.status(500).json({ success: false, message: "Error fetching results" });
+  }
+});
+
+
 
 // Fetch all posts
 router.get("/", async (req, res) => {

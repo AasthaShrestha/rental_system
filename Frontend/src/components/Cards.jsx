@@ -23,8 +23,11 @@ function Cards({ post }) {
             <div className="badge badge-outline text-lg font-semibold">
               रु {post.price}
             </div>
-            <button className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out">
-              Buy Now onClick={() => handlePayment()}
+            <button
+              className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out"
+              onClick={() => handlePayment()}
+            >
+              Book Now
             </button>
           </div>
         </div>

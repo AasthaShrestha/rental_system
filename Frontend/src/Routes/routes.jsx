@@ -5,8 +5,14 @@ import Home from "../pages/Home";
 import Rooms from "../pages/Rooms";
 import Vehicles from "../pages/Vehicles";
 import PostFree from "../pages/PostFree";
-import SignUp from "../components/SignUp.jsx";
+
 import SinglePost from "../components/SinglePost.jsx";
+import AboutUs from "../pages/AboutUs.jsx";
+import ContactUs from "../pages/AboutUs.jsx";
+import Blog from "../pages/AboutUs.jsx";
+import BlogDetailsPage from "../pages/AboutUs.jsx";
+import Objectives from "../pages/AboutUs.jsx";
+import Search from "../pages/SearchandSort/Search.jsx";
 // import SinglePost from "../pages/SinglePost.jsx";
 // import ChatSection from "../components/ChatSection.jsx";
 const router = createBrowserRouter([
@@ -36,25 +42,11 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path: "/loginmodal",
-    element: <LoginWithModal />,
+    path: "/search",
+    element: <Search />,
     errorElement: <Error />,
   },
-  {
-    path: "/signupmodal",
-    element: <SignUpWithModal />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/Profile",
-    element: <Profile />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/ProfileDetailPage",
-    element: <ProfileDetails />,
-    errorElement: <Error />,
-  },
+
   {
     path: "/aboutus",
     element: <AboutUs/>,

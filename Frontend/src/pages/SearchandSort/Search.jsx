@@ -1,143 +1,74 @@
-// import { useEffect, useState } from "react";
-// import axios from "axios";
-// import Table from "../../components/Table/index.jsx";
-// import Sort from "../../components/Sort/index.jsx";
-// import Search from "../../components/Search/index.jsx";
-// import Genre from "../../components/Genre/index.jsx";
-// import Pagination from "../../components/Pagination/index.jsx";
-// import "../../styles/Search.css";
-
-// const base_url = process.env.REACT_APP_API_URL;
-
-// function Search() {
-// 	const [obj, setObj] = useState({});
-// 	const [sort, setSort] = useState({ sort: "rating", order: "desc" });
-// 	const [filterGenre, setFilterGenre] = useState([]);
-// 	const [page, setPage] = useState(1);
-// 	const [search, setSearch] = useState("");
-
-// 	useEffect(() => {
-// 		const getAllMovies = async () => {
-// 			try {
-// 				const url = `${base_url}?page=${page}&sort=${sort.sort},${
-// 					sort.order
-// 				}&genre=${filterGenre.toString()}&search=${search}`;
-// 				const { data } = await axios.get(url);
-// 				setObj(data);
-// 			} catch (err) {
-// 				console.log(err);
-// 			}
-// 		};
-
-// 		getAllMovies();
-// 	}, [sort, filterGenre, page, search]);
-
-// 	return (
-// 		<div className="wrapper">
-// 			<div className="container">
-// 				<div className="head">
-// 					<img src="./images/logo.png" alt="logo" className="logo" />
-// 					<Search setSearch={(search) => setSearch(search)} />
-// 				</div>
-// 				<div className="body">
-// 					<div className="table_container">
-// 						<Table movies={obj.movies ? obj.movies : []} />
-// 						<Pagination
-// 							page={page}
-// 							limit={obj.limit ? obj.limit : 0}
-// 							total={obj.total ? obj.total : 0}
-// 							setPage={(page) => setPage(page)}
-// 						/>
-// 					</div>
-// 					<div className="filter_container">
-// 						<Sort sort={sort} setSort={(sort) => setSort(sort)} />
-// 						<Genre
-// 							filterGenre={filterGenre}
-// 							genres={obj.genres ? obj.genres : []}
-// 							setFilterGenre={(genre) => setFilterGenre(genre)}
-// 						/>
-// 					</div>
-// 				</div>
-// 			</div>
-// 		</div>
-// 	);
-// }
-
-// export default Search;
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import Table from "../../components/Table/index.jsx";
 import Sort from "../../components/Sort/index.jsx";
-import SearchOption from "../../components/Search/index.jsx";
-import Genre from "../../components/Genre/index.jsx";
 import Pagination from "../../components/Pagination/index.jsx";
-import "../../styles/Search.css";
+import SearchOption from "../../components/Search/index.jsx";
+import SubCategory from "../../components/subCategory/index.jsx";
 
-const mockMovies = [
-	{
-		id: 1,
-		name: "Inception",
-		year: 2010,
-		rating: 8.8,
-		genre: ["Sci-Fi", "Thriller"],
-		img: "./images/inception.jpg",
-	},
-	{
-		id: 2,
-		name: "Interstellar",
-		year: 2014,
-		rating: 8.6,
-		genre: ["Sci-Fi", "Drama"],
-		img: "./images/interstellar.jpg",
-	},
-];
-
-const mockGenres = ["Sci-Fi", "Drama", "Thriller", "Comedy", "Action"];
+// const base_url = process.env.REACT_APP_SEARCH_URL
 
 function Search() {
-	const [sort, setSort] = useState({ sort: "rating", order: "desc" });
-	const [filterGenre, setFilterGenre] = useState([]);
-	const [page, setPage] = useState(1);
-	const [search, setSearch] = useState("");
+  const [posts, setPosts] = useState({});
+  const [sort, setSort] = useState({ sort: "price", order: "desc" });
+  const [filterCategory, setFilterCategory] = useState([]);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
 
-	const filteredMovies = mockMovies
-		.filter((movie) =>
-			filterGenre.length
-				? movie.genre.some((g) => filterGenre.includes(g))
-				: true
-		)
-		.filter((movie) =>
-			search ? movie.name.toLowerCase().includes(search.toLowerCase()) : true
-		);
+  useEffect(() => {
+    const getAllposts = async () => {
+      try {
+        const url = `${"http://localhost:4001/api/posts/searchSection"}?page=${page}&sort=${
+          sort.sort
+        },${
+          sort.order
+        }&subCategory=${filterCategory.toString()}&search=${search}`;
+        const { data } = await axios.get(url);
+        setPosts(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-	return (
-		<div className="wrapper">
-			<div className="container">
-				<div className="head">
-					<img src="./images/logo.png" alt="logo" className="logo" />
-					<SearchOption setSearch={(search) => setSearch(search)} />
-				</div>
-				<div className="body">
-					<div className="table_container">
-						<Table movies={filteredMovies} />
-						<Pagination
-							page={page}
-							totalPages={2} // Mock total pages
-							setPage={(page) => setPage(page)}
-						/>
-					</div>
-					<div className="filter_container">
-						<Sort sort={sort} setSort={(sort) => setSort(sort)} />
-						<Genre
-							filterGenre={filterGenre}
-							genres={mockGenres}
-							setFilterGenre={(genre) => setFilterGenre(genre)}
-						/>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+    getAllposts();
+  }, [sort, filterCategory, page, search]);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-screen-xl mx-auto p-6">
+        {/* Header with Search */}
+        <div className="flex justify-between items-center mb-8">
+          <img src="./logo.png" alt="logo" className="h-12" />
+          <SearchOption setSearch={(search) => setSearch(search)} />
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content: Table and Pagination */}
+          <div className="flex-1 bg-white rounded-lg shadow-lg p-6">
+            <Table rooms={posts.rooms ? posts.rooms : []} />
+            <Pagination
+              page={page}
+              limit={posts.limit ? posts.limit : 0}
+              total={posts.total ? posts.total : 0}
+              setPage={(page) => setPage(page)}
+            />
+          </div>
+
+          {/* Sidebar: Sort and Filters */}
+          <div className="w-full lg:w-64 bg-white rounded-lg shadow-lg p-6">
+            <Sort sort={sort} setSort={(sort) => setSort(sort)} />
+            <SubCategory
+              filterCategory={filterCategory}
+              subCategory={posts.subCategory ? posts.subCategory : []}
+              setFilterCategory={(subCategory) =>
+                setFilterCategory(subCategory)
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Search;

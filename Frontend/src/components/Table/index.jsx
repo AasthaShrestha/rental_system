@@ -1,83 +1,39 @@
-// import styles from "./styles.module.css";
-
-// const Table = ({ movies }) => {
-// 	return (
-// 		<div className={styles.container}>
-// 			<div className={styles.heading}>
-// 				<p className={styles.title_tab}>Title</p>
-// 				<p className={styles.genre_tab}>Genre</p>
-// 				<p className={styles.rating_tab}>Rating</p>
-// 			</div>
-// 			{movies.map((movie) => (
-// 				<div className={styles.movie} key={movie._id}>
-// 					<div className={styles.title_container}>
-// 						<img src={movie.img} alt="movie" className={styles.movie_img} />
-// 						<p className={styles.movie_title}>
-// 							{movie.name} ({movie.year})
-// 						</p>
-// 					</div>
-// 					<div className={styles.genre_container}>
-// 						{movie.genre.map((genre, index) => (
-// 							<p key={genre} className={styles.movie_genre}>
-// 								{genre}
-// 								{index !== movie.genre.length - 1 && "/"}
-// 							</p>
-// 						))}
-// 					</div>
-// 					<div className={styles.rating_container}>
-// 						<img
-// 							src="./images/star.png"
-// 							alt="star"
-// 							className={styles.star_img}
-// 						/>
-// 						<p className={styles.movie_rating}>{movie.rating}</p>
-// 					</div>
-// 				</div>
-// 			))}
-// 		</div>
-// 	);
-// };
-
-// export default Table;
-
-import styles from "./styles.module.css";
-
-const Table = ({ movies }) => {
-	return (
-		<div className={styles.container}>
-			<div className={styles.heading}>
-				<p className={styles.title_tab}>Title</p>
-				<p className={styles.genre_tab}>Genre</p>
-				<p className={styles.rating_tab}>Rating</p>
-			</div>
-			{movies.map((movie) => (
-				<div className={styles.movie} key={movie.id}>
-					<div className={styles.title_container}>
-						<img src={movie.img} alt="movie" className={styles.movie_img} />
-						<p className={styles.movie_title}>
-							{movie.name} ({movie.year})
-						</p>
-					</div>
-					<div className={styles.genre_container}>
-						{movie.genre.map((genre, index) => (
-							<p key={genre} className={styles.movie_genre}>
-								{genre}
-								{index !== movie.genre.length - 1 && "/"}
-							</p>
-						))}
-					</div>
-					<div className={styles.rating_container}>
-						<img
-							src="./images/star.png"
-							alt="star"
-							className={styles.star_img}
-						/>
-						<p className={styles.movie_rating}>{movie.rating}</p>
-					</div>
-				</div>
-			))}
-		</div>
-	);
+const Table = ({ rooms }) => {
+  return (
+    <div className="container mx-auto px-4 py-4">
+      <div className="grid grid-cols-3 text-center font-semibold bg-gray-100 p-4 rounded-md mb-4">
+        <p className="text-gray-700">Name</p>
+        <p className="text-gray-700">SubCategory</p>
+        <p className="text-gray-700">Price</p>
+      </div>
+      {rooms.map((room) => (
+        <div
+          className="grid grid-cols-3 items-center text-center p-4 border-b last:border-none"
+          key={room._id}
+        >
+          <div className="flex items-center gap-4">
+            <img
+              src={room.image}
+              alt="rooms"
+              className="w-12 h-12 object-cover rounded-md"
+            />
+            <p className="text-gray-800 font-medium">{room.name}</p>
+          </div>
+          <div className="flex justify-center gap-1 text-gray-600">
+            {room.subCategory.map((subCategory, index) => (
+              <p key={subCategory}>
+                {subCategory}
+                {index !== room.subCategory.length - 1 && "/"}
+              </p>
+            ))}
+          </div>
+          <div className="text-gray-800 font-medium">
+            <span className="text-gray-500">RS.</span> {room.price}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 };
 
 export default Table;

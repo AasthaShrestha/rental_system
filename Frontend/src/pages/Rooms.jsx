@@ -1,7 +1,7 @@
-  import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import img from "../assets/main1.jpeg";
 import Flex from "../components/Flex";
-import Cards from "../components/Cards";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -29,7 +29,7 @@ useEffect(() => {
       <Flex
         title="Our Rooms"
         subtitle="Experience Comfort with our services."
-        image={main1}
+        image={img}
         children="Back"
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">

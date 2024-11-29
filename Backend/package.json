@@ -20,14 +20,15 @@
   "bugs": {
     "url": "https://github.com/AasthaShrestha/rental_system/issues"
   },
-
   "homepage": "https://github.com/AasthaShrestha/rental_system#readme",
   "dependencies": {
     "@babel/cli": "^7.25.9",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
     "@babel/preset-react": "^7.25.9",
+    "axios": "^1.7.8",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
