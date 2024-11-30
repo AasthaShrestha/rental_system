@@ -5,17 +5,14 @@ import Home from "../pages/Home";
 import Rooms from "../pages/Rooms";
 import Vehicles from "../pages/Vehicles";
 import PostFree from "../pages/PostFree";
-import LoginWithModal from "../components/modal/loginmodal.jsx";
-import SignUpWithModal from "../components/modal/signupmodal.jsx";
-import ProfileDetails from "../components/ProfileDetailPage.jsx";
+
 import AboutUs from "../pages/AboutUs.jsx";
 import Objectives from "../components/Objectives.jsx";
 import ContactUs from "../pages/ContactUs.jsx";
 import Blog from "../pages/Blog.jsx";
 import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
-import Profile from "../components/Profile.jsx";
 import ProtectedRoute from "../components/modal/ProtectedRoute.jsx";
-import SinglePost from "../components/SInglePost.jsx";
+import SinglePost from "../components/SinglePost.jsx";
 
 const router = createBrowserRouter([
   {
@@ -47,11 +44,11 @@ const router = createBrowserRouter([
     ),
     errorElement: <Error />,
   },
-  {
-    path: "/search",
-    element: <Search />,
-    errorElement: <Error />,
-  },
+  // {
+  //   path: "/search",
+  //   element: <Search />,
+  //   errorElement: <Error />,
+  // },
 
   {
     path: "/aboutus",
