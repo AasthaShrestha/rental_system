@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaPlus, FaBars } from "react-icons/fa";
-
+import { NavLink, useNavigate } from "react-router-dom";
+import { FaPlus } from "react-icons/fa";
+import SignUpModal from "./modal/signupmodal";
+import LoginModal from "./modal/loginmodal";
 import { auth } from "../firebase/firebase.jsx";
 import { onAuthStateChanged } from "firebase/auth";
-import Profile from "./profile.jsx";
-import SearchOption from "./SearchOption.jsx"; // Import the Search component
+import Profile from "./Profile.jsx";
+import SearchOption from "./SearchOption.jsx";
 
 function Navbar() {
   const [sticky, setSticky] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSignUpModal, setShowSignUpModal] = useState(false);
   const [user, setUser] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState(""); // Search state
-  const location = useLocation();
+  const [search, setSearch] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,89 +62,104 @@ function Navbar() {
     }
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  const navItems = (
+    <>
+      <li>
+        <NavLink
+          to="/"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Home
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/rooms"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Rooms
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/vehicles"
+          className={({ isActive }) =>
+            isActive
+              ? "text-pink-500 font-bold border-b-2 border-pink-500"
+              : "text-white hover:text-gray-300 transition duration-300"
+          }
+        >
+          Vehicles
+        </NavLink>
+      </li>
+      <li>
+        <button
+          onClick={handlePostForFreeClick}
+          className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
+        >
+          <FaPlus />
+          <span>Post for free</span>
+        </button>
+      </li>
+    </>
+  );
 
   return (
     <>
       <div
-        className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 ${
-          sticky
-            ? "bg-blue-300 shadow-md transition duration-300"
-            : "bg-blue-300"
-        }`}
+        className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
+        ${sticky ? "bg-black shadow-md transition duration-300" : "bg-black"}`}
       >
-        <div className="navbar flex items-center justify-between">
-          {/* Logo */}
-          <a className="text-2xl font-bold cursor-pointer">YatriKuti</a>
+        <div className="navbar">
+          {/* Navbar Start */}
+          <div className="navbar-start">
+            <div className="dropdown">
+              <button tabIndex={0} className="btn btn-ghost lg:hidden">
+                <svg
+                  className="h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M4 6h16M4 12h8m-8 6h16"
+                  />
+                </svg>
+              </button>
+              <ul
+                tabIndex={0}
+                className="menu menu-sm dropdown-content bg-black rounded-box mt-3 w-52 p-2 shadow z-[1]"
+              >
+                {navItems}
+              </ul>
+            </div>
+            <a className="text-2xl font-bold text-pink-600 cursor-pointer">YatriKuti</a>
+          </div>
 
-          {/* Search Bar */}
-          <div className="hidden md:flex flex-1 mx-6">
-            <div className="w-full bg-blue-400 rounded-md shadow-sm">
-              <SearchOption setSearch={setSearch} search={search} />
+          {/* Navbar Center */}
+          <div className="navbar-center hidden lg:flex">
+            <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
+            <div className="flex-1 mx-6">
+              <div className="w-full bg-blue-400 rounded-md shadow-sm">
+                <SearchOption setSearch={setSearch} search={search} />
+              </div>
             </div>
           </div>
 
-          {/* Hamburger Icon */}
-          <button className="md:hidden text-white" onClick={toggleMenu}>
-            <FaBars />
-          </button>
-
-          {/* Links */}
-          <div
-            className={`flex items-center space-x-4 ${
-              menuOpen ? "block" : "hidden"
-            } md:flex`}
-          >
-            <ul className="menu menu-horizontal px-1 space-x-4 flex items-center">
-              <li>
-                <Link
-                  to="/"
-                  className={`p-2 hover:shadow-lg transition-shadow duration-300 ${
-                    location.pathname === "/"
-                      ? "text-black font-semibold"
-                      : "text-white"
-                  }`}
-                >
-                  Home
-                </Link>
-              </li>
-              <li>
-                <button
-                  onClick={handlePostForFreeClick}
-                  className="p-2 hover:shadow-lg transition-shadow duration-300 text-white"
-                >
-                  <FaPlus /> Post for free
-                </button>
-              </li>
-              <li>
-                <Link
-                  to="/rooms"
-                  className={`p-2 hover:shadow-lg transition-shadow duration-300 ${
-                    location.pathname === "/rooms"
-                      ? "text-black font-semibold"
-                      : "text-white"
-                  }`}
-                >
-                  Rooms
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/vehicles"
-                  className={`p-2 hover:shadow-lg transition-shadow duration-300 ${
-                    location.pathname === "/vehicles"
-                      ? "text-black font-semibold"
-                      : "text-white"
-                  }`}
-                >
-                  Vehicles
-                </Link>
-              </li>
-            </ul>
-
-            {/* Authentication */}
+          {/* Navbar End */}
+          <div className="navbar-end flex items-center space-x-4">
             {!user ? (
               <>
                 <button

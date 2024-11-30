@@ -7,24 +7,24 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 function Featured() {
-  const [posts, setPosts] = useState([]);
+   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:4001/api/posts/latest"
-        );
-        if (response.data.success) {
-          setPosts(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
+   useEffect(() => {
+     const fetchPosts = async () => {
+       try {
+         const response = await axios.get(
+           "http://localhost:4001/api/posts/latest"
+         );
+         if (response.data.success) {
+           setPosts(response.data.data);
+         }
+       } catch (error) {
+         console.error("Error fetching posts:", error);
+       }
+     };
 
-    fetchPosts();
-  }, []);
+     fetchPosts();
+   }, []);
 
   const settings = {
     dots: true,

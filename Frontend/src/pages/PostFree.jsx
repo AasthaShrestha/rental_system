@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef} from "react";
 import upload_icon from "../assets/upload_image.png";
 import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";

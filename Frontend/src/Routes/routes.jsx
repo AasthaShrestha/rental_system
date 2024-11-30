@@ -5,16 +5,18 @@ import Home from "../pages/Home";
 import Rooms from "../pages/Rooms";
 import Vehicles from "../pages/Vehicles";
 import PostFree from "../pages/PostFree";
-
-import SinglePost from "../components/SinglePost.jsx";
+import LoginWithModal from "../components/modal/loginmodal.jsx";
+import SignUpWithModal from "../components/modal/signupmodal.jsx";
+import ProfileDetails from "../components/ProfileDetailPage.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
-import ContactUs from "../pages/AboutUs.jsx";
-import Blog from "../pages/AboutUs.jsx";
-import BlogDetailsPage from "../pages/AboutUs.jsx";
-import Objectives from "../pages/AboutUs.jsx";
-import Search from "../pages/SearchandSort/Search.jsx";
-// import SinglePost from "../pages/SinglePost.jsx";
-// import ChatSection from "../components/ChatSection.jsx";
+import Objectives from "../components/Objectives.jsx";
+import ContactUs from "../pages/ContactUs.jsx";
+import Blog from "../pages/Blog.jsx";
+import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
+import Profile from "../components/Profile.jsx";
+import ProtectedRoute from "../components/modal/ProtectedRoute.jsx";
+import SinglePost from "../components/SInglePost.jsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -38,7 +40,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/postforfree",
-    element: <PostFree />,
+    element: (
+      <ProtectedRoute>
+        <PostFree />
+      </ProtectedRoute>
+    ),
     errorElement: <Error />,
   },
   {
@@ -49,33 +55,30 @@ const router = createBrowserRouter([
 
   {
     path: "/aboutus",
-    element: <AboutUs/>,
+    element: <AboutUs />,
     errorElement: <Error />,
   },
   {
     path: "/contactus",
-    element: <ContactUs/>,
+    element: <ContactUs />,
     errorElement: <Error />,
   },
   {
     path: "/blog",
-    element: <Blog/>,
+    element: <Blog />,
     errorElement: <Error />,
-  }, {
+  },
+  {
     path: "/blog/:id",
-    element: <BlogDetailsPage/>,
+    element: <BlogDetailsPage />,
     errorElement: <Error />,
   },
   {
     path: "/objectives",
-    element: <Objectives/>,
+    element: <Objectives />,
     errorElement: <Error />,
   },
-  // {
-  //   path: "/chatsection",
-  //   element: <ChatSection />,
-  //   errorElement: <Error />,
-  // },
+
 ]);
 
 export default router;

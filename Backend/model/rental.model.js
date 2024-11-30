@@ -16,6 +16,7 @@ const rentalSchema = mongoose.Schema({
 //     parking: { type: Boolean, default: false },
 //   },
   price: { type: Number, required: true },
+  likedBy: {type: Number, default:1},
   createdAt: { type: Date, default: Date.now },
 });
 const Rental = mongoose.model("RentalInfo", rentalSchema);

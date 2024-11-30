@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
@@ -27,6 +27,64 @@ function SinglePost() {
 
     fetchPost();
   }, [id]);
+
+  const handlePayment = async () => {
+    if (!post) return; // Ensure post data exists
+
+    console.log("Initiating payment...");
+    const url = "http://localhost:4001/api/orders/create";
+
+    const data = {
+      amount: post.price, // Use post price for payment
+      products: [{ product: post.name, amount: post.price, quantity: 1 }], // Use post name and price
+      payment_method: "esewa",
+    };
+
+    console.log("Payment payload:", data);
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log("Payment response:", responseData);
+
+        if (responseData.payment_method === "esewa") {
+          esewaCall(responseData.formData);
+        }
+      } else {
+        console.error("Payment API error:", response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error("Error during payment fetch:", error);
+    }
+  };
+
+  const esewaCall = (formData) => {
+    console.log("eSewa form data:", formData);
+    const path = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
+
+    const form = document.createElement("form");
+    form.setAttribute("method", "POST");
+    form.setAttribute("action", path);
+
+    for (const key in formData) {
+      const hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", key);
+      hiddenField.setAttribute("value", formData[key]);
+      form.appendChild(hiddenField);
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -67,7 +125,10 @@ function SinglePost() {
               </span>
               <span className="badge badge-secondary">NEW</span>
             </div>
-            <button className="px-6 py-3 bg-pink-500 text-white text-lg font-medium rounded-full shadow-md hover:bg-pink-700 transition duration-300">
+            <button
+              className="px-6 py-3 bg-pink-500 text-white text-lg font-medium rounded-full shadow-md hover:bg-pink-700 transition duration-300"
+              onClick={handlePayment}
+            >
               Book Now
             </button>
           </div>

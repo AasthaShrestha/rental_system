@@ -1,7 +1,7 @@
 import React from "react";
 
 function Cards({ post }) {
-  console.log(post.images);
+  console.log(post);
   return (
     <div className="p-4 flex justify-center">
       <div className="card bg-base-100 max-w-sm w-full shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
