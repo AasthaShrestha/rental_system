@@ -10,6 +10,7 @@ const app = express();
 
 app.use(cors());
 
+
 const server = http.createServer(app);
 const io = new Server(server,{
   cors:{
@@ -47,7 +48,7 @@ mongoose
 
 //define route
 
-app.use("/rental", rentalRoute);
+app.use("/api", rentalRoute);
 
 app.listen(PORT, () => {
   console.log(`App is listening on port ${PORT}`);

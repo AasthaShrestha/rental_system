@@ -1,49 +1,46 @@
-import React, { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
-import main1 from "../assets/masterRoom.webp";
-import Flex from "../components/Flex";
-import Cards from "../components/Cards";
-import Footer from "../components/Footer";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 
-function Rooms() {
-  const [rental,setRental] = useState([]);
-  useEffect(()=>{
-    const getRental = async () => {
-      try{
-        const res = await axios.get("http://localhost:4001/rental");
-        console.log(res.data);
-        setRental(res.data);
-      }catch(error){
-        console.log(error);
-      }
-    };
-    getRental();
-  },[]);
+const Rooms = () => {
+    const [rentals, setRentals] = useState([]);
+    const [error, setError] = useState(null);
 
-  const filterData = rental.filter((data) => data.type === "rooms");
-  return (
-    <div>
-      <Navbar />
-      <Flex
-        title="Our Rooms"
-        subtitle="Eperience Comfort with our services."
-        image={main1}
-        children="Back"
-      />
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-4">
-        {filterData.map((item) => (
-          <div key={item.id} className="px-2 sm:px-4">
-            <Link to={`/post/${item.id}`}>
-              <Cards item={item} />
-            </Link>
-          </div>
-        ))}
-      </div>
-      <Footer />
-    </div>
-  );
-}
+    useEffect(() => {
+        // Fetch nearby rentals
+        const fetchNearbyRentals = async () => {
+            const userLat = 27.7172; // Example: Kathmandu latitude
+            const userLon = 85.3240; // Example: Kathmandu longitude
+            const radius = 10; // 10 km radius
+
+            try {
+                const response = await axios.get('http://localhost:4001/api/nearby-rentals', {
+                    params: { userLat, userLon, radius },
+                });
+
+                if (response.data.success) {
+                    setRentals(response.data.rentals);
+                } else {
+                    throw new Error(response.data.message || 'Error fetching rentals');
+                }
+            } catch (error) {
+                setError(error.response ? error.response.data.message : error.message);
+                console.error('Error fetching rentals:', error);
+            }
+        };
+
+        fetchNearbyRentals();
+    }, []);
+
+    return (
+        <div>
+            {error && <p>Error: {error}</p>}
+            <ul>
+                {rentals.map((rental) => (
+                    <li key={rental._id}>{rental.title}</li>
+                ))}
+            </ul>
+        </div>
+    );
+};
 
 export default Rooms;

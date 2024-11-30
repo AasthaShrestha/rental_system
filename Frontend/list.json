@@ -1,0 +1,231 @@
+[
+    {
+      "name": "Cozy Single Room for Rent",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "123 Main St, Kathmandu, Nepal",
+      "description": "A cozy single room available for rent in a peaceful neighborhood, perfect for solo tenants.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Single Room",
+      "price": 10000,
+      "createdAt": "2024-11-28T12:00:00Z"
+    },
+    {
+      "name": "Luxury Car for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "456 Riverside Rd, Pokhara, Nepal",
+      "description": "A luxury car available for rent, perfect for road trips or special occasions.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Car",
+      "price": 5000,
+      "createdAt": "2024-11-15T09:30:00Z"
+    },
+    {
+      "name": "Double Room in City Center",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "789 Central Ave, Kathmandu, Nepal",
+      "description": "Spacious double room in a well-connected area of the city center. Ideal for couples or two professionals.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Double Room",
+      "price": 15000,
+      "createdAt": "2024-11-10T14:45:00Z"
+    },
+    {
+      "name": "E-Scooter for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "321 Park Road, Lalitpur, Nepal",
+      "description": "Eco-friendly E-Scooter available for rent for short city trips. Easy to use and highly efficient.",
+      "parentCategory": "Vehicles",
+      "subCategory": "E-Scooter",
+      "price": 500,
+      "createdAt": "2024-11-01T18:00:00Z"
+    },
+    {
+      "name": "Modern 3-Bedroom Flat",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "456 Ocean Blvd, Kathmandu, Nepal",
+      "description": "A modern 3-bedroom flat with amazing views of the city. Ideal for families or group rentals.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Flat",
+      "price": 30000,
+      "createdAt": "2024-10-25T08:00:00Z"
+    },
+    {
+      "name": "Spacious House for Rent",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "123 Lakeview Rd, Pokhara, Nepal",
+      "description": "A spacious 5-bedroom house with a large backyard, perfect for families.",
+      "parentCategory": "Real Estate",
+      "subCategory": "House",
+      "price": 50000,
+      "createdAt": "2024-09-20T11:15:00Z"
+    },
+    {
+      "name": "Luxury Bike for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "789 Hill Rd, Kathmandu, Nepal",
+      "description": "A high-performance luxury bike for rent, ideal for enthusiasts.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Bike",
+      "price": 1500,
+      "createdAt": "2024-09-15T09:00:00Z"
+    },
+    {
+      "name": "Studio Apartment in the Heart of City",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "101 Main St, Lalitpur, Nepal",
+      "description": "Modern studio apartment with all necessary amenities for a single person.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Single Room",
+      "price": 12000,
+      "createdAt": "2024-08-10T10:30:00Z"
+    },
+    {
+      "name": "Scooter for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "234 City Rd, Kathmandu, Nepal",
+      "description": "Convenient and affordable scooter rental for short commutes.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Scooter",
+      "price": 300,
+      "createdAt": "2024-07-20T16:45:00Z"
+    },
+    {
+      "name": "Beautiful Flat Near Downtown",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "512 Park Rd, Kathmandu, Nepal",
+      "description": "A beautiful flat near downtown with easy access to transport and shopping.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Flat",
+      "price": 25000,
+      "createdAt": "2024-06-10T13:00:00Z"
+    },
+    {
+      "name": "Car Rental for Road Trip",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "89 Riverside Ave, Pokhara, Nepal",
+      "description": "Rent a comfortable car for your next road trip with family or friends.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Car",
+      "price": 4500,
+      "createdAt": "2024-05-15T08:30:00Z"
+    },
+    {
+      "name": "Affordable Single Room for Rent",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "325 River Rd, Kathmandu, Nepal",
+      "description": "Affordable single room available for rent in a safe and quiet area.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Single Room",
+      "price": 8000,
+      "createdAt": "2024-04-20T17:10:00Z"
+    },
+    {
+      "name": "High-End Electric Scooter",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "112 City Park, Lalitpur, Nepal",
+      "description": "Rent this high-end electric scooter for a fun and eco-friendly ride.",
+      "parentCategory": "Vehicles",
+      "subCategory": "E-Scooter",
+      "price": 600,
+      "createdAt": "2024-03-10T09:00:00Z"
+    },
+    {
+      "name": "Luxury House for Sale",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "142 Prime St, Kathmandu, Nepal",
+      "description": "A luxury house for sale with modern amenities and spacious rooms.",
+      "parentCategory": "Real Estate",
+      "subCategory": "House",
+      "price": 120000,
+      "createdAt": "2024-02-25T12:00:00Z"
+    },
+    {
+      "name": "Affordable Scooter for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "356 Main St, Pokhara, Nepal",
+      "description": "Rent an affordable scooter for your daily commute or short rides around the city.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Scooter",
+      "price": 200,
+      "createdAt": "2024-01-15T14:00:00Z"
+    },
+    {
+      "name": "Family-Friendly House for Rent",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "789 Green Rd, Kathmandu, Nepal",
+      "description": "Spacious house ideal for families with multiple bedrooms and a large garden.",
+      "parentCategory": "Real Estate",
+      "subCategory": "House",
+      "price": 35000,
+      "createdAt": "2023-12-25T10:30:00Z"
+    },
+    {
+      "name": "Sporty Bike for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "456 Sunset Blvd, Pokhara, Nepal",
+      "description": "A sporty bike available for rent for thrill seekers and adventure lovers.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Bike",
+      "price": 1200,
+      "createdAt": "2023-11-20T11:45:00Z"
+    },
+    {
+      "name": "Modern Flat in New Development",
+      "images": [
+        "main1.jpg"
+      ],
+      "address": "321 New Rd, Lalitpur, Nepal",
+      "description": "A newly developed modern flat in a growing neighborhood.",
+      "parentCategory": "Real Estate",
+      "subCategory": "Flat",
+      "price": 20000,
+      "createdAt": "2023-10-15T09:00:00Z"
+    },
+    {
+      "name": "Convertible Car for Rent",
+      "images": [
+        "hero1.jpg"
+      ],
+      "address": "654 Ocean Blvd, Kathmandu, Nepal",
+      "description": "A stylish convertible car perfect for sunny days and scenic drives.",
+      "parentCategory": "Vehicles",
+      "subCategory": "Car",
+      "price": 7000,
+      "createdAt": "2023-09-10T08:30:00Z"
+    }
+  ]
+  

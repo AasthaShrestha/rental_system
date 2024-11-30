@@ -1,7 +1,9 @@
-import express from "express";
-import {getRental} from "../controller/rental.controller.js";
+import express from 'express';
+import { getNearbyRentals } from '../controller/rental.controller.js';
 
 const router = express.Router();
 
-router.get("/",getRental);
- export default router;
+// Route to get nearby rentals
+router.get('/nearby-rentals', getNearbyRentals);
+
+export default router;
