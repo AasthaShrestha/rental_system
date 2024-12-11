@@ -3,20 +3,26 @@ import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
+import { FaHeart, FaCommentDots } from "react-icons/fa"; // For like and chat icons
 
-function SinglePost() {
+function SinglePost({ userId }) {
+  // Assuming `userId` is passed as a prop or available from context
   const { id } = useParams(); // Get the ID from the URL
   const [post, setPost] = useState(null); // State for the single post (null for initial)
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [liked, setLiked] = useState(false); // For the like button state
+  const [likeCount, setLikeCount] = useState(0); // To store and display the like count
 
   useEffect(() => {
+    // Fetch post data
     const fetchPost = async () => {
       try {
         const response = await axios.get(
           `http://localhost:4001/api/posts/${id}`
         );
         setPost(response.data.data); // Set post data (single object)
+        setLikeCount(response.data.data.likes || 0); // Set the initial like count from the server
       } catch (error) {
         setError("Unable to fetch post details.");
         console.error("Error:", error);
@@ -26,7 +32,13 @@ function SinglePost() {
     };
 
     fetchPost();
-  }, [id]);
+
+    // Check if the post is liked by this specific user in localStorage
+    const likedStatus = localStorage.getItem(`liked-${userId}-${id}`);
+    if (likedStatus === "true") {
+      setLiked(true); // Set liked state based on localStorage
+    }
+  }, [id, userId]); // Re-run when the post ID or user ID changes
 
   const handlePayment = async () => {
     if (!post) return; // Ensure post data exists
@@ -59,7 +71,11 @@ function SinglePost() {
           esewaCall(responseData.formData);
         }
       } else {
-        console.error("Payment API error:", response.status, response.statusText);
+        console.error(
+          "Payment API error:",
+          response.status,
+          response.statusText
+        );
       }
     } catch (error) {
       console.error("Error during payment fetch:", error);
@@ -84,6 +100,30 @@ function SinglePost() {
 
     document.body.appendChild(form);
     form.submit();
+  };
+
+  const handleLike = () => {
+    const newLikedState = !liked;
+    setLiked(newLikedState); // Toggle like state
+
+    // Persist like state in localStorage, tied to the current userId and postId
+    localStorage.setItem(`liked-${userId}-${id}`, newLikedState.toString());
+
+    // Update like count
+    if (newLikedState) {
+      setLikeCount(likeCount + 1); // Increment like count
+    } else {
+      setLikeCount(likeCount - 1); // Decrement like count
+    }
+
+    // Optionally, update the like count on the server if you want it persisted in the backend
+    axios.post(`http://localhost:4001/api/posts/${id}/like`, {
+      liked: newLikedState,
+    });
+  };
+
+  const handleChat = () => {
+    alert("Chat functionality is not implemented yet.");
   };
 
   if (loading) {
@@ -125,6 +165,26 @@ function SinglePost() {
               </span>
               <span className="badge badge-secondary">NEW</span>
             </div>
+
+            {/* Like and Chat buttons */}
+            <div className="flex gap-4 mb-6">
+              <button
+                className={`flex items-center ${
+                  liked ? "text-red-500" : "text-gray-600"
+                } hover:text-pink-500 transition duration-300`}
+                onClick={handleLike}
+              >
+                <FaHeart className="mr-1" /> Like{" "}
+                {likeCount > 0 && `(${likeCount})`}
+              </button>
+              <button
+                className="flex items-center text-gray-600 hover:text-blue-500 transition duration-300"
+                onClick={handleChat}
+              >
+                <FaCommentDots className="mr-1" /> Chat
+              </button>
+            </div>
+
             <button
               className="px-6 py-3 bg-pink-500 text-white text-lg font-medium rounded-full shadow-md hover:bg-pink-700 transition duration-300"
               onClick={handlePayment}

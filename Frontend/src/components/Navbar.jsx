@@ -1,65 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaPlus } from "react-icons/fa";
-import SignUpModal from "./modal/signupmodal";
-import LoginModal from "./modal/loginmodal";
-import { auth } from "../firebase/firebase.jsx";
-import { onAuthStateChanged } from "firebase/auth";
-import Profile from "./Profile.jsx";
-import SearchOption from "./SearchOption.jsx";
+import { AuthUserContext } from "../App"; // Import AuthUserContext
 
 function Navbar() {
-  const [sticky, setSticky] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
-  const [user, setUser] = useState(null);
-  const [search, setSearch] = useState("");
-
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setSticky(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { authUser, setAuthUser } = useContext(AuthUserContext); // Access authUser and setAuthUser from context
 
   const handleLoginClick = () => {
-    setShowLoginModal(true);
-    setShowSignUpModal(false);
-  };
-
-  const handleSignUpClick = () => {
-    setShowSignUpModal(true);
-    setShowLoginModal(false);
-  };
-
-  const handleCloseModal = () => {
-    setShowLoginModal(false);
-    setShowSignUpModal(false);
-  };
-
-  const handleLogout = () => {
-    auth.signOut();
-    setUser(null);
-  };
-
-  const handlePostForFreeClick = () => {
-    if (user) {
-      navigate("/postforfree");
-    } else {
-      setShowLoginModal(true);
-    }
+    navigate("/login");
   };
 
   const navItems = (
@@ -70,7 +19,7 @@ function Navbar() {
           className={({ isActive }) =>
             isActive
               ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
+              : "text-black hover:text-gray-300 transition duration-300"
           }
         >
           Home
@@ -82,7 +31,7 @@ function Navbar() {
           className={({ isActive }) =>
             isActive
               ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
+              : "text-black hover:text-gray-300 transition duration-300"
           }
         >
           Rooms
@@ -94,17 +43,14 @@ function Navbar() {
           className={({ isActive }) =>
             isActive
               ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
+              : "text-black hover:text-gray-300 transition duration-300"
           }
         >
           Vehicles
         </NavLink>
       </li>
       <li>
-        <button
-          onClick={handlePostForFreeClick}
-          className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
-        >
+        <button className="flex items-center space-x-1 text-black hover:text-gray-300 transition duration-300">
           <FaPlus />
           <span>Post for free</span>
         </button>
@@ -113,89 +59,103 @@ function Navbar() {
   );
 
   return (
-    <>
-      <div
-        className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
-        ${sticky ? "bg-black shadow-md transition duration-300" : "bg-black"}`}
-      >
-        <div className="navbar">
-          {/* Navbar Start */}
-          <div className="navbar-start">
-            <div className="dropdown">
-              <button tabIndex={0} className="btn btn-ghost lg:hidden">
-                <svg
-                  className="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h8m-8 6h16"
-                  />
-                </svg>
-              </button>
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-black rounded-box mt-3 w-52 p-2 shadow z-[1]"
+    <div className="navbar bg-base-100 px-4">
+      <div className="flex items-center justify-between w-full">
+        <div className="navbar-start flex items-center space-x-4">
+          <div className="dropdown lg:hidden">
+            <button tabIndex={0} className="btn btn-ghost">
+              <svg
+                className="h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                {navItems}
-              </ul>
-            </div>
-            <a className="text-2xl font-bold text-pink-600 cursor-pointer">YatriKuti</a>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h8m-8 6h16"
+                />
+              </svg>
+            </button>
+            <ul
+              tabIndex={0}
+              className="menu menu-sm dropdown-content bg-white rounded-box mt-3 w-52 p-2 shadow z-[1]"
+            >
+              {navItems}
+            </ul>
           </div>
-
-          {/* Navbar Center */}
-          <div className="navbar-center hidden lg:flex">
-            <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
-            <div className="flex-1 mx-6">
-              <div className="w-full bg-blue-400 rounded-md shadow-sm">
-                <SearchOption setSearch={setSearch} search={search} />
-              </div>
-            </div>
-          </div>
-
-          {/* Navbar End */}
-          <div className="navbar-end flex items-center space-x-4">
-            {!user ? (
-              <>
-                <button
-                  onClick={handleLoginClick}
-                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={handleSignUpClick}
-                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-                >
-                  Sign Up
-                </button>
-              </>
-            ) : (
-              <Profile user={user} onLogout={handleLogout} />
-            )}
-          </div>
+          <a className="text-2xl font-bold text-pink-600 cursor-pointer">
+            YatriKuti
+          </a>
         </div>
-      </div>
 
-      {/* Modals */}
-      {showLoginModal && (
-        <LoginModal
-          onClose={handleCloseModal}
-          onSwitchToSignUp={handleSignUpClick}
-        />
-      )}
-      {showSignUpModal && (
-        <SignUpModal
-          onClose={handleCloseModal}
-          onSwitchToLogin={handleLoginClick}
-        />
-      )}
-    </>
+        <div className="flex flex-1 justify-start lg:w-1/3">
+          <input
+            type="text"
+            placeholder="Search"
+            className="input input-bordered w-full max-w-sm lg:w-96 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-600"
+          />
+        </div>
+
+        <div className="navbar-end hidden lg:flex items-center space-x-4">
+          <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
+        </div>
+
+        <div>
+          {!authUser && (
+            <button
+              onClick={handleLoginClick} // Open modal on click
+              className="px-3 py-3 text-white font-semibold bg-gradient-to-r from-pink-500 to-pink-500 rounded-lg shadow-md hover:pink-600 transform transition duration-200 ease-in-out hover:scale-105 flex items-center space-x-2"
+            >
+              <span>Login</span>
+            </button>
+          )}
+        </div>
+        {authUser && (
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt={authUser?.name} src={"fdsfa.jpg"} />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {authUser?.roles?.includes("Admin") && (
+                <MenuItem onClick={() => navigate("/dashboard")}>
+                  <Typography sx={{ textAlign: "center" }}>
+                    Dashboard
+                  </Typography>
+                </MenuItem>
+              )}
+
+              <MenuItem onClick={handleCloseUserMenu}>
+                <Typography sx={{ textAlign: "center" }}>Profile</Typography>
+              </MenuItem>
+
+              <MenuItem onClick={handleLogout}>
+                <Typography sx={{ textAlign: "center" }}>Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
+        )}
+      </div>
+    </div>
   );
 }
 
