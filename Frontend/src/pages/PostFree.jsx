@@ -17,6 +17,8 @@ function PostFree() {
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
   const [file, setFile] = useState(null);
+  const [latitude, setLatitude] = useState(null);  // Added latitude state
+  const [longitude, setLongitude] = useState(null);  // Added longitude state
   const [mapCenter, setMapCenter] = useState({ lat: 27.7172, lng: 85.324 }); // Default map center
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
@@ -35,11 +37,14 @@ function PostFree() {
     formData.append("price", price);
     formData.append("parentCategory", category);
     formData.append("subCategory", subcategory);
+    formData.append("latitude", latitude);  // Append latitude
+    formData.append("longitude", longitude);  // Append longitude
 
     file?.forEach((image) => {
       formData.append("images", image);
     });
 
+    console.log(formData)
     try {
       const response = await axios.post(
         "http://localhost:4001/api/posts",
@@ -72,7 +77,7 @@ function PostFree() {
   };
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyDVsrErMhEQtr1gSWj0MyIGQzbkslWb4zY",
+    googleMapsApiKey: "AIzaSyDVsrErMhEQtr1gSWj0MyIGQzbkslWb4zY", // Replace with your Google API key
     libraries: ["places"],
   });
 
@@ -81,9 +86,15 @@ function PostFree() {
     if (place?.geometry) {
       // Set the address and center map to the selected place
       setAddress(place.formatted_address || "");
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setLatitude(lat);  // Update latitude
+      setLongitude(lng);  // Update longitude
+
       setMapCenter({
-        lat: place.geometry.location.lat(),
-        lng: place.geometry.location.lng(),
+        lat: lat,
+        lng: lng,
       });
     }
   };
@@ -111,7 +122,7 @@ function PostFree() {
           <FaTimes size={20} />
         </button>
 
-        <form className="flex flex-col space-y-6">
+        <form className="flex flex-col space-y-6" onSubmit={handleSubmit}>
           {/* Image Upload Section */}
           <div className="flex flex-wrap gap-4 items-center">
             {images.map((image, index) => (
@@ -282,7 +293,6 @@ function PostFree() {
           {/* Submit Button */}
           <button
             type="submit"
-            onClick={handleSubmit}
             className="w-full mt-4 bg-pink-500 text-white font-bold py-2 px-4 rounded hover:bg-pink-600 transition"
           >
             Submit Post

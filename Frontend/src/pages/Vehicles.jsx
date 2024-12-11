@@ -29,13 +29,7 @@ function Vehicles() {
   return (
     <>
       <Navbar />
-      <Flex
-        title="Our Vehicles"
-        subtitle="Experience Comfort with our services."
-        image={img}
-        children="Back"
-      />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+      <div className="pt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         {posts.map((post) => (
           <Link to={`/post/${post._id}`} key={post._id}>
             <Cards post={post} />

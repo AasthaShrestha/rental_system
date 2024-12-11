@@ -1,27 +1,36 @@
 import React from "react";
-import { FaHeart, FaCommentDots } from "react-icons/fa"; // Import icons from React Icons
 
 function Cards({ post }) {
   console.log(post);
   return (
     <div className="p-4 flex justify-center">
-      <div className="card bg-base-100 max-w-sm w-full shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300">
-        <figure>
+      <div
+        className="card bg-base-100 max-w-sm w-full shadow-xl rounded-lg overflow-hidden hover:scale-105 transition-transform duration-300"
+        style={{ height: "400px" }} // Fixed height for the card
+      >
+        <figure className="h-1/2 overflow-hidden">
           <img
             src={`http://localhost:4001/${post.images[0]}`}
             alt="post image"
-            className="h-64 w-full object-cover"
+            className="h-full w-full object-cover"
           />
         </figure>
-        <div className="card-body p-4">
-          <h2 className="card-title text-lg font-semibold mb-2 flex items-center">
-            {post.name}
-            <div className="badge badge-secondary ml-2">NEW</div>
-          </h2>
-          <p className="text-sm text-gray-600 mb-4">{post.description}</p>
-          <p className="text-sm text-gray-600 mb-4">Location: {post.address}</p>
-          <p className="text-sm text-gray-600 mb-4">SubCategory: {post.subCategory}</p>
-
+        <div className="card-body p-4 h-1/2 flex flex-col justify-between">
+          <div>
+            <h2 className="card-title text-lg font-semibold mb-2 flex items-center">
+              {post.name}
+              <div className="badge badge-secondary ml-2">NEW</div>
+            </h2>
+            <p className="text-sm text-gray-600 mb-2 line-clamp-2">
+              {post.description}
+            </p>
+            <p className="text-sm text-gray-600 mb-1 truncate">
+              Location: {post.address}
+            </p>
+            <p className="text-sm text-gray-600 mb-1 truncate">
+              SubCategory: {post.subCategory}
+            </p>
+          </div>
           <div className="card-actions flex justify-between items-center">
             <div className="badge badge-outline text-lg font-semibold">
               रु {post.price}

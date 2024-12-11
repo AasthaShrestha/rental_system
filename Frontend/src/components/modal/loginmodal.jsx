@@ -12,8 +12,8 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
   // Handle login with email and password
   const handleLogin = async (e) => {
     e.preventDefault();
-    setSuccessMessage(""); // Reset success message
-    setError(""); // Reset error message
+    setSuccessMessage(""); 
+    setError(""); 
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -51,8 +51,8 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
   // Handle forgot password request
   const handleForgotPassword = async (e) => {
     e.preventDefault();
-    setSuccessMessage(""); // Reset success message
-    setError(""); // Reset error message
+    setSuccessMessage(""); 
+    setError(""); 
 
     if (!email || !/\S+@\S+\.\S+/.test(email)) {
       setError("Please enter a valid email address.");

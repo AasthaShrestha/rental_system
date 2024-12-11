@@ -17,22 +17,87 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/", upload.array("images", 5), async (req, res) => {
+router.post('/', upload.array('images'), async (req, res) => {
   try {
-    const filePaths = req.files.map((file) => file.path);
-    console.log(filePaths);
-    console.log(req.file);
-    const postData = {
-      ...req.body,
-      images: filePaths,
-    };
+    const { name, description, address, price, parentCategory, subCategory, latitude, longitude } = req.body;
 
-    const post = new Rental(postData);
-    await post.save();
-    res.status(201).json({ success: true, data: post });
+    console.log(req.body);
+
+    // Ensure images are uploaded
+    const imagePaths = req.files.map(file => file.path); // Store image paths
+
+    // Save the new post data to the database
+    const newPost = new Rental({
+      name,
+      description,
+      address,
+      price,
+      parentCategory,
+      subCategory,
+      latitude: parseFloat(latitude),  // Convert to float
+      longitude: parseFloat(longitude), // Convert to float
+      images: imagePaths,
+    });
+
+    await newPost.save();
+
+    console.log("Data saved successfully");
+
+    // Respond with success message and the created post
+    res.status(201).json({
+      message: 'Post created successfully',
+      post: newPost,
+    });
+
   } catch (error) {
-    res.status(400).json({ success: false, error: error.message });
+    console.error('Error saving post:', error);
+    res.status(500).json({ message: 'Failed to create post', error: error.message });
   }
+});
+
+// Utility function to calculate haversine distance between two coordinates (in km)
+const toRadians = (degrees) => (degrees * Math.PI) / 180;
+
+let haversineDistance = (lat1, lon1, lat2, lon2) => {
+const R = 6371; // Earth's radius in km
+const φ1 = toRadians(lat1); 
+const φ2 = toRadians(lat2);
+const Δφ = toRadians(lat2 - lat1);
+const Δλ = toRadians(lon2 - lon1);
+
+const a =
+  Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+  Math.cos(φ1) * Math.cos(φ2) *
+  Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+return R * c; // Distance in km
+};
+
+// GET route to fetch nearby rentals based on user’s location
+router.get('/nearby', async (req, res) => {
+try {
+  const { latitude, longitude } = req.query;
+
+  if (!latitude || !longitude) {
+    return res.status(400).json({ message: 'Latitude and Longitude are required.' });
+  }
+
+  // Fetch all rentals from the database
+  const rentals = await Rental.find();
+
+  // Filter rentals based on proximity
+  const nearbyRentals = rentals.filter((rental) => {
+    const distance = haversineDistance(parseFloat(latitude), parseFloat(longitude), rental.latitude, rental.longitude);
+    return distance <= 10; // Adjust the distance as needed, e.g., 10 km
+  });
+
+  // Return the nearby rentals
+  res.status(200).json({ nearbyRentals });
+} catch (error) {
+  console.error('Error fetching nearby rentals:', error);
+  res.status(500).json({ message: 'Failed to fetch nearby rentals', error: error.message });
+}
 });
 
 router.get("/searchSection", async (req, res) => {

@@ -58,19 +58,20 @@ const Profile = ({ user, onLogout }) => {
 
       {/* Logout Confirmation Popup */}
       {isLogoutPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-gray-100 p-6 rounded-xl shadow-lg max-w-sm w-full">
-            <h3 className="text-xl font-semibold mb-4 text-gray-800">Are you sure you want to log out?</h3>
-            <div className="flex space-x-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 backdrop-blur-sm transition-opacity duration-300">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full animate-fade-in">
+            <h3 className="text-2xl font-semibold mb-4 text-gray-800">Confirm Logout</h3>
+            <p className="mb-4 text-gray-600">Are you sure you want to log out?</p>
+            <div className="flex justify-end space-x-4">
               <button
                 onClick={handleLogout}
-                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-300"
+                className="bg-red-600 text-white px-5 py-2 rounded-md hover:bg-red-700 transition duration-300"
               >
                 Yes, Logout
               </button>
               <button
                 onClick={closeLogoutPopup}
-                className="bg-gray-300 text-black px-4 py-2 rounded-md hover:bg-gray-400 transition duration-300"
+                className="bg-gray-200 text-black px-5 py-2 rounded-md hover:bg-gray-300 transition duration-300"
               >
                 No, Stay Logged In
               </button>

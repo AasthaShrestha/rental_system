@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const rentalSchema = mongoose.Schema({
   name: { type: String, required: true },
+
+  latitude:{type:Number, requrired:true},
+  longitude:{type:Number, requrired:true},
   images:[ 
     {
       type:String,required:true
