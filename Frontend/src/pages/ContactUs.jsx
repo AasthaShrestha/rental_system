@@ -13,6 +13,8 @@ function ContactUs() {
   });
 
   const [emailError, setEmailError] = useState(""); // State for email error message
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const [errorMessage, setErrorMessage] = useState(""); // State for error message
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,17 +35,52 @@ function ContactUs() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (emailError) {
       alert("Please correct the errors in the form before submitting.");
       return;
     }
-
-    alert("Form submitted successfully!");
+  
+    // Map the frontend data to backend format
+    const dataToSubmit = {
+      name: formData.name,
+      email: formData.email,
+      suggestion: formData.message, // Change 'message' to 'suggestion'
+      enquiryType: formData.enquiryType,
+    };
+  
+    try {
+      const response = await fetch("http://localhost:4001/api/suggestions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSubmit),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        setSuccessMessage(data.message || "Form submitted successfully!");
+        setErrorMessage(""); // Clear any previous errors
+        setFormData({
+          name: "",
+          email: "",
+          enquiryType: "",
+          message: "",
+        });
+      } else {
+        setErrorMessage(data.message || "An error occurred. Please try again.");
+        setSuccessMessage(""); // Clear any previous success messages
+      }
+    } catch (error) {
+      setErrorMessage("There was a problem submitting the form. Please try again.");
+      setSuccessMessage(""); // Clear any previous success messages
+    }
   };
-
+  
   return (
     <div>
       <Navbar />
@@ -136,6 +173,13 @@ function ContactUs() {
             >
               Submit
             </button>
+
+            {successMessage && (
+              <p className="text-green-500 mt-4">{successMessage}</p>
+            )}
+            {errorMessage && (
+              <p className="text-red-500 mt-4">{errorMessage}</p>
+            )}
           </form>
         </div>
 

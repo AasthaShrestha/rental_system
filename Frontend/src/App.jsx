@@ -7,8 +7,9 @@ import Search from "./pages/SearchandSort/Search";
 function App() {
   return (
     <>
-      {/* <RouterProvider router={router}/> */}
-      <Search/>
+      <RouterProvider router={router}/>
+      {/* <Search/> */}
+      {/* <Esewa/> */}
     </>
   );
 }

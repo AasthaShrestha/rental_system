@@ -10,7 +10,7 @@ import { FaTimes } from "react-icons/fa";
 
 function PostFree() {
   const [images, setImages] = useState([]);
-  //const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
+  const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
@@ -24,9 +24,9 @@ function PostFree() {
   const [parking, setParking] = useState(false);
   const [furnished, setFurnished] = useState(false);
   const autocompleteRef = useRef(null);
-  const currentUserId ="User12234555";
+  const currentUserId = "User12234555";
   const navigate = useNavigate();
-  const [file, setFile] = useState(null); 
+  const [file, setFile] = useState(null);
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
@@ -45,69 +45,73 @@ function PostFree() {
     );
   };
 
- const handleSubmit = async (e) => {
-   e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-   const formData = new FormData(); // Use FormData for file upload
-   formData.append("name", productName);
-   formData.append("title", productDescription);
-   formData.append("address", address);
-   formData.append("price", price);
-   formData.append("parentCategory", category);
-   formData.append("subCategory", subcategory);
+    const formData = new FormData(); // Use FormData for file upload
+    formData.append("name", productName);
+    formData.append("title", productDescription);
+    formData.append("address", address);
+    formData.append("price", price);
+    formData.append("parentCategory", category);
+    formData.append("subCategory", subcategory);
 
-   // Append all images to the FormData
-   images.forEach((image) => {
-     formData.append(`images`, image); // Ensure these are File objects
-   });
-
-   try {
-     const response = await axios.post(
-       "http://localhost:4001/api/posts",
-       formData,
-       {
-         headers: { "Content-Type": "multipart/form-data" },
-       }
-     );
-      toast.success("Post submitted successfully!");
-     console.log("Response:", response.data);
-   } catch (error) {
-        console.error("Error:", error.response?.data || error.message);
-        toast.error("Error submitting post.");
-   }
- };
-
-const handleImageUpload = (e) => {
-  const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
-  if (uploadedFiles.length > 0) {
-    setFile(uploadedFiles); // Save all files to state
-
-    // Loop over each file and read them
-    uploadedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
-      };
-      reader.readAsDataURL(file); // Read each file as data URL
+    // Append all images to the FormData
+    images.forEach((image) => {
+      formData.append(`images`, image); // Ensure these are File objects
     });
-  }
-};
 
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
-    libraries: ["places"],
-    version: "weekly",
-  });
+    try {
+      const response = await axios.post(
+        "http://localhost:4001/api/posts",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      toast.success("Post submitted successfully!");
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("Error submitting post.");
+    }
+  };
 
+  const handleImageUpload = (e) => {
+    const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
+    if (uploadedFiles.length > 0) {
+      setFile(uploadedFiles); // Save all files to state
+
+      // Loop over each file and read them
+      uploadedFiles.forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
+        };
+        reader.readAsDataURL(file); // Read each file as data URL
+      });
+    }
+  };
+
+
+  // Handle location update from Autocomplete
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current.getPlace();
     if (place && place.geometry) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
-      setLocation({ lat, lng });
-      setAddress(place.formatted_address || "");
+      setLocation({ lat, lng }); // Update map center
+      setAddress(place.formatted_address || ""); // Update address field
     }
   };
+
+
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+    libraries: ["places"],
+    version: "weekly",
+  });
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -336,9 +340,7 @@ const handleImageUpload = (e) => {
               Location
             </label>
             <Autocomplete
-              onLoad={(autocomplete) =>
-                (autocompleteRef.current = autocomplete)
-              }
+              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
               onPlaceChanged={handlePlaceSelect}
             >
               <input
@@ -351,12 +353,13 @@ const handleImageUpload = (e) => {
             </Autocomplete>
             <GoogleMap
               mapContainerStyle={{ height: "400px", width: "100%" }}
-              center={location}
+              center={location} // Updated dynamically
               zoom={15}
             >
               <Marker position={location} />
             </GoogleMap>
           </div>
+
 
           {/* Submit Button */}
           <button
