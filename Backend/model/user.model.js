@@ -17,11 +17,17 @@ const userSchema = new mongoose.Schema(
         "Please provide a valid email address",
       ],
     },
+    roles: {
+      type: [String],
+      enum: ["Admin", "Customer", "Super Admin"],
+      default: "Customer",
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
       minlength: [7, "Password must be at least 7 characters long"],
     },
+  
   },
   {
     timestamps: true,

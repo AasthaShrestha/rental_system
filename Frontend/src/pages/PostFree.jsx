@@ -10,21 +10,15 @@ import { FaTimes } from "react-icons/fa";
 
 function PostFree() {
   const [images, setImages] = useState([]);
-  //const [location, setLocation] = useState({ lat: 27.7172, lng: 85.324 }); // Default location (Kathmandu)
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
-  // const [selectedFeatures, setSelectedFeatures] = useState([]);
-  // const [area, setArea] = useState(""); // Textbox for area
+
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [condition, setCondition] = useState(""); // Condition for vehicles
-  const [bathroom, setBathroom] = useState(false);
-  const [parking, setParking] = useState(false);
-  const [furnished, setFurnished] = useState(false);
+
   const autocompleteRef = useRef(null);
-  const currentUserId ="User12234555";
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const subcategories = {
@@ -36,18 +30,7 @@ function PostFree() {
     "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
     Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
   };
-  // const categoryFeatures = {
-  //   "Real Estate": ["Area", "Bedrooms", "Bathrooms", "Furnished"],
-  //   Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
-  // };
-
-  // const handleFeatureToggle = (feature) => {
-  //   setSelectedFeatures((prevFeatures) =>
-  //     prevFeatures.includes(feature)
-  //       ? prevFeatures.filter((f) => f !== feature)
-  //       : [...prevFeatures, feature]
-  //   );
-  // };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();

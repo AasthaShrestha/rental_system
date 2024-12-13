@@ -1,8 +1,11 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../config/constant.js";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const signUp = async (req, res) => {
   //req.body={name,email,password}
   const userExist = await User.findOne({
@@ -49,15 +52,16 @@ const logIn = async (req, res) => {
         name: user.name,
         roles: user.roles,
       },
-        process.env.JWT_SECRET,
+        JWT_SECRET,
       { expiresIn: "20d" }
     );
 
-    delete user.password;
+   
     res.status(200).json({
       message: "Logged In Successfully",
       token,
       data: user,
+      
     });
     return;
   }
