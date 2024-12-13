@@ -2,29 +2,28 @@ import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import Cards from "./Cards";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import Cards from "./Cards";
 
 function Featured() {
-   const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-   useEffect(() => {
-     const fetchPosts = async () => {
-       try {
-         const response = await axios.get(
-           "http://localhost:4001/api/posts/latest"
-         );
-         if (response.data.success) {
-           setPosts(response.data.data);
-         }
-       } catch (error) {
-         console.error("Error fetching posts:", error);
-       }
-     };
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4001/api/posts/latest"
+        );
+        if (response.data.success) {
+          setPosts(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
 
-     fetchPosts();
-   }, []);
+    fetchPosts();
+  }, []);
 
   const settings = {
     dots: true,
@@ -76,9 +75,7 @@ function Featured() {
       <div className="slider-container relative">
         <Slider {...settings}>
           {posts.map((post) => (
-            <Link to={`/post/${post._id}`} key={post._id}>
-              <Cards post={post} />
-            </Link>
+            <Cards key={post._id} post={post} />
           ))}
         </Slider>
       </div>

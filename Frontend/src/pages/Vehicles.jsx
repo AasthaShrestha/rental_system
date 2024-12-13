@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import img from "../assets/masterVehicle.webp";
-import Flex from "../components/Flex";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
 import axios from "axios";
@@ -31,9 +29,9 @@ function Vehicles() {
       <Navbar />
       <div className="pt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         {posts.map((post) => (
-          <Link to={`/post/${post._id}`} key={post._id}>
-            <Cards post={post} />
-          </Link>
+  
+  <Cards key={post._id} post={post} />
+          
         ))}
       </div>
       <Footer />

@@ -10,8 +10,8 @@ function SinglePost() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [liked, setLiked] = useState(false); // State for like button
-  const [chatOpen, setChatOpen] = useState(false); // State for chat button
+  
+  
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -81,15 +81,6 @@ function SinglePost() {
     form.submit();
   };
 
-  const handleLike = () => {
-    setLiked(!liked); // Toggle the "liked" state
-  };
-
-  const handleChat = () => {
-    setChatOpen(true);
-    
-    console.log("Chat function triggered");
-  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -124,24 +115,7 @@ function SinglePost() {
               <span className="badge badge-secondary">NEW</span>
             </div>
 
-            {/* Like and chat buttons */}
-            <div className="flex gap-4 mb-6">
-              <button
-                className={`flex items-center ${
-                  liked ? "text-red-500" : "text-gray-600"
-                } hover:text-pink-500 transition duration-300`}
-                onClick={handleLike}
-              >
-                <FaHeart className="mr-1" /> Like
-              </button>
-              <button
-                className="flex items-center text-gray-600 hover:text-blue-500 transition duration-300"
-                onClick={handleChat}
-              >
-                <FaCommentDots className="mr-1" /> Chat
-              </button>
-            </div>
-
+           
             <button
               className="px-6 py-3 bg-pink-500 text-white text-lg font-medium rounded-full shadow-md hover:bg-pink-700 transition duration-300"
               onClick={handlePayment}
