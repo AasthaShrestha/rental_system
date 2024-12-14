@@ -16,11 +16,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "../Routes/Pathway";
 
 const logIn = async (data) => {
-  
-    const res = await axios.post("http://localhost:4001/user/login", data);
+  const res = await axios.post("http://localhost:4001/user/login", data);
 
-    return res.data;
-
+  return res.data;
 };
 
 // Validation schema using Yup
@@ -45,7 +43,9 @@ export default function LogIn() {
   const mutation = useMutation({
     mutationFn: logIn,
     onSuccess: (res) => {
-      setAuthUser(res.data.data);
+      console.log(res);
+      setAuthUser(res.data);
+      localStorage.setItem("authUser", JSON.stringify(setAuthUser));
       navigate("/");
     },
   });

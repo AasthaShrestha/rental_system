@@ -47,8 +47,7 @@ const NavBar = () => {
 
   const handleLogout = () => {
     setAuthUser(null);
-    localStorage.removeItem("authUser");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -154,7 +153,7 @@ const NavBar = () => {
           </Box>
 
           {/* User Menu */}
-          {authUser ? (
+            {authUser && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -171,13 +170,21 @@ const NavBar = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
+                {authUser?.roles?.includes("Admin") && (
+                  <MenuItem onClick={() => navigate("/dashboard")}>
+                    <Typography sx={{ textAlign: "center" }}>
+                      Dashboard
+                    </Typography>
+                  </MenuItem>
+                )}
                 <MenuItem onClick={() => navigate("/profile")}>
                   Profile
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </Box>
-          ) : (
+          )}
+          {!authUser && (
             <Button
               onClick={() => navigate("/login")}
               sx={{
