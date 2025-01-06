@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   define: {
-    'process.env': {}, // Add this line to define process.env
+    "process.env": {}, // Add this line to define process.env
   },
-})
+  server: {
+    proxy: {
+      "/api": "http://localhost:4001",
+    },
+  },
+});

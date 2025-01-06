@@ -50,11 +50,12 @@ function PostFree() {
 
     try {
       const response = await axios.post(
-        "http://localhost:4001/api/posts",
+        "api/posts",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-        }
+        },
+        
       );
       toast.success("Post submitted successfully!");
       console.log("Response:", response.data);

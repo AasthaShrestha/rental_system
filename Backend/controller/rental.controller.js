@@ -33,11 +33,13 @@ const getRooms = async (req, res) => {
 };
 // Create a new rental
 const createRental = async (req, res) => {
+  console.log(req.headers.token)
   try {
     const filePaths = req.files.map((file) => file.path);
     const postData = {
       ...req.body,
       images: filePaths,
+      user:req.authUser._id,
     };
 
     const post = new Rental(postData);
@@ -81,7 +83,7 @@ const getAllRentals = async (req, res) => {
 };
 
 // Fetch rentals by category (e.g., Vehicles or Rooms)
-const getRentalsByCategory = async (category, req, res) => {
+const  getRentalsByCategory = async (category, req, res) => {
   try {
     const posts = await Rental.find({ parentCategory: category });
     res.status(200).json({ success: true, data: posts });
