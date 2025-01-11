@@ -1,8 +1,10 @@
 // order.controller.js
 
-import * as orderService from "../services/order.services.js";  // Import order services (adjust path if needed)
+import * as orderService from "../services/order.services.js"; // Import order services (adjust path if needed)
 import axios from "axios";
 import crypto from "crypto";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import Order from "../model/order.model.js";
 
 // Get all orders
 export const getAllOrders = async (req, res) => {
@@ -18,7 +20,7 @@ export const getAllOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     console.log(req.body);
-    const order = await orderService.save(req.body);
+    const order = await orderService.save({ ...req.body, user: req.user._id });
 
     const signature = createSignature(
       `total_amount=${order.amount},transaction_uuid=${order._id},product_code=EPAYTEST`
@@ -33,7 +35,7 @@ export const createOrder = async (req, res) => {
         product_code: "EPAYTEST",
         signature: signature,
         signed_field_names: "total_amount,transaction_uuid,product_code",
-        success_url: "http://localhost:5005/api/esewa/success",
+        success_url: "http://localhost:4001/api/esewa/success",
         tax_amount: "0",
         total_amount: order.amount,
         transaction_uuid: order._id,
@@ -69,7 +71,7 @@ export const updateOrderAfterPayment = async (req, res, next) => {
 // Create a signature for eSewa payment verification
 export const createSignature = (message) => {
   const secret = "8gBm/:&EnhH.1/q"; // Secret key (different in production)
-  
+
   // Create an HMAC-SHA256 hash
   const hmac = crypto.createHmac("sha256", secret);
   hmac.update(message);
@@ -78,3 +80,16 @@ export const createSignature = (message) => {
   const hashInBase64 = hmac.digest("base64");
   return hashInBase64;
 };
+
+const getMyOrders = async (req, res) => {
+  console.log(req.user);
+  if (req.user.roles.includes["Admin"]) {
+    const orders = await Order.find();
+    return res.json(new ApiResponse(200, "All Orders of all user", orders));
+  } else {
+    const orders = await Order.find({ user: req.user._id });
+    return res.json(new ApiResponse(200, "Your orders only.", orders));
+  }
+};
+
+export { getMyOrders };

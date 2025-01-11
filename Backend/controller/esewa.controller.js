@@ -1,4 +1,3 @@
-
 // esewa.controller.js
 
 import { createSignature } from "./order.controller.js"; // Make sure the path is correct
@@ -17,9 +16,12 @@ export const handleEsewaSuccess = async (req, res, next) => {
 
     const message = decodedData.signed_field_names
       .split(",")
-      .map((field) => `${field}=${decodedData[field] || ""}`)
+      .map((field) => {
+        return field == "total_amount"
+          ? `${field}=${decodedData[field].replace(",", "")}`
+          : `${field}=${decodedData[field]}`;
+      })
       .join(",");
-    console.log(message);
 
     const signature = createSignature(message);
 

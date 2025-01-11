@@ -24,6 +24,21 @@ const orderSchema = mongoose.Schema(
           required: true,
           default: 1,
         },
+        parentCategory: {
+          type: String,
+        },
+        subCategory: {
+          type: String,
+        },
+        price: {
+          type: Number,
+        },
+        address: {
+          type: String,
+        },
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+        },
       },
     ],
     status: {
@@ -33,6 +48,10 @@ const orderSchema = mongoose.Schema(
       default: "created",
     },
     address: String,
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,

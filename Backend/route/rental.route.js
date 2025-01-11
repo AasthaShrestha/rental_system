@@ -8,7 +8,7 @@ import {
   getLatestRentals,
   getRentalById,
 } from "../controller/rental.controller.js";
-import { checkAuth } from "../middleware/userAuth.middleware.js";
+import validateUser from "../middleware/userAuth.middleware.js";
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Routes
-router.post("/", checkAuth("Admin"), upload.array("images", 5), createRental);
+router.post("/", validateUser("any"), upload.array("images", 5), createRental);
 router.get("/searchSection", searchRentals);
 router.get("/", getAllRentals);
 router.get("/vehicles", (req, res) =>

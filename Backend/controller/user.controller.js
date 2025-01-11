@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
 const signUp = async (req, res) => {
   //req.body={name,email,password}
   const userExist = await User.findOne({
@@ -51,23 +51,21 @@ const logIn = async (req, res) => {
         name: user.name,
         roles: user.roles,
       },
-      JWT_SECRET,
+      JWT_ACCESS_SECRET,
       { expiresIn: "20d" }
-      
     );
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 20);
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 20);
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        expires: expiresAt,
-      });
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   expires: expiresAt,
+    // });
 
     res.status(200).json({
       message: "Logged In Successfully",
       token,
       data: user,
-      
     });
     return;
   }
