@@ -5,16 +5,17 @@ import Home from "../pages/Home";
 import Rooms from "../pages/Rooms";
 import Vehicles from "../pages/Vehicles";
 import PostFree from "../pages/PostFree";
-import LoginWithModal from "../components/modal/loginmodal.jsx";
-import SignUpWithModal from "../components/modal/signupmodal.jsx";
-import ProfileDetails from "../components/ProfileDetailPage.jsx";
-import Profile from "../components/profile.jsx";
-import PostDetails from "../components/PostDetails.jsx";
 import AboutUs from "../pages/AboutUs.jsx";
 import Objectives from "../components/Objectives.jsx";
 import ContactUs from "../pages/ContactUs.jsx";
 import Blog from "../pages/Blog.jsx";
 import BlogDetailsPage from "../pages/BlogDetailsPage.jsx";
+// import ProtectedRoute from "../components/modal/ProtectedRoute.jsx";
+import SinglePost from "../components/SinglePost.jsx";
+import LogIn from "../pages/Login.jsx";
+import SignUp from "../pages/SignUp.jsx";
+import SuccessPage from "../pages/Esewa/success.jsx";
+import FailurePage from "../pages/Esewa/failure.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,9 +24,9 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
-    path:"/post/:id",
-    element:<PostDetails/>,
-    errorElement:<Error/>
+    path: "/post/:id",
+    element: <SinglePost />,
+    errorElement: <Error />,
   },
   {
     path: "/rooms",
@@ -39,56 +40,70 @@ const router = createBrowserRouter([
   },
   {
     path: "/postforfree",
-    element: <PostFree />,
+    element: (
+        <PostFree />
+    ),
     errorElement: <Error />,
   },
-  {
-    path: "/loginmodal",
-    element: <LoginWithModal />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/signupmodal",
-    element: <SignUpWithModal />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/Profile",
-    element: <Profile />,
-    errorElement: <Error />,
-  },
-  {
-    path: "/ProfileDetailPage",
-    element: <ProfileDetails />,
-    errorElement: <Error />,
-  },
+  // {
+  //   path: "/search",
+  //   element: <Search />,
+  //   errorElement: <Error />,
+  // },
+
   {
     path: "/aboutus",
-    element: <AboutUs/>,
+    element: <AboutUs />,
     errorElement: <Error />,
   },
   {
     path: "/contactus",
-    element: <ContactUs/>,
+    element: <ContactUs />,
     errorElement: <Error />,
   },
   {
     path: "/blog",
-    element: <Blog/>,
+    element: <Blog />,
     errorElement: <Error />,
-  }, {
+  },
+  {
     path: "/blog/:id",
-    element: <BlogDetailsPage/>,
+    element: <BlogDetailsPage />,
     errorElement: <Error />,
   },
   {
     path: "/objectives",
-    element: <Objectives/>,
+    element: <Objectives />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/login",
+    element: <LogIn/>,
+    errorElement: <Error />,
+  },
+  {
+    path: "/signup",
+    element: <SignUp />,
+    errorElement: <Error />,
+  },
+  {
+    path: "/success",
+    element: <SuccessPage/>,
+    errorElement: <Error />,
+  },
+  {
+    path: "/failure",
+    element: <FailurePage />,
     errorElement: <Error />,
   },
   // {
-  //   path: "/chatsection",
-  //   element: <ChatSection />,
+  //   path: "/profile",
+  //   element: <Profile />,
+  //   errorElement: <Error />,
+  // },
+  // {
+  //   path: "/profileDetails",
+  //   element: <ProfileDetails />,
   //   errorElement: <Error />,
   // },
 ]);

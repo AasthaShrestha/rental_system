@@ -1,69 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import img from "../assets/main1.jpeg";
 import Flex from "../components/Flex";
-import Cards from "../components/Cards";
 import Footer from "../components/Footer";
-import main1 from "../assets/masterRoom.webp";
+import { Link } from "react-router-dom";
 import axios from "axios";
-
+import Cards from "../components/Cards";
 function Rooms() {
-  const [rental, setRental] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const getRental = async () => {
-      try {
-        const res = await axios.get("http://localhost:4001/rental");
-        console.log("Fetched rentals:", res.data);
-        if (res.data.success && Array.isArray(res.data.data)) {
-          setRental(res.data.data);
-        } else {
-          console.log("Unexpected response format:", res.data);
-          setError("Unexpected data format from server.");
-        }
-      } catch (error) {
-        console.error("Error fetching rentals:", error.message);
-        setError("Failed to fetch rentals. Please try again later.");
-      } finally {
-        setLoading(false);
+useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get("http://localhost:4001/api/posts/rooms");
+      if (response.data.success) {
+        setPosts(response.data.data);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
 
-    getRental();
-  }, []);
-
-  const filterData = Array.isArray(rental)
-    ? rental.filter((data) => data.type === "rooms")
-    : [];
-
+  fetchPosts();
+}, []);
   return (
     <div>
       <Navbar />
       <Flex
         title="Our Rooms"
         subtitle="Experience Comfort with our services."
-        image={main1}
+        image={img}
         children="Back"
       />
-      <div className="mt-12">
-        {loading && <p>Loading rooms...</p>}
-        {error && <p className="text-red-500">{error}</p>}
-        {!loading && !error && filterData.length === 0 && (
-          <p>No rooms available at the moment.</p>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-4">
-          {!loading &&
-            !error &&
-            filterData.map((item) => (
-              <div key={item.id} className="px-2 sm:px-4">
-                <Link to={`/post/${item.id}`}>
-                  <Cards item={item} />
-                </Link>
-              </div>
-            ))}
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+        {posts.map((post) => (
+          <Link to={`/post/${post._id}`} key={post._id}>
+            <Cards post={post} />
+          </Link>
+        ))}
       </div>
       <Footer />
     </div>

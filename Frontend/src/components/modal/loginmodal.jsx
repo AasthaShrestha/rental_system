@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
-import { auth, googleProvider, signInWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup } from "../../firebase/firebase.jsx";
+import {
+  auth,
+  googleProvider,
+  signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithPopup,
+} from "../../firebase/firebase.jsx";
 
 const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
   const [email, setEmail] = useState("");
@@ -16,7 +22,11 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
     setError(""); // Reset error message
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       console.log("User signed in:", userCredential.user);
       setError("");
       onClose(); // Close the modal after login
@@ -65,11 +75,15 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
     } catch (err) {
       console.error("Error during password reset:", err);
       if (err.code === "auth/user-not-found") {
-        setError("No user found with this email. Please check your email or sign up.");
+        setError(
+          "No user found with this email. Please check your email or sign up."
+        );
       } else if (err.code === "auth/invalid-email") {
         setError("Invalid email address format. Please enter a valid email.");
       } else {
-        setError("An error occurred while sending the password reset email. Please try again.");
+        setError(
+          "An error occurred while sending the password reset email. Please try again."
+        );
       }
     }
   };
@@ -93,20 +107,34 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
           <h2 className="text-2xl font-bold text-center text-gray-800 w-full">
             {isForgotPassword ? "Forgot Password" : "Welcome Back"}
           </h2>
-          <button onClick={onClose} className="text-gray-600 hover:text-gray-800">✕</button>
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            ✕
+          </button>
         </div>
 
         <p className="text-center text-sm text-gray-700">
-          {isForgotPassword ? "Enter your email to reset your password." : "Log in to access your account"}
+          {isForgotPassword
+            ? "Enter your email to reset your password."
+            : "Log in to access your account"}
         </p>
 
         {error && <p className="text-center text-sm text-red-500">{error}</p>}
-        {successMessage && <p className="text-center text-sm text-green-500">{successMessage}</p>}
+        {successMessage && (
+          <p className="text-center text-sm text-green-500">{successMessage}</p>
+        )}
 
         {!isForgotPassword ? (
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-gray-800">Email</label>
+              <label
+                htmlFor="email"
+                className="block text-xs font-medium text-gray-800"
+              >
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -118,7 +146,12 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-xs font-medium text-gray-800">Password</label>
+              <label
+                htmlFor="password"
+                className="block text-xs font-medium text-gray-800"
+              >
+                Password
+              </label>
               <input
                 type="password"
                 id="password"
@@ -139,7 +172,12 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
         ) : (
           <form onSubmit={handleForgotPassword} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-gray-800">Email</label>
+              <label
+                htmlFor="email"
+                className="block text-xs font-medium text-gray-800"
+              >
+                Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -181,7 +219,10 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
           {!isForgotPassword ? (
             <>
               Don't have an account?{" "}
-              <button onClick={onSwitchToSignUp} className="text-indigo-500 hover:underline">
+              <button
+                onClick={onSwitchToSignUp}
+                className="text-indigo-500 hover:underline"
+              >
                 Sign up
               </button>
               <br />
