@@ -7,8 +7,8 @@ import axios from "axios";
 function Vehicles() {
   const [posts, setPosts] = useState([]);
   const [sortOrder, setSortOrder] = useState(""); // Sorting order state
-  const [selectedSubCategories, setSelectedSubCategories] = useState([]); // State to store selected subcategories
-  const [showFilter, setShowFilter] = useState(false); // State to toggle filter and sort options visibility
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]); 
+  const [showFilter, setShowFilter] = useState(false); 
 
   // Fetch posts with sorting and filtering
   useEffect(() => {
@@ -30,7 +30,7 @@ function Vehicles() {
     };
 
     fetchPosts();
-  }, [sortOrder, selectedSubCategories]); // Fetch whenever sortOrder or selectedSubCategories changes
+  }, [sortOrder, selectedSubCategories]); 
 
   // Handle checkbox change for subcategories
   const handleCheckboxChange = (e) => {
@@ -47,9 +47,8 @@ function Vehicles() {
   // Handle checkbox change for sorting (with "untick" functionality)
   const handleSortChange = (e) => {
     const value = e.target.value;
-    // If "Clear Sorting" option is checked, reset sortOrder
     if (value === "clear") {
-      setSortOrder(""); // Reset sorting when both checkboxes are unticked
+      setSortOrder(""); 
     } else {
       setSortOrder(value);
     }

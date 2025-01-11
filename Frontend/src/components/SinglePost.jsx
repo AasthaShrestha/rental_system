@@ -4,15 +4,20 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
 import { FaHeart, FaCommentDots } from "react-icons/fa"; // Import icons
+import DatePicker from "react-datepicker"; // DatePicker for date selection
+import "react-datepicker/dist/react-datepicker.css"; // Import CSS for DatePicker
 
 function SinglePost() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
-  
+  const [startDate, setStartDate] = useState(null); // Start date for booking (initially null)
+  const [endDate, setEndDate] = useState(null); // End date for booking (initially null)
+  const [totalPrice, setTotalPrice] = useState(0); // Total price for booking
+  const [days, setDays] = useState(0); // Default to 0 days (no selection)
 
+  // Fetch the post data when component mounts
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -31,13 +36,43 @@ function SinglePost() {
     fetchPost();
   }, [id]);
 
+  // Handle start date change
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    if (endDate && date > endDate) {
+      setEndDate(null); // Reset end date if start date is after it
+      setTotalPrice(0); // Reset price
+    }
+  };
+
+  // Handle end date change
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    if (startDate && date < startDate) {
+      setStartDate(null); // Reset start date if end date is before it
+      setTotalPrice(0); // Reset price
+    }
+  };
+
+  // Calculate total price based on selected dates
+  useEffect(() => {
+    if (startDate && endDate) {
+      const days = Math.ceil((endDate - startDate) / (1000 * 3600 * 24)); // Calculate days difference
+      const price = post.price * days; // Base price multiplied by the number of days
+      setTotalPrice(price);
+    } else {
+      setTotalPrice(0); // Reset if either date is not selected
+    }
+  }, [startDate, endDate, post]);
+
+  // Handle payment logic
   const handlePayment = async () => {
-    if (!post) return;
+    if (!post || !startDate || !endDate) return;
 
     const url = "http://localhost:4001/api/orders/create";
     const data = {
-      amount: post.price,
-      products: [{ product: post.name, amount: post.price, quantity: 1 }],
+      amount: totalPrice,
+      products: [{ product: post.name, amount: totalPrice, quantity: 1 }],
       payment_method: "esewa",
     };
 
@@ -63,6 +98,7 @@ function SinglePost() {
     }
   };
 
+  // eSewa call to handle payment
   const esewaCall = (formData) => {
     const path = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
     const form = document.createElement("form");
@@ -81,7 +117,28 @@ function SinglePost() {
     form.submit();
   };
 
+  // Handle predefined duration selection
+  const handlePreSetDuration = (event) => {
+    const selectedDays = event.target.value ? parseInt(event.target.value) : null;
+    if (selectedDays === null) {
+      setStartDate(null);
+      setEndDate(null);
+      setDays(0);
+      setTotalPrice(0);
+    } else {
+      const start = new Date();
+      const end = new Date(start);
+      end.setDate(start.getDate() + selectedDays);
+  
+      setStartDate(start);
+      setEndDate(end);
+      setDays(selectedDays);
+      setTotalPrice(post.price * selectedDays);
+    }
+  };
+  
 
+  // Loading and error handling
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -95,13 +152,14 @@ function SinglePost() {
       <Navbar />
       <div className="container mx-auto px-4 py-16 mt-20">
         <div className="max-w-4xl mx-auto flex flex-col lg:flex-row gap-8 items-start bg-white shadow-md rounded-lg overflow-hidden">
-          <div className="flex-1">
-            <img
-              src={`http://localhost:4001/${post.images}`}
-              alt="post image"
-              className="w-full h-96 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
-            />
-          </div>
+        <div className="flex-1">
+  <img
+    src={`http://localhost:4001/${post.images}`}
+    alt="post image"
+    className="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+  />
+</div>
+
           <div className="flex-1 p-6">
             <h1 className="text-2xl font-bold text-gray-800 mb-4">{post.name}</h1>
             <p className="text-gray-600 text-sm mb-6">{post.description}</p>
@@ -110,12 +168,59 @@ function SinglePost() {
             </div>
             <div className="flex items-center gap-2 mb-6">
               <span className="text-lg font-bold text-gray-800">
-                रु {post.price}
+                रु {totalPrice || post.price} {/* Show total price or base price */}
               </span>
               <span className="badge badge-secondary">NEW</span>
             </div>
 
-           
+            <div className="mb-6">
+              <label className="block text-sm text-gray-600 mb-2">Select Booking Duration:</label>
+              <select
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                value={days}
+                onChange={handlePreSetDuration}
+              >
+                <option value="">None</option> {/* Option for "None" */}
+                {[...Array(7).keys()].map((day) => (
+                  <option key={day + 1} value={day + 1}>
+                    Book for {day + 1} Day{day + 1 > 1 ? "s" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Date Picker Container: Side by Side */}
+            <div className="flex gap-4 mb-6">
+              {/* Start Date Picker */}
+              <div className="flex-1">
+                <label className="block text-sm text-gray-600 mb-2">
+                  Select Start Date:
+                </label>
+                <DatePicker
+                  selected={startDate}
+                  onChange={handleStartDateChange}
+                  minDate={new Date()}
+                  className="w-full p-3 border rounded-lg"
+                  dateFormat="yyyy/MM/dd"
+                />
+              </div>
+
+              {/* End Date Picker */}
+              <div className="flex-1">
+                <label className="block text-sm text-gray-600 mb-2">
+                  Select End Date:
+                </label>
+                <DatePicker
+                  selected={endDate}
+                  onChange={handleEndDateChange}
+                  minDate={startDate ? startDate : new Date()}
+                  className="w-full p-3 border rounded-lg"
+                  dateFormat="yyyy/MM/dd"
+                />
+              </div>
+            </div>
+
+            {/* Book Now Button */}
             <button
               className="px-6 py-3 bg-pink-500 text-white text-lg font-medium rounded-full shadow-md hover:bg-pink-700 transition duration-300"
               onClick={handlePayment}
