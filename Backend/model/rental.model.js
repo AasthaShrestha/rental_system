@@ -1,24 +1,25 @@
 import mongoose from "mongoose";
-
+import {Schema} from 'mongoose';
 const rentalSchema = mongoose.Schema({
   name: { type: String, required: true },
-  images:[ 
+  images: [
     {
-      type:String,required:true
-    }, ],
+      type: String,
+      required: true,
+    },
+  ],
   address: { type: String, required: true },
   description: { type: String, required: true },
   parentCategory: { type: String, required: true },
   subCategory: { type: String, required: true },
-//   features: {
-//     bathroom: { type: Boolean, default: false },
-//     furnished: { type: Boolean, default: false },
-//     parking: { type: Boolean, default: false },
-//   },
   price: { type: Number, required: true },
-  likedBy: {type: Number, default:1},
+  likedBy: { type: Number, default: 1 },
   createdAt: { type: Date, default: Date.now },
+  user:{
+    type:Schema.Types.ObjectId,
+    ref:'User'
+  },
 });
-const Rental = mongoose.model("RentalInfo", rentalSchema);
 
+const Rental = mongoose.model("RentalInfo", rentalSchema);
 export default Rental;

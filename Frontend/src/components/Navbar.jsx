@@ -1,202 +1,206 @@
-import React, { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import Menu from "@mui/material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
+import Container from "@mui/material/Container";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
+import MenuItem from "@mui/material/MenuItem";
+import { useAuthUser } from "../Routes/Pathway";
+import { useNavigate } from "react-router";
 import { FaPlus } from "react-icons/fa";
-import SignUpModal from "./modal/signupmodal";
-import LoginModal from "./modal/loginmodal";
-import { auth } from "../firebase/firebase.jsx";
-import { onAuthStateChanged } from "firebase/auth";
-import Profile from "./Profile.jsx";
-import SearchOption from "./SearchOption.jsx";
+import { NavLink } from "react-router-dom";
 
-function Navbar() {
-  const [sticky, setSticky] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [showSignUpModal, setShowSignUpModal] = useState(false);
-  const [user, setUser] = useState(null);
-  const [search, setSearch] = useState("");
+const navItems = [
+  { label: "Home", path: "/" },
+  { label: "Rooms", path: "/rooms" },
+  { label: "Vehicles", path: "/vehicles" },
+  { label: "Post for Free", path: "/postforfree", icon: <FaPlus /> },
+];
 
+const NavBar = () => {
+  const { authUser, setAuthUser } = useAuthUser();
+  const [anchorElNav, setAnchorElNav] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setSticky(window.scrollY > 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleLoginClick = () => {
-    setShowLoginModal(true);
-    setShowSignUpModal(false);
+  const handleOpenNavMenu = (event) => {
+    setAnchorElNav(event.currentTarget);
   };
 
-  const handleSignUpClick = () => {
-    setShowSignUpModal(true);
-    setShowLoginModal(false);
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseModal = () => {
-    setShowLoginModal(false);
-    setShowSignUpModal(false);
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
   };
 
   const handleLogout = () => {
-    auth.signOut();
-    setUser(null);
+    setAuthUser(null);
+    navigate("/");
   };
-
-  const handlePostForFreeClick = () => {
-    if (user) {
-      navigate("/postforfree");
-    } else {
-      setShowLoginModal(true);
-    }
-  };
-
-  const navItems = (
-    <>
-      <li>
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            isActive
-              ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
-          }
-        >
-          Home
-        </NavLink>
-      </li>
-      <li>
-        <NavLink
-          to="/rooms"
-          className={({ isActive }) =>
-            isActive
-              ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
-          }
-        >
-          Rooms
-        </NavLink>
-      </li>
-      <li>
-        <NavLink
-          to="/vehicles"
-          className={({ isActive }) =>
-            isActive
-              ? "text-pink-500 font-bold border-b-2 border-pink-500"
-              : "text-white hover:text-gray-300 transition duration-300"
-          }
-        >
-          Vehicles
-        </NavLink>
-      </li>
-      <li>
-        <button
-          onClick={handlePostForFreeClick}
-          className="flex items-center space-x-1 text-white hover:text-gray-300 transition duration-300"
-        >
-          <FaPlus />
-          <span>Post for free</span>
-        </button>
-      </li>
-    </>
-  );
 
   return (
-    <>
-      <div
-        className={`max-w-screen-2xl mx-auto md:px-20 px-4 fixed top-0 left-0 right-0 z-50 
-        ${sticky ? "bg-black shadow-md transition duration-300" : "bg-black"}`}
-      >
-        <div className="navbar">
-          {/* Navbar Start */}
-          <div className="navbar-start">
-            <div className="dropdown">
-              <button tabIndex={0} className="btn btn-ghost lg:hidden">
-                <svg
-                  className="h-5 w-5"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+    <AppBar position="static" sx={{ backgroundColor: "#1a1a2e" }}>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          {/* Logo */}
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            onClick={() => navigate("/")}
+            sx={{
+              mr: 2,
+              display: { xs: "none", md: "flex" },
+              fontFamily: "monospace",
+              fontWeight: 700,
+              letterSpacing: ".3rem",
+              color: "inherit",
+              textDecoration: "none",
+              cursor: "pointer",
+            }}
+          >
+            YatriKuti
+          </Typography>
+
+          {/* Mobile Menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+            <IconButton
+              size="large"
+              aria-label="open navigation menu"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+              keepMounted
+              transformOrigin={{ vertical: "top", horizontal: "left" }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: "block", md: "none" } }}
+            >
+              {navItems.map((item) => (
+                <MenuItem
+                  key={item.label}
+                  onClick={() => {
+                    navigate(item.path);
+                    handleCloseNavMenu();
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 6h16M4 12h8m-8 6h16"
-                  />
-                </svg>
-              </button>
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-black rounded-box mt-3 w-52 p-2 shadow z-[1]"
+                  <Typography textAlign="center">{item.label}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+
+          {/* Search Bar */}
+          <Box sx={{ flexGrow: 1, mx: 4 }}>
+            <input
+              type="text"
+              placeholder="Search"
+              style={{
+                width: "100%",
+                maxWidth: "400px",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                border: "1px solid #ccc",
+                outline: "none",
+              }}
+            />
+          </Box>
+
+          {/* Desktop Menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+            {navItems.map((item) => (
+              <NavLink
+                key={item.label}
+                to={item.path}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: "white",
+                  fontWeight: 500,
+                  marginRight: "16px",
+                  borderBottom: isActive ? "3px solid #ff4c93" : "none",
+                  paddingBottom: isActive ? "4px" : "0",
+                  transition: "all 0.3s ease",
+                })}
               >
-                {navItems}
-              </ul>
-            </div>
-            <a className="text-2xl font-bold text-pink-600 cursor-pointer">YatriKuti</a>
-          </div>
+                {item.icon ? (
+                  <span style={{ display: "flex", alignItems: "center" }}>
+                    {item.icon}
+                    <span style={{ marginLeft: "5px" }}>{item.label}</span>
+                  </span>
+                ) : (
+                  item.label
+                )}
+              </NavLink>
+            ))}
+          </Box>
 
-          {/* Navbar Center */}
-          <div className="navbar-center hidden lg:flex">
-            <ul className="menu menu-horizontal px-1 space-x-4">{navItems}</ul>
-            <div className="flex-1 mx-6">
-              <div className="w-full bg-blue-400 rounded-md shadow-sm">
-                <SearchOption setSearch={setSearch} search={search} />
-              </div>
-            </div>
-          </div>
-
-          {/* Navbar End */}
-          <div className="navbar-end flex items-center space-x-4">
-            {!user ? (
-              <>
-                <button
-                  onClick={handleLoginClick}
-                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={handleSignUpClick}
-                  className="bg-black text-white px-3 py-2 rounded-md hover:bg-slate-800 transition duration-300"
-                >
-                  Sign Up
-                </button>
-              </>
-            ) : (
-              <Profile user={user} onLogout={handleLogout} />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Modals */}
-      {showLoginModal && (
-        <LoginModal
-          onClose={handleCloseModal}
-          onSwitchToSignUp={handleSignUpClick}
-        />
-      )}
-      {showSignUpModal && (
-        <SignUpModal
-          onClose={handleCloseModal}
-          onSwitchToLogin={handleLoginClick}
-        />
-      )}
-    </>
+          {/* User Menu */}
+            {authUser && (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt={authUser?.name} src="/path/to/avatar.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                keepMounted
+                transformOrigin={{ vertical: "top", horizontal: "right" }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {authUser?.roles?.includes("Admin") && (
+                  <MenuItem onClick={() => navigate("/dashboard")}>
+                    <Typography sx={{ textAlign: "center" }}>
+                      Dashboard
+                    </Typography>
+                  </MenuItem>
+                )}
+                <MenuItem onClick={() => navigate("/profile")}>
+                  Profile
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              </Menu>
+            </Box>
+          )}
+          {!authUser && (
+            <Button
+              onClick={() => navigate("/login")}
+              sx={{
+                my: 2,
+                color: "white",
+                textTransform: "capitalize",
+                fontWeight: 500,
+              }}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
-}
+};
 
-export default Navbar;
+export default NavBar;
