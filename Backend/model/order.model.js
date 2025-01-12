@@ -24,6 +24,15 @@ const orderSchema = mongoose.Schema(
           required: true,
           default: 1,
         },
+        amount:{
+          type:Number,
+        },
+        startDate:{
+          type:Date
+        },
+        endDate:{
+          type:Date
+        }
       },
     ],
     status: {
@@ -33,7 +42,9 @@ const orderSchema = mongoose.Schema(
       default: "created",
     },
     address: String,
+    
   },
+  
   {
     timestamps: true,
   }

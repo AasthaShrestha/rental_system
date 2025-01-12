@@ -17,7 +17,8 @@ export const getAllOrders = async (req, res) => {
 // Create a new order
 export const createOrder = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.body," req.body");
+    // return res.json({data:req.body});
     const order = await orderService.save(req.body);
 
     const signature = createSignature(
@@ -33,7 +34,7 @@ export const createOrder = async (req, res) => {
         product_code: "EPAYTEST",
         signature: signature,
         signed_field_names: "total_amount,transaction_uuid,product_code",
-        success_url: "http://localhost:5005/api/esewa/success",
+        success_url: "http://localhost:4001/api/esewa/success",
         tax_amount: "0",
         total_amount: order.amount,
         transaction_uuid: order._id,
@@ -55,6 +56,7 @@ export const createOrder = async (req, res) => {
 export const updateOrderAfterPayment = async (req, res, next) => {
   try {
     console.log(req.body);
+    console.log(req.query,"query")
     const order = await orderService.findById(req.transaction_uuid);
     order.status = "paid";
     order.transaction_code = req.transaction_code;

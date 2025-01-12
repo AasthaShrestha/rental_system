@@ -7,6 +7,7 @@ import router from "./route/rental.route.js"; // Rental system routes
 import suggestionRoute from "./route/suggestion.route.js";
 import orderRoutes from "./route/order.route.js"; // Order routes
 import esewaRoutes from "./route/esewa.route.js"; // eSewa routes
+import userRoutes from "./route/user.route.js";
 
 dotenv.config(); // Load environment variables
 
@@ -37,6 +38,7 @@ app.use("/api/posts", router);
 app.use(suggestionRoute);
 app.use("/api/orders", orderRoutes); // Order management routes
 app.use("/api/esewa", esewaRoutes); // eSewa payment routes
+app.use("/api/users",userRoutes);
 
 app.use("/uploads", express.static("uploads"));
 

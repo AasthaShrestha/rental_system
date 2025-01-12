@@ -72,7 +72,7 @@ function SinglePost() {
     const url = "http://localhost:4001/api/orders/create";
     const data = {
       amount: totalPrice,
-      products: [{ product: post.name, amount: totalPrice, quantity: 1 }],
+      products: [{ product: post.name, amount: totalPrice, quantity: 1,startDate,endDate }],
       payment_method: "esewa",
     };
 

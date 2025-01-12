@@ -2,6 +2,7 @@ import express from "express";
 // import {getRental} from "../controller/rental.controller.js";
 import Rental from "../model/rental.model.js";
 import multer from "multer";
+import validateUser from "../middlewares/userAuth.middlewares.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post("/", upload.array("images"), async (req, res) => {
+router.post("/",validateUser("any"), upload.array("images"), async (req, res) => {
   try {
     const { name, description, address, price, parentCategory, subCategory, latitude, longitude } = req.body;
 
