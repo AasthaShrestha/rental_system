@@ -46,6 +46,7 @@ export default function LogIn() {
       console.log(res);
       setAuthUser(res.data);
       localStorage.setItem("authUser", JSON.stringify(setAuthUser));
+      localStorage.setItem("token", res.token);
       navigate("/");
     },
   });
