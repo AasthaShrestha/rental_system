@@ -1,97 +1,76 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import img from "../assets/main1.jpeg";
-import Flex from "../components/Flex";
 import Footer from "../components/Footer";
-import { Link } from "react-router-dom";
-import axios from "axios";
 import Cards from "../components/Cards";
-import { Box, FormControl, InputLabel, MenuItem, Select, TablePagination } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 function Rooms() {
-const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [sortOrder, setSortOrder] = useState(""); // Sorting order state
+  const [subCategory, setSubCategory] = useState(""); // Subcategory filter state
 
-useEffect(() => {
-  const getRooms = async () => {
-    try {
-      const response = await axios.get("http://localhost:4001/api/posts/rooms");
-      if (response.data.success) {
-        setPosts(response.data.data);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        // Check if sortOrder is "clear" to reset sorting
+        let sortQuery = sortOrder === "clear" ? "" : sortOrder;  // Reset sorting if "clear" is selected
+
+        // Get posts with filters applied (subCategory and sortOrder)
+        const response = await axios.get("http://localhost:4001/api/posts/rooms", {
+          params: { order: sortQuery, subCategory: subCategory },
+        });
+
+        if (response.data.success) {
+          setPosts(response.data.data); // Update posts with filtered data
+        }
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
       }
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    }
-  };
+    };
 
-  getRooms();
-}, []);
-  const [order, setOrder] = React.useState("");
-  const [page, setPage] = React.useState(1);
-  const [rowsPerPage, setRowsPerPage] = React.useState(8);
+    fetchPosts();
+  }, [sortOrder, subCategory]); // Fetch whenever sortOrder or subCategory changes
 
-  const handleChange = (event) => {
-    setOrder(event.target.value);
-  };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage + 1);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(1);
-  };
-
-  const query = useQuery({
-    queryKey: ["products", rowsPerPage, page, order],
-    queryFn: () => getRooms(page, rowsPerPage, order),
-  });
   return (
-    <div>
+    <>
       <Navbar />
-      <Flex
-        title="Our Rooms"
-        subtitle="Experience Comfort with our services."
-        image={img}
-        children="Back"
-      />
-      <Box sx={{ display: "flex", justifyContent: "end", my: 2 }}>
-        <FormControl sx={{ width: "500px" }}>
-          <InputLabel id="demo-simple-select-label">Sort By</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={order}
-            label="Sort by"
-            onChange={handleChange}
+      <div className="pt-20 pb-6 px-4">
+        {/* Sorting and Filtering Dropdowns in the same line */}
+        <div className="flex gap-4 justify-start items-center">
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="border rounded px-4 py-2 w-full md:w-48"
           >
-            <MenuItem value={""}>Best Match</MenuItem>
-            <MenuItem value={"asc"}>Price low to high</MenuItem>
-            <MenuItem value={"desc"}>Price high to low</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            <option value="">Sort by</option>
+            <option value="asc">Price: Low to High</option>
+            <option value="desc">Price: High to Low</option>
+            <option value="clear">Clear Sorting</option> {/* Clear Sorting option */}
+          </select>
+
+          <select
+            value={subCategory}
+            onChange={(e) => setSubCategory(e.target.value)}
+            className="border rounded px-4 py-2 w-full md:w-48"
+          >
+            <option value="">Filter</option>
+            <option value="Single Room">Single Room</option>
+            <option value="Double Room">Double Room</option>
+            <option value="Flat">Flat</option>
+            <option value="House">House</option>
+            <option value="All">All Subcategories</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="pt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
         {posts.map((post) => (
-          <Link to={`/post/${post._id}`} key={post._id}>
-            <Cards post={post} />
-          </Link>
+          <Cards key={post._id} post={post} />
         ))}
       </div>
-      {posts.isSuccess && (
-        <TablePagination
-          component="div"
-          count={posts.data.total}
-          page={page - 1}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[8, 16, 24]}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      )}
+
       <Footer />
-    </div>
+    </>
   );
 }
 
