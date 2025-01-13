@@ -1,12 +1,18 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import upload_icon from "../assets/upload_image.png";
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  Autocomplete,
+} from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/hero1.jpg";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaTimes } from "react-icons/fa";
+import { axiosInstance } from "../api/axiosInstance";
 
 function PostFree() {
   const [images, setImages] = useState([]);
@@ -30,7 +36,6 @@ function PostFree() {
     "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
     Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
   };
- 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,14 +54,9 @@ function PostFree() {
     });
 
     try {
-      const response = await axios.post(
-        "api/posts",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
-        
-      );
+      const response = await axiosInstance.post("api/posts", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       toast.success("Post submitted successfully!");
       console.log("Response:", response.data);
     } catch (error) {

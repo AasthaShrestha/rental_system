@@ -12,11 +12,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { axiosInstance } from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "../Routes/Pathway";
 
 const logIn = async (data) => {
-  const res = await axios.post("http://localhost:4001/user/login", data);
+  const res = await axiosInstance.post(
+    "http://localhost:4001/user/login",
+    data
+  );
 
   return res.data;
 };
