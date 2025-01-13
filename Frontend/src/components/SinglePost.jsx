@@ -48,7 +48,18 @@ function SinglePost({ userId }) {
 
     const data = {
       amount: post.price, // Use post price for payment
-      products: [{ product: post.name, amount: post.price, quantity: 1 }], // Use post name and price
+      products: [
+        {
+          product: post.name,
+          amount: post.price,
+          quantity: 1,
+          parentCategory: post.parentCategory,
+          subCategory: post.subCategory,
+          price: post.price,
+          address: post.address,
+          productId: post._id,
+        },
+      ], // Use post name and price
       payment_method: "esewa",
     };
 
@@ -59,6 +70,7 @@ function SinglePost({ userId }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(data),
       });
