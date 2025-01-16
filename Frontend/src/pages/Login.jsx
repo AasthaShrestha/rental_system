@@ -13,35 +13,24 @@ import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuthUser } from "../Routes/Pathway";
 
-// API call for login
-const signIn = async (data) => {
-  try {
-    console.log("Sending data:", data);
-    const res = await axios.post("http://localhost:4001/user/login", data);
-    console.log("API response:", res.data);
-    return res.data;
-  } catch (error) {
-    console.error("API error:", error.response?.data || error.message);
-    throw error; // Rethrow to let `useMutation` handle it
-  }
+const logIn = async (data) => {
+  const res = await axios.post("http://localhost:4001/user/login", data);
+
+  return res.data;
 };
 
 // Validation schema using Yup
 const schema = yup
   .object({
-    email: yup
-      .string()
-      .email("Invalid email format.")
-      .required("Email is required."),
-    password: yup
-      .string()
-      .min(6, "Password must be at least 6 characters long.")
-      .required("Password is required."),
+    email: yup.string().email().required(),
+    password: yup.string().required(),
   })
   .required();
 
 export default function LogIn() {
+  const { setAuthUser } = useAuthUser();
   const navigate = useNavigate();
   const {
     register,
@@ -52,17 +41,16 @@ export default function LogIn() {
   });
 
   const mutation = useMutation({
-    mutationFn: signIn,
-    onSuccess: () => {
+    mutationFn: logIn,
+    onSuccess: (res) => {
+      console.log(res);
+      setAuthUser(res.data);
+      localStorage.setItem("authUser", JSON.stringify(setAuthUser));
       navigate("/");
-    },
-    onError: (error) => {
-      console.error("Login error:", error);
     },
   });
 
   const onSubmit = (data) => {
-    console.log("Form submitted with data:", data);
     mutation.mutate(data);
   };
   return (

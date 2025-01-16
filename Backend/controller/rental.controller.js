@@ -1,12 +1,45 @@
 import Rental from "../model/rental.model.js";
 
+
+const getRooms = async (req, res) => {
+  const { limit, page } = req.query;
+  const sort = {};
+
+  if (req.query.priceOrder) {
+    sort.price = req.query.priceOrder;
+  }
+
+  // page = 1 = skip = 0
+  // page 2 = skip = 5 (limit = 5)
+  // page 3 = skiep = 10 (limit = 5)
+
+  // skip = (page -1) * limit
+  const filter = {};
+  if (req.query.minPrice && req.query.maxPrice) {
+    filter.price = {
+      $gte: req.query.minPrice,
+      $lte: req.query.maxPrice,
+    };
+  }
+  const posts = await Product.find(filter)
+    .sort(sort)
+    .limit(limit)
+    .skip((page - 1) * limit); // -1,1, asc, desc
+  const total = await Product.countDocuments(filter);
+  res.json({
+    total,
+    data: posts,
+  });
+};
 // Create a new rental
 const createRental = async (req, res) => {
+  console.log(req.headers.token)
   try {
     const filePaths = req.files.map((file) => file.path);
     const postData = {
       ...req.body,
       images: filePaths,
+      user:req.authUser._id,
     };
 
     const post = new Rental(postData);
@@ -50,7 +83,7 @@ const getAllRentals = async (req, res) => {
 };
 
 // Fetch rentals by category (e.g., Vehicles or Rooms)
-const getRentalsByCategory = async (category, req, res) => {
+const  getRentalsByCategory = async (category, req, res) => {
   try {
     const posts = await Rental.find({ parentCategory: category });
     res.status(200).json({ success: true, data: posts });
@@ -85,6 +118,7 @@ const getRentalById = async (req, res) => {
 };
 
 export {
+  getRooms,
   createRental,
   searchRentals,
   getAllRentals,

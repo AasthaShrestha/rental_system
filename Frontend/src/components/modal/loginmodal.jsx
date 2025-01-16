@@ -248,3 +248,4 @@ const LoginWithModal = ({ onClose, onSwitchToSignUp }) => {
 };
 
 export default LoginWithModal;
+

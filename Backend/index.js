@@ -8,13 +8,16 @@ import suggestionRoute from "./route/suggestion.route.js";
 import orderRoutes from "./route/order.route.js";
 import esewaRoutes from "./route/esewa.route.js";
 import userRouter from "./route/userRoute.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const app = express();
 
 // Middleware
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json({ limit: "50mb" }));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Database connection
