@@ -136,7 +136,7 @@ const getRoomByCategory = async (category, req, res) => {
 // Fetch latest rentals
 const getLatestRentals = async (req, res) => {
   try {
-    const posts = await Rental.find().sort({ createdAt: -1 }).limit(4);
+    const posts = await Rental.find().sort({ createdAt: -1 }).limit(6);
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
