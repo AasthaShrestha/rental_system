@@ -15,8 +15,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router";
 
-const getRooms = async (page, limit) => {
-  const res = await axios.get("http://localhost:4001/api/posts/rooms", {
+const getVehicles = async (page, limit) => {
+  const res = await axios.get("http://localhost:4001/api/posts/vehicles", {
     params: {
       page,
       limit,
@@ -24,12 +24,12 @@ const getRooms = async (page, limit) => {
   });
   return res.data;
 };
-const deleteRoom = async (id) => {
-  const res = await axios.delete(`/api/posts/rooms/${id}`);
+const deleteVehicle = async (id) => {
+  const res = await axios.delete(`/api/posts/vehicles/${id}`);
   return res.data;
 };
 
-export default function DashboardRooms() {
+export default function DashboardVehicle() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const navigate = useNavigate();
@@ -44,12 +44,13 @@ export default function DashboardRooms() {
   };
 
   const query = useQuery({
-    queryKey: ["rooms", rowsPerPage, page],
-    queryFn: () => getRooms(page + 1, rowsPerPage),
+    queryKey: ["vehicles", rowsPerPage, page],
+    queryFn: () => getVehicles(page + 1, rowsPerPage),
+    keepPreviousData: true,
   });
 
   const mutation = useMutation({
-    mutationFn: deleteRoom,
+    mutationFn: deleteVehicle,
     onSuccess: () => {
       query.refetch();
       // queryClient.invalidateQueries({queryKey:["products"]});-->for different page access for refetch
@@ -68,7 +69,7 @@ export default function DashboardRooms() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {query?.data?.data?.map(({ _id, name, price, image }) => (
+          {query.data.data.map(({ _id, name, price, image }) => (
             <TableRow
               key={_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -93,7 +94,7 @@ export default function DashboardRooms() {
                 <IconButton
                   aria-label="edit"
                   onClick={() => {
-                    navigate(`/dashboard/api/posts/rooms/edit/${_id}`);
+                    navigate(`/dashboard/api/posts/vehicles/edit/${_id}`);
                   }}
                 >
                   <EditIcon />
@@ -103,6 +104,7 @@ export default function DashboardRooms() {
           ))}
         </TableBody>
       </Table>
+
       <TablePagination
         component="div"
         count={query.data.total || 0}

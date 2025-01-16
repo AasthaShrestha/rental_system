@@ -30,6 +30,31 @@ const getRooms = async (req, res) => {
     data: posts,
   });
 };
+const getVehicles = async (req, res) => {
+  const { limit, page } = req.query;
+  const sort = {};
+
+  if (req.query.priceOrder) {
+    sort.price = req.query.priceOrder;
+  }
+
+  const filter = {};
+  if (req.query.minPrice && req.query.maxPrice) {
+    filter.price = {
+      $gte: req.query.minPrice,
+      $lte: req.query.maxPrice,
+    };
+  }
+  const posts = await Product.find(filter)
+    .sort(sort)
+    .limit(limit)
+    .skip((page - 1) * limit); // -1,1, asc, desc
+  const total = await Product.countDocuments(filter);
+  res.json({
+    total,
+    data: posts,
+  });
+};
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -118,6 +143,7 @@ const getRentalById = async (req, res) => {
 
 export {
   getRooms,
+  getVehicles,
   createRental,
   searchRentals,
   getAllRentals,

@@ -20,10 +20,10 @@ import { useState, useEffect, createContext, useContext } from "react";
 import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
+import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
 
 const queryClient = new QueryClient();
 const AuthUserContext = createContext(null);
-
 
 export const useAuthUser = () => {
   return useContext(AuthUserContext);
@@ -50,9 +50,9 @@ function AdminRoutes() {
 function Pathway() {
   const [authUser, setAuthUser] = useState(getValueFromLocalstorage);
 
-   useEffect(() => {
-     localStorage.setItem("authUser", JSON.stringify(authUser));
-   }, [authUser]);
+  useEffect(() => {
+    localStorage.setItem("authUser", JSON.stringify(authUser));
+  }, [authUser]);
 
   return (
     <AuthUserContext.Provider value={{ authUser, setAuthUser }}>
@@ -69,10 +69,11 @@ function Pathway() {
             {/* </Route> */}
 
             <Route element={<AdminRoutes />}>
-              <Route path="/dashboard" element={<Dashboard />} >
-              <Route index element={<h2>Dashboard section</h2>} />
-              <Route path="rooms" element={<DashboardRooms />} />
-             </Route>
+              <Route path="/dashboard" element={<Dashboard />}>
+                <Route index element={<h2>Dashboard section</h2>} />
+                <Route path="rooms" element={<DashboardRooms />} />
+                <Route path="vehicles" element={<DashboardVehicle />} />
+              </Route>
             </Route>
 
             <Route path="/aboutus" element={<AboutUs />} />
@@ -91,6 +92,6 @@ function Pathway() {
       </QueryClientProvider>
     </AuthUserContext.Provider>
   );
-};
+}
 
 export default Pathway;

@@ -25,15 +25,21 @@ const upload = multer({ storage: storage });
 
 // Routes
 router.post("/", validateUser("any"), upload.array("images", 5), createRental);
+
 router.get("/searchSection", searchRentals);
+
 router.get("/", getAllRentals);
+
 router.get("/vehicles", (req, res) =>
   getRentalsByCategory("Vehicles", req, res)
 );
+
 router.get("/rooms", (req, res) =>
   getRentalsByCategory("Real Estate", req, res)
 );
+
 router.get("/latest", getLatestRentals);
+
 router.get("/:id", getRentalById);
 
 export default router;
