@@ -1,60 +1,4 @@
 import Rental from "../model/rental.model.js";
-
-const getRooms = async (req, res) => {
-  const { limit, page } = req.query;
-  const sort = {};
-
-  if (req.query.priceOrder) {
-    sort.price = req.query.priceOrder;
-  }
-
-  // page = 1 = skip = 0
-  // page 2 = skip = 5 (limit = 5)
-  // page 3 = skiep = 10 (limit = 5)
-
-  // skip = (page -1) * limit
-  const filter = {};
-  if (req.query.minPrice && req.query.maxPrice) {
-    filter.price = {
-      $gte: req.query.minPrice,
-      $lte: req.query.maxPrice,
-    };
-  }
-  const posts = await Product.find(filter)
-    .sort(sort)
-    .limit(limit)
-    .skip((page - 1) * limit); // -1,1, asc, desc
-  const total = await Product.countDocuments(filter);
-  res.json({
-    total,
-    data: posts,
-  });
-};
-const getVehicles = async (req, res) => {
-  const { limit, page } = req.query;
-  const sort = {};
-
-  if (req.query.priceOrder) {
-    sort.price = req.query.priceOrder;
-  }
-
-  const filter = {};
-  if (req.query.minPrice && req.query.maxPrice) {
-    filter.price = {
-      $gte: req.query.minPrice,
-      $lte: req.query.maxPrice,
-    };
-  }
-  const posts = await Product.find(filter)
-    .sort(sort)
-    .limit(limit)
-    .skip((page - 1) * limit); // -1,1, asc, desc
-  const total = await Product.countDocuments(filter);
-  res.json({
-    total,
-    data: posts,
-  });
-};
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -106,11 +50,95 @@ const getAllRentals = async (req, res) => {
   }
 };
 
-// Fetch rentals by category (e.g., Vehicles or Rooms)
-const getRentalsByCategory = async (category, req, res) => {
+const getVehicleByCategory = async (category, req, res) => {
   try {
-    const posts = await Rental.find({ parentCategory: category });
-    res.status(200).json({ success: true, data: posts });
+    const { order, subCategory, limit = 10, page = 1 } = req.query; // Get the order, subCategory, limit, and page parameters
+    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; // Set the sort order (null for random)
+
+    // Set the filters
+    const filters = { parentCategory: "Vehicles" };
+    if (subCategory && subCategory !== "All") {
+      filters.subCategory = subCategory.split(","); // If subCategory is provided, filter by it
+    }
+
+    // Create the base query
+    let postsQuery = Rental.find(filters);
+
+    // Apply sorting if sortOrder is defined
+    if (sortOrder !== null) {
+      postsQuery = postsQuery.sort({ price: sortOrder });
+    }
+
+    // Apply pagination (limit and skip)
+    const skip = (page - 1) * limit; // Skip the number of documents based on the page
+    postsQuery = postsQuery.limit(parseInt(limit, 10)).skip(skip);
+
+    // Get posts from the database
+    const posts = await postsQuery;
+
+    // If no sorting is chosen, shuffle the results randomly
+    if (!sortOrder) {
+      posts.sort(() => Math.random() - 0.5); // Randomize posts if no sorting is defined
+    }
+
+    // Get the total number of posts for pagination
+    const total = await Rental.countDocuments(filters);
+
+    // Send the response with pagination data
+    res.status(200).json({
+      success: true,
+      data: posts,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit), // Calculate total pages
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const getRoomByCategory = async (category, req, res) => {
+  try {
+    const { order, subCategory, limit = 10, page = 1 } = req.query; // Get the order, subCategory, limit, and page parameters
+    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; // Set the sort order (null for random)
+
+    // Set the filters
+    const filters = { parentCategory: "Real Estate" };
+    if (subCategory && subCategory !== "All") {
+      filters.subCategory = subCategory.split(","); // If subCategory is provided, filter by it
+    }
+
+    // Create the base query
+    let postsQuery = Rental.find(filters);
+
+    // Apply sorting if sortOrder is defined
+    if (sortOrder !== null) {
+      postsQuery = postsQuery.sort({ price: sortOrder });
+    }
+
+    // Apply pagination (limit and skip)
+    const skip = (page - 1) * limit; // Skip the number of documents based on the page
+    postsQuery = postsQuery.limit(parseInt(limit, 10)).skip(skip);
+
+    // Get posts from the database
+    const posts = await postsQuery;
+
+    // If no sorting is chosen, shuffle the results randomly
+    if (!sortOrder) {
+      posts.sort(() => Math.random() - 0.5); // Randomize posts if no sorting is defined
+    }
+
+    // Get the total number of posts for pagination
+    const total = await Rental.countDocuments(filters);
+
+    // Send the response with pagination data
+    res.status(200).json({
+      success: true,
+      data: posts,
+      total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit), // Calculate total pages
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -119,7 +147,7 @@ const getRentalsByCategory = async (category, req, res) => {
 // Fetch latest rentals
 const getLatestRentals = async (req, res) => {
   try {
-    const posts = await Rental.find().sort({ createdAt: -1 }).limit(4);
+    const posts = await Rental.find().sort({ createdAt: -1 }).limit(6);
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -142,12 +170,11 @@ const getRentalById = async (req, res) => {
 };
 
 export {
-  getRooms,
-  getVehicles,
   createRental,
   searchRentals,
   getAllRentals,
-  getRentalsByCategory,
+  getVehicleByCategory,
+  getRoomByCategory,
   getLatestRentals,
   getRentalById,
 };
