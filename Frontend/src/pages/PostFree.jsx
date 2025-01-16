@@ -1,36 +1,37 @@
-import React, { useState, useRef} from "react";
+import React, { useState, useRef } from "react";
 import upload_icon from "../assets/upload_image.png";
-import { GoogleMap, useJsApiLoader, Marker, Autocomplete, } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  Autocomplete,
+} from "@react-google-maps/api";
 import { useNavigate } from "react-router-dom";
 import backgroundImage from "../assets/hero1.jpg";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaTimes } from "react-icons/fa";
+import { axiosInstance } from "../api/axiosInstance";
 
 function PostFree() {
   const [images, setImages] = useState([]);
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
-
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
-
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
+  const [latitude, setLatitude] = useState(null);  // Added latitude state
+  const [longitude, setLongitude] = useState(null);  // Added longitude state
+  const [mapCenter, setMapCenter] = useState({ lat: 27.7172, lng: 85.324 });
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
   };
-
-  const categoryFeatures = {
-    "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
-    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
-  };
- 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +43,8 @@ function PostFree() {
     formData.append("price", price);
     formData.append("parentCategory", category);
     formData.append("subCategory", subcategory);
+    formData.append("latitude", latitude);  
+    formData.append("longitude", longitude);
 
     // Append all images to the FormData
     file.forEach((image) => {
@@ -49,16 +52,12 @@ function PostFree() {
     });
 
     try {
-      const response = await axios.post(
-        "api/posts",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
-        
-      );
+      const response = await axiosInstance.post("api/posts", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
       toast.success("Post submitted successfully!");
       console.log("Response:", response.data);
+      navigate("/");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       toast.error("Error submitting post.");
@@ -81,6 +80,11 @@ function PostFree() {
     }
   };
 
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: "AIzaSyDVsrErMhEQtr1gSWj0MyIGQzbkslWb4zY",
+    libraries: ["places"],
+    version: "weekly",
+  });
 
   // Handle location update from Autocomplete
   const handlePlaceSelect = () => {
@@ -88,8 +92,13 @@ function PostFree() {
     if (place && place.geometry) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
-      setLocation({ lat, lng }); // Update map center
-      setAddress(place.formatted_address || ""); // Update address field
+      setLatitude(lat);
+      setLatitude(lng);
+      setAddress(place.formatted_address || "");
+      setMapCenter({
+        lat:lat,
+        lng:lng,
+      });
     }
   };
 
@@ -283,12 +292,14 @@ function PostFree() {
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500 mb-6"
               />
             </Autocomplete>
+            </div>
+            <div className="mt-4">
             <GoogleMap
               mapContainerStyle={{ height: "400px", width: "100%" }}
-              center={location} // Updated dynamically
+              center={mapCenter}
               zoom={15}
             >
-              <Marker position={location} />
+              <Marker position={mapCenter} />
             </GoogleMap>
           </div>
 

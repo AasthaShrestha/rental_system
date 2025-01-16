@@ -1,33 +1,56 @@
 import jwt from "jsonwebtoken";
-// import { JWT_SECRET } from "../config/constant.js";
-import dotenv from "dotenv";
-dotenv.config();
+import { ApiError } from "../utils/ApiError.js";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const validateUser =
+  (role = "any") =>
+  (req, res, next) => {
+    // role = 1 indicates any userType with valid token is allowed
+    const auth = req.headers?.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      throw new ApiError(401, "Authorization Header Invalid");
+    }
 
-const checkAuth = (role) => {
-  return (req, res, next) => {
+    const token = auth.split(" ")[1];
+
     try {
-      console.log(req.cookies);
-      const decoded = jwt.verify(req.cookies.token, JWT_SECRET);
-      req.authUser = decoded;
-    console.log({decoded});
+      jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const decodedToken = jwt.decode(token, process.env.JWT_ACCESS_SECRET);
 
-      if (role && !req.authUser.roles.includes(role)) {
-        console.log(role);
-        res.status(401).json({
-          message: "Unauthorized",
-        });
-        return;
+      if (role == "any" || role == decodedToken.userType) {
+        // decodedToken contains {_id,userType}
+        req.user = decodedToken;
+        next();
+      } else {
+        throw new ApiError(
+          401,
+          `Forbidded for userType: ${decodedToken.userType}`
+        );
       }
-      next();
     } catch (err) {
-      console.log(err);
-      res.status(401).json({
-        message: "Unauthorized",
-      });
+      throw new ApiError(401, err.message || "Invalid or expired token");
     }
   };
+
+const optionalValidation = (req, res, next) => {
+  const auth = req.headers?.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    req.user = null;
+    return next();
+  }
+
+  const token = auth.split(" ")[1];
+
+  try {
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    const decodedToken = jwt.decode(token, process.env.JWT_ACCESS_SECRET);
+
+    req.user = decodedToken;
+    next();
+  } catch (err) {
+    throw new ApiError(401, err.message || "Invalid or expired token");
+  }
 };
 
-export { checkAuth };
+export default validateUser;
+
+export { optionalValidation };

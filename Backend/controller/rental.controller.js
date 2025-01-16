@@ -1,6 +1,5 @@
 import Rental from "../model/rental.model.js";
 
-
 const getRooms = async (req, res) => {
   const { limit, page } = req.query;
   const sort = {};
@@ -33,13 +32,13 @@ const getRooms = async (req, res) => {
 };
 // Create a new rental
 const createRental = async (req, res) => {
-  console.log(req.headers.token)
+  console.log(req.headers.token);
   try {
     const filePaths = req.files.map((file) => file.path);
     const postData = {
       ...req.body,
       images: filePaths,
-      user:req.authUser._id,
+      user: req.user._id,
     };
 
     const post = new Rental(postData);
@@ -83,19 +82,61 @@ const getAllRentals = async (req, res) => {
 };
 
 // Fetch rentals by category (e.g., Vehicles or Rooms)
-const  getRentalsByCategory = async (category, req, res) => {
+const getVehicleByCategory = async (category, req, res) => {
   try {
-    const posts = await Rental.find({ parentCategory: category });
+    const { order, subCategory } = req.query; // Get the order and subCategory parameters
+    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; // Set the sort order (null for random)
+    const filters = { parentCategory: "Vehicles" };
+    if (subCategory && subCategory !== "All") {
+      filters.subCategory = subCategory.split(","); // If subCategory is provided, filter by it
+    }
+    let postsQuery = Rental.find(filters);
+
+    // Apply sorting if sortOrder is defined
+    if (sortOrder !== null) {
+      postsQuery = postsQuery.sort({ price: sortOrder });
+    }
+    // Get posts from the database
+    const posts = await postsQuery;
+    // If no sorting is chosen, shuffle the results randomly
+    if (!sortOrder) {
+      posts.sort(() => Math.random() - 0.5);
+    }
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
 };
 
+const getRoomByCategory = async (category, req, res) => {
+  try {
+    const { order, subCategory } = req.query; // Get the order and subCategory parameters
+    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; // Set the sort order (null for random)
+    const filters = { parentCategory: "Real Estate" };
+    if (subCategory && subCategory !== "All") {
+      filters.subCategory = subCategory.split(","); // If subCategory is provided, filter by it
+    }
+    let postsQuery = Rental.find(filters);
+
+    // Apply sorting if sortOrder is defined
+    if (sortOrder !== null) {
+      postsQuery = postsQuery.sort({ price: sortOrder });
+    }
+    // Get posts from the database
+    const posts = await postsQuery;
+    // If no sorting is chosen, shuffle the results randomly
+    if (!sortOrder) {
+      posts.sort(() => Math.random() - 0.5);
+    }
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
 // Fetch latest rentals
 const getLatestRentals = async (req, res) => {
   try {
-    const posts = await Rental.find().sort({ createdAt: -1 }).limit(4);
+    const posts = await Rental.find().sort({ createdAt: -1 }).limit(6);
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -117,12 +158,14 @@ const getRentalById = async (req, res) => {
   }
 };
 
+
 export {
   getRooms,
   createRental,
   searchRentals,
   getAllRentals,
-  getRentalsByCategory,
+  getVehicleByCategory,
+  getRoomByCategory,
   getLatestRentals,
   getRentalById,
 };

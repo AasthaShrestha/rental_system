@@ -15,9 +15,13 @@ export const handleEsewaSuccess = async (req, res, next) => {
     // Validate the signature...
     const message = decodedData.signed_field_names
       .split(",")
-      .map((field) => `${field}=${decodedData[field] || ""}`)
+      .map((field) => {
+        return field == "total_amount"
+          ? `${field}=${decodedData[field].replace(",", "")}`
+          : `${field}=${decodedData[field]}`;
+      })
       .join(",");
-    
+
     const signature = createSignature(message);
 
     if (signature !== decodedData.signature) {

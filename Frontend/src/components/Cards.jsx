@@ -1,6 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Cards({ post }) {
+  const navigate = useNavigate();
+  const handleBookNow = (event) => {
+    event.stopPropagation(); // Prevent navigation from parent elements
+    navigate(`/post/${post._id}`); // Navigate only when "Book Now" is clicked
+  };
   console.log(post);
   return (
     <div className="p-4 flex justify-center">
@@ -24,8 +30,8 @@ function Cards({ post }) {
               रु {post.price}
             </div>
             <button
+              onClick={handleBookNow} // Trigger navigation on button click
               className="px-4 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-700 transition duration-300 ease-in-out"
-              onClick={() => handlePayment()}
             >
               Book Now
             </button>
