@@ -86,7 +86,6 @@ function PostFree() {
     version: "weekly",
   });
 
-  // Handle location update from Autocomplete
   const handlePlaceSelect = () => {
     const place = autocompleteRef.current.getPlace();
     if (place && place.geometry) {
@@ -101,14 +100,6 @@ function PostFree() {
       });
     }
   };
-
-
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"],
-    version: "weekly",
-  });
 
   if (!isLoaded) {
     return <div>Loading...</div>;
@@ -281,7 +272,9 @@ function PostFree() {
               Location
             </label>
             <Autocomplete
-              onLoad={(autocomplete) => (autocompleteRef.current = autocomplete)}
+              onLoad={(autocomplete) =>
+                (autocompleteRef.current = autocomplete)
+              }
               onPlaceChanged={handlePlaceSelect}
             >
               <input
@@ -302,7 +295,6 @@ function PostFree() {
               <Marker position={mapCenter} />
             </GoogleMap>
           </div>
-
 
           {/* Submit Button */}
           <button

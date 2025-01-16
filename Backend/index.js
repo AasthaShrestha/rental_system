@@ -21,23 +21,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Database connection
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4000;
 const URI = process.env.MongoDBURI || process.env.DB_URL;
 
-if (!URI) {
-    console.error("MongoDB URI is not set in environment variables.");
-    process.exit(1);
-}
-
 mongoose
-    .connect(URI)
-    .then(() => {
-        console.log("Connected to MongoDB successfully");
-    })
-    .catch((err) => {
-        console.error("Error connecting to MongoDB:", err);
-        process.exit(1);
-    });
+  .connect(URI)
+  .then(() => {
+    console.log("Connected to MongoDB successfully");
+  })
+  .catch((err) => {
+    console.error("Error connecting to MongoDB:", err);
+  });
 
 // Define routes
 app.use("/api/posts", router);
@@ -51,5 +45,5 @@ app.use("/uploads", express.static("uploads"));
 
 // Start the server
 app.listen(PORT, () => {
-    console.log(`Server running at http://127.0.0.1:${PORT}/`);
+  console.log(`Server running at http://127.0.0.1:${PORT}/`);
 });
