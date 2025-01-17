@@ -21,6 +21,7 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
+import ValidUserForm from "../components/Validuserform.jsx";
 
 const queryClient = new QueryClient();
 const AuthUserContext = createContext(null);
@@ -63,7 +64,7 @@ function Pathway() {
             <Route path="/post/:id" element={<SinglePost />} />
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/vehicles" element={<Vehicles />} />
-
+            <Route path="/validuserform" element={<ValidUserForm />} />
             {/* <Route element={<ProtectedRoutes />}> */}
             <Route path="/postforfree" element={<PostFree />} />
             {/* </Route> */}
