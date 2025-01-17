@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 function Cards({ post }) {
   const navigate = useNavigate();
   const handleBookNow = (event) => {
-    event.stopPropagation(); // Prevent navigation from parent elements
-    navigate(`/post/${post._id}`); // Navigate only when "Book Now" is clicked
+    event.stopPropagation(); 
+    navigate(`/post/${post._id}`); 
   };
   console.log(post);
   return (
