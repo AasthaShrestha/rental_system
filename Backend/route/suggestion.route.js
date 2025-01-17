@@ -1,5 +1,4 @@
 import express from "express";
-import { submitSuggestion } from "../controller/suggestion.controller.js"; // Import controller
 import validateUser from "../middleware/userAuth.middleware.js";
 import { getSuggested } from "../controller/suggest.controller.js";
 

@@ -20,7 +20,7 @@ const navItems = [
   { label: "Home", path: "/" },
   { label: "Rooms", path: "/rooms" },
   { label: "Vehicles", path: "/vehicles" },
-  { label: "Post for Free", path: "/validuserform", icon: <FaPlus /> },
+  { label: "Post for Free", path: "/postforfree", icon: <FaPlus /> },
 ];
 
 const NavBar = () => {

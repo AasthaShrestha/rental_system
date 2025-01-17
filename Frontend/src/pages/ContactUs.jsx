@@ -52,7 +52,7 @@ function ContactUs() {
     };
   
     try {
-      const response = await fetch("http://localhost:4001/api/suggestions", {
+      const response = await fetch("http://localhost:4001/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
