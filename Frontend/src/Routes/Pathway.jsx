@@ -79,7 +79,7 @@ function Pathway() {
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogDetailsPage />} />
+            <Route path="/blog/:id" element={<BlogDetailsPage />}/>
             <Route path="/objectives" element={<Objectives />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />

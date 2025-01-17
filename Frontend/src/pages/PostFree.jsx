@@ -19,22 +19,18 @@ function PostFree() {
   const [address, setAddress] = useState("");
   const [category, setCategory] = useState(""); // Main category
   const [subcategory, setSubCategory] = useState("");
-
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [price, setPrice] = useState("");
-
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
+  const [latitude, setLatitude] = useState(null);  // Added latitude state
+  const [longitude, setLongitude] = useState(null);  // Added longitude state
+  const [mapCenter, setMapCenter] = useState({ lat: 27.7172, lng: 85.324 });
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
     Vehicles: ["Bike", "Scooter", "Car", "E-Scooter"],
-  };
-
-  const categoryFeatures = {
-    "Real Estate": ["Area", "Bathrooms", "Furnished", "Parking"],
-    Vehicles: ["Condition", "ABS", "Airbags", "Electric"],
   };
 
   const handleSubmit = async (e) => {
@@ -47,6 +43,8 @@ function PostFree() {
     formData.append("price", price);
     formData.append("parentCategory", category);
     formData.append("subCategory", subcategory);
+    formData.append("latitude", latitude);  
+    formData.append("longitude", longitude);
 
     // Append all images to the FormData
     file.forEach((image) => {
@@ -59,6 +57,7 @@ function PostFree() {
       });
       toast.success("Post submitted successfully!");
       console.log("Response:", response.data);
+      navigate("/");
     } catch (error) {
       console.error("Error:", error.response?.data || error.message);
       toast.error("Error submitting post.");
@@ -82,7 +81,7 @@ function PostFree() {
   };
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyBwe0b9cHRzka1-EdBW-SSQ-45fFI8V1HI",
+    googleMapsApiKey: "AIzaSyDVsrErMhEQtr1gSWj0MyIGQzbkslWb4zY",
     libraries: ["places"],
     version: "weekly",
   });
@@ -92,8 +91,13 @@ function PostFree() {
     if (place && place.geometry) {
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
-      setLocation({ lat, lng });
+      setLatitude(lat);
+      setLatitude(lng);
       setAddress(place.formatted_address || "");
+      setMapCenter({
+        lat:lat,
+        lng:lng,
+      });
     }
   };
 
@@ -281,12 +285,14 @@ function PostFree() {
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-pink-500 mb-6"
               />
             </Autocomplete>
+            </div>
+            <div className="mt-4">
             <GoogleMap
               mapContainerStyle={{ height: "400px", width: "100%" }}
-              center={location}
+              center={mapCenter}
               zoom={15}
             >
-              <Marker position={location} />
+              <Marker position={mapCenter} />
             </GoogleMap>
           </div>
 

@@ -70,7 +70,7 @@ export const updateOrderAfterPayment = async (req, res, next) => {
 
 // Create a signature for eSewa payment verification
 export const createSignature = (message) => {
-  const secret = "8gBm/:&EnhH.1/q"; // Secret key (different in production)
+  const secret = "8gBm/:&EnhH.1/q"; 
 
   // Create an HMAC-SHA256 hash
   const hmac = crypto.createHmac("sha256", secret);

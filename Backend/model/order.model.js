@@ -39,6 +39,12 @@ const orderSchema = mongoose.Schema(
         productId: {
           type: mongoose.Schema.Types.ObjectId,
         },
+        startDate: { 
+          type: Date,
+        },
+        endDate: { 
+          type: Date,
+        },
       },
     ],
     status: {
