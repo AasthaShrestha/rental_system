@@ -35,14 +35,10 @@ router.get("/vehicles", (req, res) =>
   getVehicleByCategory("Vehicles", req, res)
 );
 
-router.get("/rooms", (req, res) =>
-  getRoomByCategory("Real Estate", req, res)
-);
+router.get("/rooms", (req, res) => getRoomByCategory("Real Estate", req, res));
 
 router.get("/latest", getLatestRentals);
 
 router.get("/:id", getRentalById);
-
-
 
 export default router;
