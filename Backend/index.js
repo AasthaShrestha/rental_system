@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Database connection
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4002;
 const URI = process.env.MongoDBURI || process.env.DB_URL;
 
 mongoose

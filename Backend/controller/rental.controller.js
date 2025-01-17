@@ -169,6 +169,46 @@ const getRentalById = async (req, res) => {
   }
 };
 
+// delete and update section
+const updateProduct = async (req, res) => {
+  await Rental.updateOne({ _id: req.params.id }, req.body);
+  res.json({
+    message: "product updated succesfully.",
+  });
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    // product fetch vayo from database with its id
+    const product = await Rental.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+    // ya image path haliyo
+    const imagePath = product.image;
+
+    if (imagePath) {
+      // path.resolve garera absolute path banaiyo
+      const absolutePath = path.resolve("uploads/", imagePath);
+      //check to file exixtence
+      if (fs.existsSync(absolutePath)) {
+        //if file exixts,delete
+        await fs.promises.unlink(absolutePath);
+        console.log("File deleted:", absolutePath);
+      } else {
+        console.warn("File not found:", absolutePath);
+      }
+    }
+    // delete the product from the database
+    await Rental.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "Product and image deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 export {
   createRental,
   searchRentals,
@@ -177,4 +217,6 @@ export {
   getRoomByCategory,
   getLatestRentals,
   getRentalById,
+  updateProduct,
+  deleteProduct,
 };
