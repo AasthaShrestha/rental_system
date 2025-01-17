@@ -68,14 +68,14 @@ export default function DashboardRooms() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {query?.data?.data?.map(({ _id, name, price, image }) => (
+          {query?.data?.data?.map(({ _id, name, price, images }) => (
             <TableRow
               key={_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
                 <Box sx={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                  <Avatar src={`http://localhost:3000/${image}`} alt={name} />
+                  <Avatar src={`http://localhost:4001/${images[0]}`} alt={name} />
                   <Typography>{name}</Typography>
                 </Box>
               </TableCell>
