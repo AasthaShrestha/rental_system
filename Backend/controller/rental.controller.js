@@ -1,4 +1,6 @@
 import Rental from "../model/rental.model.js";
+import path from "path";
+import fs from "fs";
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -181,19 +183,20 @@ const deleteProduct = async (req, res) => {
   try {
     // product fetch vayo from database with its id
     const product = await Rental.findById(req.params.id);
+    // console.log(product,"abcds")
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
     // ya image path haliyo
-    const imagePath = product.image;
-
+    const imagePath = product.images[0];
+    console.log(imagePath)
     if (imagePath) {
       // path.resolve garera absolute path banaiyo
-      const absolutePath = path.resolve("uploads/", imagePath);
+      const absolutePath = path.resolve(imagePath);
       //check to file exixtence
       if (fs.existsSync(absolutePath)) {
         //if file exixts,delete
-        await fs.promises.unlink(absolutePath);
+        fs.unlinkSync(absolutePath);
         console.log("File deleted:", absolutePath);
       } else {
         console.warn("File not found:", absolutePath);
