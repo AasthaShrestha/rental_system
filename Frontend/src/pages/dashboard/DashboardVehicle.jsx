@@ -25,7 +25,9 @@ const getVehicles = async (page, limit) => {
   return res.data;
 };
 const deleteVehicle = async (id) => {
-  const res = await axios.delete(`/api/posts/vehicles/${id}`);
+  const res = await axios.delete(
+    `http://localhost:4001/api/posts/vehicles/${id}`
+  );
   return res.data;
 };
 
@@ -53,7 +55,7 @@ export default function DashboardVehicle() {
     mutationFn: deleteVehicle,
     onSuccess: () => {
       query.refetch();
-      // queryClient.invalidateQueries({queryKey:["products"]});-->for different page access for refetch
+      // vehicle data refetch hunxa after deteletion
     },
   });
   if (query.isError) return <div>Error loading vehicles!</div>;
@@ -94,7 +96,7 @@ export default function DashboardVehicle() {
                 <IconButton
                   aria-label="edit"
                   onClick={() => {
-                    navigate(`/dashboard/api/posts/vehicles/edit/${_id}`);
+                    navigate(`/dashboard/vehicles/edit/${_id}`);
                   }}
                 >
                   <EditIcon />

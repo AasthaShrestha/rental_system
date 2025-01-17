@@ -1,18 +1,19 @@
 // esewa.controller.js
 
+import { createSignature } from "./order.controller.js"; // Make sure the path is correct
+
 export const handleEsewaSuccess = async (req, res, next) => {
   try {
     const { data } = req.query;
-
-    // Decode and parse the eSewa data as before...
-    const decodedUrlData = decodeURIComponent(data);
-    const decodedData = JSON.parse(Buffer.from(decodedUrlData, "base64").toString("utf-8"));
+    const decodedData = JSON.parse(
+      Buffer.from(data, "base64").toString("utf-8")
+    );
+    console.log(decodedData);
 
     if (decodedData.status !== "COMPLETE") {
       return res.status(400).json({ message: "error" });
     }
 
-    // Validate the signature...
     const message = decodedData.signed_field_names
       .split(",")
       .map((field) => {
@@ -25,13 +26,14 @@ export const handleEsewaSuccess = async (req, res, next) => {
     const signature = createSignature(message);
 
     if (signature !== decodedData.signature) {
-      return res.json({ message: "Integrity error" });
+      return res.json({ message: "integrity error" });
     }
 
     req.transaction_uuid = decodedData.transaction_uuid;
     req.transaction_code = decodedData.transaction_code;
     next();
   } catch (err) {
+    console.log(err);
     return res.status(400).json({ error: err?.message || "No Orders found" });
   }
 };
