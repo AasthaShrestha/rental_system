@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Flex({ children, title, subtitle, image }) {
   return (
-    <div className="relative w-full h-screen bg-cover bg-center overflow-hidden">
+    <div className="relative w-full h-full py-[10rem] bg-cover bg-center overflow-hidden">
       {/* Background Image */}
       <img
         src={image}

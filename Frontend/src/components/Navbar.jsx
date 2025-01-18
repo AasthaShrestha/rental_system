@@ -16,14 +16,13 @@ import { useNavigate } from "react-router";
 import { FaPlus } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 
-const navItems = [
-  { label: "Home", path: "/" },
-  { label: "Rooms", path: "/rooms" },
-  { label: "Vehicles", path: "/vehicles" },
-  { label: "Post for Free", path: "/postforfree", icon: <FaPlus /> },
-];
 
 const NavBar = () => {
+  const navItems = [
+    { label: "Home", path: "/" },
+    { label: "Rooms", path: "/rooms" },
+    { label: "Vehicles", path: "/vehicles" },
+  ];
   const { authUser, setAuthUser } = useAuthUser();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
@@ -150,8 +149,30 @@ const NavBar = () => {
                 )}
               </NavLink>
             ))}
-          </Box>
 
+{authUser && (<NavLink
+                key={"Post for Free"}
+                to={"/postforfree"}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: "white",
+                  fontWeight: 500,
+                  marginRight: "16px",
+                  borderBottom: isActive ? "3px solid #ff4c93" : "none",
+                  paddingBottom: isActive ? "4px" : "0",
+                  transition: "all 0.3s ease",
+                })}
+              >
+               
+                  <span style={{ display: "flex", alignItems: "center" }}>
+                  <FaPlus />
+                    <span style={{ marginLeft: "5px" }}>Post for Free</span>
+                  </span>
+               
+              </NavLink>)}
+          </Box>
+          
+         
           {/* User Menu */}
             {authUser && (
             <Box sx={{ flexGrow: 0 }}>

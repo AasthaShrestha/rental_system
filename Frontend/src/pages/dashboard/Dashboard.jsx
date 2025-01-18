@@ -129,6 +129,11 @@ export default function Dashboard() {
       route: "/dashboard/users",
       icon: <PeopleOutlineIcon />,
     },
+    {
+      label:"KYC Request",
+      route:"/dashboard/kycs",
+      icon:<PeopleOutlineIcon/>,
+    }
   ];
 
   return (

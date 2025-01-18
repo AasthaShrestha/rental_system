@@ -10,6 +10,9 @@ import {
   getRoomByCategory,
   updateProduct,
   deleteProduct,
+  getAllExpiredRental,
+  freeExpiredRentals,
+  freeExpiredRentalsById,
 } from "../controller/rental.controller.js";
 import validateUser, { optionalValidation } from "../middleware/userAuth.middleware.js";
 
@@ -33,6 +36,13 @@ router.get("/searchSection", searchRentals);
 
 router.get("/", getAllRentals);
 
+// expire
+router.get("/all-expired-rentals",validateUser('any'),getAllExpiredRental)
+router.get("/free-expired-rentals",validateUser('any'),freeExpiredRentals)
+router.get("/free-expired-rentals-by-id/:rentalId",validateUser('any'),freeExpiredRentalsById)
+
+
+
 router.get("/vehicles", (req, res) =>
   getVehicleByCategory("Vehicles", req, res)
 );
@@ -46,6 +56,7 @@ router.patch("/vehicles/edit/:id", updateProduct);
 
 router.delete("/rooms/:id", deleteProduct);
 router.delete("/vehicles/:id", deleteProduct);
-router.get("/rental/:id", getRentalById);
+router.get("/:id", getRentalById);
+
 
 export default router;

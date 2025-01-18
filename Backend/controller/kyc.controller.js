@@ -67,6 +67,7 @@ const verifyKyc = async (req,res) => {
             return res.json(new ApiResponse(404,"User not found"))
         }
         user.kycVerified = true;
+        await user.save()
         return res.json(new ApiResponse(200,"Kyc Verified"))
 
     }catch(err){

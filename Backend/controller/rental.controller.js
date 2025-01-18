@@ -1,6 +1,8 @@
 import Rental from "../model/rental.model.js";
 import path from "path";
 import fs from "fs";
+import orderModel from "../model/order.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -212,6 +214,76 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getAllExpiredRental = async (req,res) => {
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    const currentDate = new Date();
+
+    const expiredRentals = await orderModel.find({
+      "products.0.endDate": { $lt: currentDate },
+      occupied:true
+    });
+
+    res.json(new ApiResponse(200, "Expired rentals fetched successfully", expiredRentals));
+  } catch (error) {
+    res.json(new ApiResponse(500, "Failed to fetch expired rentals"));
+
+  }
+}
+
+const freeExpiredRentals = async (req,res) => {
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    const currentDate = new Date();
+
+    const expiredRentals = await orderModel.find({
+      "products.0.endDate": { $lt: currentDate },
+    });
+
+    const ids = []
+    expiredRentals.forEach(exp => {
+      const prodId = exp.products[0].productId
+      ids.push(prodId)
+    });
+    
+    const freed = await Rental.updateMany(
+      { _id: { $in: ids } ,occupied:true }, // Match rentals where `_id` is in the `ids` array
+      { $set: { occupied: false } } // Set `occupied` to `false`
+    );
+
+    res.json(new ApiResponse(200, ` ${freed.modifiedCount } Expired rentals freed successfully` ,freed));
+  } catch (error) {
+    res.json(new ApiResponse(500, "Failed to free expired rentals"));
+
+  }
+}
+
+const freeExpiredRentalsById = async (req,res) => {
+  const rentalId  = req.params.rentalId;
+
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    
+    
+    const freed = await Rental.updateOne(
+      { _id: rentalId }, // Match rentals where `_id` is in the `ids` array
+      { $set: { occupied: false } } // Set `occupied` to `false`
+    );
+
+    res.json(new ApiResponse(200, `Expired rentals freed successfully` ,freed));
+  } catch (error) {
+    res.json(new ApiResponse(500, "Failed to free expired rentals"));
+
+  }
+}
+
+
 
 export {
   createRental,
@@ -222,5 +294,8 @@ export {
   getLatestRentals,
   getRentalById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getAllExpiredRental,
+  freeExpiredRentals,
+  freeExpiredRentalsById
 };
