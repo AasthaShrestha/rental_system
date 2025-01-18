@@ -24,16 +24,78 @@ const addKyc = async (req, res, next) => {
     // Update user KYC details
     user.kycStatus = true; // Example status
     user.kycDetails = {idType,idNumber,photoUrl}; // Store the KYC details
+    user.kycFilled = true
     
 
     await user.save();
 
     // Respond with success
-    res.json(new ApiResponse(200, "KYC verified successfully", { userId: user._id, kycStatus: user.kycStatus }));
+    res.json(new ApiResponse(200, "KYC added. Pending verification", { userId: user._id, kycStatus: user.kycStatus }));
   } catch (error) {
     // Pass errors to error-handling middleware
     next(error instanceof ApiError ? error : new ApiError(500, error.message));
   }
 };
 
-export {addKyc};
+const getAllUnverifiedKyc = async (req,res)=> {
+    try {
+        console.log(req.user)
+        if (req.user.roles.includes("Admin")) {
+
+        
+            const users = await User.find({kycVerified:false,kycFilled:true});
+            console.log(users)
+            return res.json(new ApiResponse(200,"Pending verificaiton Users:",users))
+        }else{
+            return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+        }
+    } catch (error) {
+        console.log(error)
+        throw new ApiError(500,"Something went wrong ")
+    }
+}
+
+const verifyKyc = async (req,res) => {
+    const userId = req.params.userId;
+    if (!req.user.roles.includes("Admin")) {
+        return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+    }
+
+    try{
+        const user = await User.findOne({_id:userId});
+        if (!user) {
+            return res.json(new ApiResponse(404,"User not found"))
+        }
+        user.kycVerified = true;
+        return res.json(new ApiResponse(200,"Kyc Verified"))
+
+    }catch(err){
+        return res.json(new ApiResponse(500,"something went wrong"))
+    }
+}
+
+const declineKyc = async (req,res) => {
+    const userId = req.params.userId;
+    if (!req.user.roles.includes("Admin")) {
+        return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+    }
+
+    try{
+        const user = await User.findOne({_id:userId});
+        if (!user) {
+            return res.json(new ApiResponse(404,"User not found"))
+        }
+        user.kycVerified = false;
+        user.kycFilled = false;
+
+        return res.json(new ApiResponse(200,"Kyc Declined"))
+
+    }catch(err){
+        return res.json(new ApiResponse(500,"something went wrong"))
+    }
+
+
+
+}
+
+export {addKyc,getAllUnverifiedKyc,verifyKyc, declineKyc};

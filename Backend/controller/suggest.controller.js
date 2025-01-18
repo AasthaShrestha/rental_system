@@ -107,7 +107,7 @@ const getSuggestedVehicle = asynchHandler(async (req, res) => {
   if (userRentals.length == 0) {
     // if user has 0 purchased.
     const suggestions = await Rental.find({parentCategory:"Vehicles"}).sort({ createdAt: 1 });
-    return res.json(new ApiResponse(200, "Suggested Rentals", suggestions));
+    return res.json(new ApiResponse(200, "Suggested Rentals", []));
   } else {
     const latestRental = userRentals[0];
     const rentals = await Rental.find({

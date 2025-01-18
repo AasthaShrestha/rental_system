@@ -5,7 +5,8 @@ import {
   logInValidator,
 } from "../validator/userAuth.validator.js";
 import multer from "multer";
-import { addKyc } from "../controller/kyc.controller.js";
+import { addKyc, declineKyc, getAllUnverifiedKyc, verifyKyc } from "../controller/kyc.controller.js";
+import validateUser from "../middleware/userAuth.middleware.js";
 
 
 // Multer setup
@@ -25,6 +26,14 @@ const userRouter = express.Router();
 userRouter.post("/signup", signUpValidator, signUp);
 userRouter.post("/login", logInValidator, logIn);
 
-userRouter.post("/addkyc",upload.array("images", 5),addKyc)
+userRouter.post("/addkyc",validateUser('any'),upload.array("images", 5),addKyc)
+
+userRouter.get("/get-pending-kyc", validateUser('any'), getAllUnverifiedKyc);
+
+userRouter.get("/verifykyc/:userId", validateUser('any'), verifyKyc);
+
+userRouter.get("/declinekyc/:userId", validateUser('any'), declineKyc);
+
+
 
 export default userRouter;
