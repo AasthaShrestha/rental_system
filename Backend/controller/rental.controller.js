@@ -212,6 +212,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+
 export {
   createRental,
   searchRentals,
@@ -221,5 +222,5 @@ export {
   getLatestRentals,
   getRentalById,
   updateProduct,
-  deleteProduct,
+  deleteProduct
 };

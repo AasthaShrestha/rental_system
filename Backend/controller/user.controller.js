@@ -50,6 +50,7 @@ const logIn = async (req, res) => {
         _id: user._id,
         name: user.name,
         roles: user.roles,
+        kycVerified: user.kycVerified
       },
       JWT_ACCESS_SECRET,
       { expiresIn: "20d" }
@@ -74,4 +75,5 @@ const logIn = async (req, res) => {
   });
 };
 
-export { signUp, logIn };
+
+export { signUp, logIn  };

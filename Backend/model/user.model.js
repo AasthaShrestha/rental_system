@@ -27,6 +27,26 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: [7, "Password must be at least 7 characters long"],
     },
+    kycVerified:{
+      type: String,
+      default: false
+    },
+    kycDetails: {
+      idType: {
+        type: String,
+        enum: ["Passport", "National ID", "Driver's License"], // Example ID types
+        required: false,
+      },
+      idNumber: {
+        type: String,
+        required: false,
+        trim: true,
+      },
+      photoUrl:[{
+        type: String,
+        required:false
+      }],
+    }
   
   },
   {

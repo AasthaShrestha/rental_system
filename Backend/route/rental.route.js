@@ -11,7 +11,7 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controller/rental.controller.js";
-import validateUser from "../middleware/userAuth.middleware.js";
+import validateUser, { optionalValidation } from "../middleware/userAuth.middleware.js";
 
 const router = express.Router();
 
@@ -46,6 +46,6 @@ router.patch("/vehicles/edit/:id", updateProduct);
 
 router.delete("/rooms/:id", deleteProduct);
 router.delete("/vehicles/:id", deleteProduct);
-router.get("/:id", getRentalById);
+router.get("/rental/:id", getRentalById);
 
 export default router;
