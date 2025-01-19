@@ -12,7 +12,7 @@ import Paper from "@mui/material/Paper";
 // Function to fetch pending KYC requests
 const getKyc = async () => {
   const token = localStorage.getItem('token');
-  const res = await axios.get("http://localhost:4001/user/get-pending-kyc", {
+  const res = await axios.get("http://localhost:4001/user/all-expired-rentals", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -61,8 +61,7 @@ const DashboardKyc = () => {
   const { mutate: DeclineKyc } = useMutation({
     mutationFn: declineKyc,
     onSuccess: () => {
-        window.location.reload();
-      
+      window.location.reload();
     },
   });
 

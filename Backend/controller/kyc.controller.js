@@ -88,6 +88,7 @@ const declineKyc = async (req,res) => {
         }
         user.kycVerified = false;
         user.kycFilled = false;
+        await user.save()
 
         return res.json(new ApiResponse(200,"Kyc Declined"))
 
