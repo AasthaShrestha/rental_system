@@ -11,7 +11,7 @@ import {
 
 const getSuggestedRoom = asynchHandler(async (req, res) => {
   const numberOfResult = req.query.numberOfResult;
-  console.log("room")
+
 
   const userRentals = await Order.find({ user: req.user._id,  products: {
     $elemMatch: { parentCategory: "Real Estate" }, 

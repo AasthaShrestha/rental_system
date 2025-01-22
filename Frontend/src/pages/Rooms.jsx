@@ -34,7 +34,7 @@ function Rooms() {
   return (
     <>
       <Navbar />
-      <div className="pt-20 pb-6 px-4">
+      <div className="pt-10 pb-6 px-4">
         {/* Sorting and Filtering Dropdowns in the same line */}
         <div className="flex gap-4 justify-start items-center">
           <select

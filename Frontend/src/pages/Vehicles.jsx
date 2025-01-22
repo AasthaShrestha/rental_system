@@ -57,7 +57,7 @@ function Vehicles() {
   return (
     <>
       <Navbar />
-      <div className="pt-20 pb-6 px-4">
+      <div className="pt-10 pb-6 px-4">
         {/* Button to Toggle Filter and Sort Options */}
         <button
           onClick={() => setShowFilter(!showFilter)}

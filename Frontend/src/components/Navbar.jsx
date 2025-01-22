@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,7 +15,7 @@ import { useAuthUser } from "../Routes/Pathway";
 import { useNavigate } from "react-router";
 import { FaPlus } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
-
+import SearchOption from "./SearchOption";
 
 const NavBar = () => {
   const navItems = [
@@ -26,6 +26,7 @@ const NavBar = () => {
   const { authUser, setAuthUser } = useAuthUser();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -50,7 +51,14 @@ const NavBar = () => {
   };
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: "#1a1a2e" }}>
+    <AppBar
+      position="sticky"
+      sx={{
+        backgroundColor: "#1a1a2e",
+        top: 0,
+        zIndex: 1100, // Ensures it stays on top
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Logo */}
@@ -109,18 +117,7 @@ const NavBar = () => {
 
           {/* Search Bar */}
           <Box sx={{ flexGrow: 1, mx: 4 }}>
-            <input
-              type="text"
-              placeholder="Search"
-              style={{
-                width: "100%",
-                maxWidth: "400px",
-                padding: "8px 12px",
-                borderRadius: "8px",
-                border: "1px solid #ccc",
-                outline: "none",
-              }}
-            />
+            <SearchOption setSearch={setSearch} search={search} />
           </Box>
 
           {/* Desktop Menu */}
@@ -150,7 +147,8 @@ const NavBar = () => {
               </NavLink>
             ))}
 
-              {authUser && (<NavLink
+            {authUser && (
+              <NavLink
                 key={"Post for Free"}
                 to={"/postforfree"}
                 style={({ isActive }) => ({
@@ -163,18 +161,16 @@ const NavBar = () => {
                   transition: "all 0.3s ease",
                 })}
               >
-               
-                  <span style={{ display: "flex", alignItems: "center" }}>
+                <span style={{ display: "flex", alignItems: "center" }}>
                   <FaPlus />
-                    <span style={{ marginLeft: "5px" }}>Post for Free</span>
-                  </span>
-               
-              </NavLink>)}
+                  <span style={{ marginLeft: "5px" }}>Post for Free</span>
+                </span>
+              </NavLink>
+            )}
           </Box>
-          
-         
+
           {/* User Menu */}
-            {authUser && (
+          {authUser && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -198,9 +194,7 @@ const NavBar = () => {
                     </Typography>
                   </MenuItem>
                 )}
-                <MenuItem onClick={() => navigate("/profile")}>
-                  Profile
-                </MenuItem>
+                <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </Box>
