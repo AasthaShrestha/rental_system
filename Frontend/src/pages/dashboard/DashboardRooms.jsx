@@ -58,6 +58,8 @@ export default function DashboardRooms() {
   if (query.isError) return <div>Error loading vehicles!</div>;
   if (query.isLoading) return <div>Loading...</div>;
   return (
+    <Box>
+      <Typography variant="h5" gutterBottom>List of Rooms</Typography>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -112,5 +114,6 @@ export default function DashboardRooms() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </TableContainer>
+    </Box>
   );
 }

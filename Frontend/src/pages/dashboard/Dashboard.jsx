@@ -139,6 +139,11 @@ export default function Dashboard() {
       route:"/dashboard/expiredRentals",
       icon:<PeopleOutlineIcon/>
     },
+    {
+      label:"Query Detials",
+      route:"/dashboard/userquery",
+      icon:<PeopleOutlineIcon/>
+    },
   ];
 
   return (

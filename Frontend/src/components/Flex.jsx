@@ -17,7 +17,7 @@ export default function Flex({ children, title, subtitle, image }) {
       {/* Content */}
       <div className="flex flex-col items-center justify-center h-full text-center px-6 md:px-12 space-y-8">
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-pink-600 tracking-wide leading-snug md:leading-tight drop-shadow-lg animate-bounce">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-pink-600 tracking-wide leading-snug md:leading-tight drop-shadow-lg ">
           {title}
         </h1>
 

@@ -77,6 +77,11 @@ const DashboardKyc = () => {
   };
 
   return (
+    <Box>
+      <Typography variant="h5" gutterBottom>
+        KYC Verification
+      </Typography>
+    
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -143,6 +148,7 @@ const DashboardKyc = () => {
         </TableBody>
       </Table>
     </TableContainer>
+    </Box>
   );
 };
 

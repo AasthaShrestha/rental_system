@@ -30,7 +30,7 @@ const schema = yup
       .required("Email is required."),
     password: yup
       .string()
-      .min(6, "Password must be at least 6 characters long.")
+      .min(7, "Password must be at least 7 characters long.")
       .required("Password is required."),
   })
   .required();
