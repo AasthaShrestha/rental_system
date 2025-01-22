@@ -11,13 +11,13 @@ export default function Flex({ children, title, subtitle, image }) {
         alt="background"
       />
 
-      {/* Light Blur Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-30 backdrop-blur-[1px] -z-5"></div>
+      
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 "></div>
 
       {/* Content */}
       <div className="flex flex-col items-center justify-center h-full text-center px-6 md:px-12 space-y-8">
         {/* Title */}
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-pink-600 tracking-wide leading-snug md:leading-tight drop-shadow-lg ">
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold text-pink-600 tracking-wide leading-snug md:leading-tight drop-shadow-lg animate-bounce">
           {title}
         </h1>
 

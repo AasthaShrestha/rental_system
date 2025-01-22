@@ -150,7 +150,7 @@ const NavBar = () => {
               </NavLink>
             ))}
 
-{authUser && (<NavLink
+              {authUser && (<NavLink
                 key={"Post for Free"}
                 to={"/postforfree"}
                 style={({ isActive }) => ({
