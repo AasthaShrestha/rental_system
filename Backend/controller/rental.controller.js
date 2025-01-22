@@ -3,6 +3,7 @@ import path from "path";
 import fs from "fs";
 import orderModel from "../model/order.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { pid } from "process";
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -220,14 +221,70 @@ const getAllExpiredRental = async (req,res) => {
   }
   try {
     const currentDate = new Date();
+    console.log(currentDate)
 
     const expiredRentals = await orderModel.find({
       "products.0.endDate": { $lt: currentDate },
-      occupied:true
+    }).lean();
+    const ids = []
+    expiredRentals.forEach(exp => {
+      const prodId = exp.products[0].productId
+      ids.push(prodId)
     });
+    console.log(ids)
 
-    res.json(new ApiResponse(200, "Expired rentals fetched successfully", expiredRentals));
+    // const occupiedExpiredRentals = await Rental.find(
+    //   { _id: { $in: ids } ,occupied:true }, // Match rentals where `_id` is in the `ids` array
+    // ).lean();    
+
+    // const prodIds = []
+    // occupiedExpiredRentals.forEach(prod => {
+    //   const prodId = prod.orderId
+    //   prodIds.push(prodId)
+    // });
+    
+
+    // const finalExpiredRentals = await orderModel.find({
+    //   _id : { $in: prodIds }
+    // });
+
+    const occupiedExpiredRentals = await Rental.aggregate([
+      {
+        $match: {
+          _id: { $in: ids },
+          occupied: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'orders',  // Assuming the orders collection is named 'orders'
+          localField: 'orderId', // Field in `Rental` that links to `orderModel`
+          foreignField: '_id', // Field in `orderModel` that matches `orderId`
+          as: 'order' // Alias for the joined data
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',  // Assuming the orders collection is named 'orders'
+          localField: 'order.user', // Field in `Rental` that links to `orderModel`
+          foreignField: '_id', // Field in `orderModel` that matches `orderId`
+          as: 'userDetail' // Alias for the joined data
+        }
+      },
+      {
+        $unwind: {
+          path: '$order', // Unwind the 'order' array to have a single order object
+          preserveNullAndEmptyArrays: true // To handle cases where no order is found
+        }
+      }
+    ]);
+    
+
+    
+
+    res.json(new ApiResponse(200, "Expired rentals fetched successfully", occupiedExpiredRentals));
   } catch (error) {
+    console.log(error)
     res.json(new ApiResponse(500, "Failed to fetch expired rentals"));
 
   }

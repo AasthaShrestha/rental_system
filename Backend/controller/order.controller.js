@@ -20,6 +20,7 @@ export const getAllOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     console.log(req.body);
+    console.log("user is ",req.user._id)
     const order = await orderService.save({ ...req.body, user: req.user._id });
 
     const signature = createSignature(

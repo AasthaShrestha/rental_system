@@ -16,6 +16,7 @@ const rentalSchema = mongoose.Schema({
   likedBy: { type: Number, default: 1 },
   createdAt: { type: Date, default: Date.now },
   occupied: {type:Boolean,default:false},
+  orderId :{type:Schema.Types.ObjectId, ref:"Order"},
   user:{
     type:Schema.Types.ObjectId,
     ref:'User'

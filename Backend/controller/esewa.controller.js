@@ -38,6 +38,7 @@ export const handleEsewaSuccess = async (req, res, next) => {
     const selectedOrder = await orderModel.findOne({_id: req.transaction_uuid})
     const selectedRental = await Rental.findOne({_id: selectedOrder.products[0].productId})
     selectedRental.occupied = true;
+    selectedRental.orderId = req.transaction_uuid;
     await selectedRental.save();
 
 

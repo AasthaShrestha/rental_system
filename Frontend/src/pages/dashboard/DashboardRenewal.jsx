@@ -68,8 +68,8 @@ const DashboardExpiredRentals = () => {
         <Table sx={{ minWidth: 650 }} aria-label="expired rentals table">
           <TableHead>
             <TableRow>
-              <TableCell>Rental ID</TableCell>
-              <TableCell>Product ID</TableCell>
+              <TableCell>Rental by</TableCell>
+              <TableCell>Product</TableCell>
               <TableCell>End Date</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Photo</TableCell>
@@ -77,16 +77,16 @@ const DashboardExpiredRentals = () => {
           </TableHead>
           <TableBody>
             {query?.data?.data?.map((rental) => {
-              const photoUrl = rental.products[0]?.photoUrl; // Assuming `photoUrl` exists in the product
+              const photoUrl = rental.images[0]; // Assuming `photoUrl` exists in the product
               const baseUrl = "http://localhost:4001/";
               const formattedUrl = photoUrl?.replace(/\\/g, "/");
               const finalPhotoUrl = formattedUrl ? baseUrl + formattedUrl : null;
 
               return (
                 <TableRow key={rental._id}>
-                  <TableCell>{rental._id}</TableCell>
-                  <TableCell>{rental.products[0]?.productId}</TableCell>
-                  <TableCell>{new Date(rental.products[0]?.endDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{rental.userDetail[0]?.email}</TableCell>
+                  <TableCell>{rental.name}</TableCell>
+                  <TableCell>{new Date(rental.order?.products[0]?.endDate).toLocaleDateString()}</TableCell>
                   <TableCell>{rental.occupied ? "Occupied" : "Freed"}</TableCell>
                   <TableCell>
                     {finalPhotoUrl ? (
