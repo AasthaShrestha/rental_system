@@ -9,10 +9,10 @@ import TableRow from "@mui/material/TableRow";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Paper from "@mui/material/Paper";
 
-// Function to fetch pending KYC requests
-const getKyc = async () => {
-  const token = localStorage.getItem('token');
-  const res = await axios.get("http://localhost:4001/user/all-expired-rentals", {
+// Function to fetch expired rentals
+const getExpiredRentals = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("http://localhost:4001/api/posts/all-expired-rentals", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -20,10 +20,10 @@ const getKyc = async () => {
   return res.data;
 };
 
-// Function to verify KYC
-const verifyKyc = async (id) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.get(`http://localhost:4001/user/verifykyc/${id}`, {
+// Function to free expired rentals
+const freeExpiredRentals = async () => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get("http://localhost:4001/api/posts/free-expired-rentals", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -31,118 +31,84 @@ const verifyKyc = async (id) => {
   return res.data;
 };
 
-// Function to decline KYC
-const declineKyc = async (id) => {
-  const token = localStorage.getItem('token');
-  const res = await axios.get(`http://localhost:4001/user/declinekyc/${id}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  return res.data;
-};
-
-const DashboardKyc = () => {
-  // Fetch pending KYC requests
+const DashboardExpiredRentals = () => {
+  // Fetch expired rentals
   const query = useQuery({
-    queryKey: ["kycs"],
-    queryFn: getKyc,
+    queryKey: ["expiredRentals"],
+    queryFn: getExpiredRentals,
   });
 
-  // Mutation for verifying KYC
-  const { mutate: VerifyKyc } = useMutation({
-    mutationFn: verifyKyc,
+  // Mutation for freeing expired rentals
+  const { mutate: FreeExpiredRentals } = useMutation({
+    mutationFn: freeExpiredRentals,
     onSuccess: () => {
-      window.location.reload();
+      query.refetch(); // Refetch data after freeing rentals
     },
   });
 
-  // Mutation for declining KYC
-  const { mutate: DeclineKyc } = useMutation({
-    mutationFn: declineKyc,
-    onSuccess: () => {
-      window.location.reload();
-    },
-  });
-
-  // Handle accept KYC
-  const handleAcceptKyc = (id) => {
-    VerifyKyc(id);
-  };
-
-  // Handle decline KYC
-  const handleDeclineKyc = (id) => {
-    DeclineKyc(id);
+  // Handle freeing rentals
+  const handleFreeRentals = () => {
+    FreeExpiredRentals();
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Email</TableCell>
-            <TableCell align="right">Id Number</TableCell>
-            <TableCell align="right">Id Type</TableCell>
-            <TableCell align="left">Document Photo</TableCell>
-            <TableCell align="left">Action</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {query?.data?.data?.map((kyc) => {
-            const baseUrl = "http://localhost:4001/";
-            const imageUrl = kyc?.kycDetails?.photoUrl?.[0];
+    <Box>
+      <Typography variant="h5" gutterBottom>
+        Expired Rentals
+      </Typography>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleFreeRentals}
+        style={{ marginBottom: "20px" }}
+      >
+        Free Expired Rentals
+      </Button>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="expired rentals table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Rental ID</TableCell>
+              <TableCell>Product ID</TableCell>
+              <TableCell>End Date</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Photo</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {query?.data?.data?.map((rental) => {
+              const photoUrl = rental.products[0]?.photoUrl; // Assuming `photoUrl` exists in the product
+              const baseUrl = "http://localhost:4001/";
+              const formattedUrl = photoUrl?.replace(/\\/g, "/");
+              const finalPhotoUrl = formattedUrl ? baseUrl + formattedUrl : null;
 
-            // Safely handle undefined or empty imageUrl
-            if (!imageUrl) {
-              return null;
-            }
-
-            // Convert backslashes to forward slashes for valid URLs
-            const formattedUrl = imageUrl.replace(/\\/g, "/");
-            const finalUrl = baseUrl + formattedUrl;
-
-            return (
-              <TableRow
-                key={kyc._id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                    <Typography>{kyc.email}</Typography>
-                  </Box>
-                </TableCell>
-                <TableCell align="right">{kyc?.kycDetails?.idNumber}</TableCell>
-                <TableCell align="right">{kyc?.kycDetails?.idType}</TableCell>
-                <TableCell align="left">
-                  <a href={finalUrl} target="_blank" rel="noopener noreferrer">
-                    <img
-                      src={finalUrl}
-                      alt="Photo"
-                      style={{ width: "100px", height: "auto" }}
-                    />
-                  </a>
-                </TableCell>
-                <TableCell>
-                  <Button
-                    style={{ backgroundColor: "green", color: "white", marginRight: "10px" }}
-                    onClick={() => handleAcceptKyc(kyc._id)}
-                  >
-                    Accept
-                  </Button>
-                  <Button
-                    style={{ backgroundColor: "red", color: "white" }}
-                    onClick={() => handleDeclineKyc(kyc._id)}
-                  >
-                    Decline
-                  </Button>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+              return (
+                <TableRow key={rental._id}>
+                  <TableCell>{rental._id}</TableCell>
+                  <TableCell>{rental.products[0]?.productId}</TableCell>
+                  <TableCell>{new Date(rental.products[0]?.endDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{rental.occupied ? "Occupied" : "Freed"}</TableCell>
+                  <TableCell>
+                    {finalPhotoUrl ? (
+                      <a href={finalPhotoUrl} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={finalPhotoUrl}
+                          alt="Product"
+                          style={{ width: "100px", height: "auto" }}
+                        />
+                      </a>
+                    ) : (
+                      "No Photo"
+                    )}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
-export default DashboardKyc;
+export default DashboardExpiredRentals;

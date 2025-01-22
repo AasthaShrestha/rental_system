@@ -23,6 +23,7 @@ import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
 import Kyc from '../pages/Kyc.jsx'
 import DashboardKyc from '../pages/dashboard/DashboardKyc.jsx';
+import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
 // import ValidUserForm from "../components/Validuserform.jsx";
 
 
@@ -77,6 +78,7 @@ function Pathway() {
                 <Route path="rooms" element={<DashboardRooms />} />
                 <Route path="vehicles" element={<DashboardVehicle />} />
                 <Route path="kycs" element = {<DashboardKyc/>} />
+                <Route path="expiredRentals" element = {<DashboardExpiredRentals/>} />
               </Route>
             </Route>
 

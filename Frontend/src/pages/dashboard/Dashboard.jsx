@@ -133,7 +133,12 @@ export default function Dashboard() {
       label:"KYC Request",
       route:"/dashboard/kycs",
       icon:<PeopleOutlineIcon/>,
-    }
+    },
+    {
+      label:"Free Rentals",
+      route:"/dashboard/expiredRentals",
+      icon:<PeopleOutlineIcon/>
+    },
   ];
 
   return (
