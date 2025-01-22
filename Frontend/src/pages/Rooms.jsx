@@ -7,68 +7,143 @@ import axios from "axios";
 function Rooms() {
   const [posts, setPosts] = useState([]);
   const [sortOrder, setSortOrder] = useState(""); // Sorting order state
-  const [subCategory, setSubCategory] = useState(""); // Subcategory filter state
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]); 
+  const [showFilter, setShowFilter] = useState(false); 
 
+  // Fetch posts with sorting and filtering
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // Check if sortOrder is "clear" to reset sorting
-        let sortQuery = sortOrder === "clear" ? "" : sortOrder;  // Reset sorting if "clear" is selected
-
-        // Get posts with filters applied (subCategory and sortOrder)
         const response = await axios.get("http://localhost:4001/api/posts/rooms", {
-          params: { order: sortQuery, subCategory: subCategory },
+          params: {
+            order: sortOrder,
+            subCategory: selectedSubCategories.join(","),
+          },
         });
 
         if (response.data.success) {
-          setPosts(response.data.data); // Update posts with filtered data
+          setPosts(response.data.data);
         }
       } catch (error) {
-        console.error("Error fetching vehicles:", error);
+        console.error("Error fetching rooms:", error);
       }
     };
 
     fetchPosts();
-  }, [sortOrder, subCategory]); // Fetch whenever sortOrder or subCategory changes
+  }, [sortOrder, selectedSubCategories]); 
+
+  // Handle checkbox change for subcategories
+  const handleCheckboxChange = (e) => {
+    const value = e.target.value;
+    setSelectedSubCategories((prevSelected) => {
+      if (prevSelected.includes(value)) {
+        return prevSelected.filter((item) => item !== value); // Remove from selected
+      } else {
+        return [...prevSelected, value]; // Add to selected
+      }
+    });
+  };
+
+  // Handle checkbox change for sorting (with "untick" functionality)
+  const handleSortChange = (e) => {
+    const value = e.target.value;
+    if (value === "clear") {
+      setSortOrder(""); 
+    } else {
+      setSortOrder(value);
+    }
+  };
 
   return (
     <>
       <Navbar />
       <div className="pt-10 pb-6 px-4">
-        {/* Sorting and Filtering Dropdowns in the same line */}
-        <div className="flex gap-4 justify-start items-center">
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="border rounded px-4 py-2 w-full md:w-48"
-          >
-            <option value="">Sort by</option>
-            <option value="asc">Price: Low to High</option>
-            <option value="desc">Price: High to Low</option>
-            <option value="clear">Clear Sorting</option> {/* Clear Sorting option */}
-          </select>
+        {/* Button to Toggle Filter and Sort Options */}
+        <button
+          onClick={() => setShowFilter(!showFilter)}
+          className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
+        >
+          {showFilter ? "Hide Filter & Sort Options" : "Show Filter & Sort Options"}
+        </button>
 
-          <select
-            value={subCategory}
-            onChange={(e) => setSubCategory(e.target.value)}
-            className="border rounded px-4 py-2 w-full md:w-48"
-          >
-            <option value="">Filter</option>
-            <option value="Single Room">Single Room</option>
-            <option value="Double Room">Double Room</option>
-            <option value="Flat">Flat</option>
-            <option value="House">House</option>
-            <option value="All">All Subcategories</option>
-          </select>
-        </div>
+        {/* Show filter and sort options only if showFilter is true */}
+        {showFilter && (
+          <div>
+            {/* Sorting Section */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-xl text-gray-700 mb-3">Sort by:</h3>
+              <div className="flex gap-6 items-center">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="asc"
+                    checked={sortOrder === "asc"}
+                    onChange={handleSortChange}
+                    className="h-5 w-5"
+                  />
+                  <span className="text-lg">Price: Low to High</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="desc"
+                    checked={sortOrder === "desc"}
+                    onChange={handleSortChange}
+                    className="h-5 w-5"
+                  />
+                  <span className="text-lg">Price: High to Low</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="clear"
+                    checked={sortOrder === ""}
+                    onChange={handleSortChange}
+                    className="h-5 w-5"
+                  />
+                  <span className="text-lg">Clear Sorting</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Subcategory Filter Section */}
+            <div className="mb-6">
+              <h3 className="font-semibold text-xl text-gray-700 mb-3">Filter by Subcategory:</h3>
+              <div className="flex gap-6 flex-wrap">
+                {["Single Room", "Double Room", "Flat", "House"].map((option) => (
+                  <label key={option} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      value={option}
+                      checked={selectedSubCategories.includes(option)}
+                      onChange={handleCheckboxChange}
+                      className="h-5 w-5"
+                    />
+                    <span className="text-lg">{option}</span>
+                  </label>
+                ))}
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value="All"
+                    checked={selectedSubCategories.length === 0}
+                    onChange={handleCheckboxChange}
+                    className="h-5 w-5"
+                  />
+                  <span className="text-lg">All Subcategories</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
-      <div className="pt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+      {/* Cards Section */}
+      <div className={`pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 ${showFilter ? 'mt-4' : ''}`}>
         {posts.map((post) => (
           <Cards key={post._id} post={post} />
         ))}
       </div>
-
       <Footer />
     </>
   );
