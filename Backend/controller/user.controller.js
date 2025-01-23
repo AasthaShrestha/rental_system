@@ -23,6 +23,8 @@ const signUp = async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
+    latitude:req.body.latitude,
+    longitude:req.body.longitude,
   });
   res.status(201).json({
     message: "Signed Up successfully",

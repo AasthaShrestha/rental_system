@@ -10,6 +10,8 @@ const rentalSchema = mongoose.Schema({
   ],
   address: { type: String, required: true },
   description: { type: String, required: true },
+  latitude:{type: Number, required: true},
+  longitude:{type: Number, required: true},
   parentCategory: { type: String, required: true },
   subCategory: { type: String, required: true },
   price: { type: Number, required: true },

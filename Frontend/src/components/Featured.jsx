@@ -5,11 +5,13 @@ import Slider from "react-slick";
 import Cards from "./Cards";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { axiosInstance } from "../api/axiosInstance";
 
 function Featured() {
   const [posts, setPosts] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [rooms, setRooms] = useState([]);
+  const [places, setPlaces] = useState([]); // New state for places
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -62,9 +64,21 @@ function Featured() {
       }
     };
 
+    const fetchPlaces = async () => { // Fetching data from haversine API
+      try {
+        const response = await axiosInstance.get(
+          "http://localhost:4001/api/haversine"
+        );
+          setPlaces(response.data);
+      } catch (error) {
+        console.error("Error fetching places:", error);
+      }
+    };
+
     fetchPosts();
     fetchRooms();
     fetchVehicles();
+    fetchPlaces();
   }, []);
 
   const settings = {
@@ -103,7 +117,6 @@ function Featured() {
 
   return (
     <div className="max-w-screen-xl mx-auto p-4 sm:p-6 lg:p-8 bg-gray-50">
-
       {/* Latest Rooms & Vehicles Section */}
       <div className="text-center mb-8 sm:mb-10 lg:mb-12">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
@@ -131,12 +144,11 @@ function Featured() {
         </h2>
         <div className="slider-container relative w-full">
           <Slider {...settings}>
-            {rooms.length > 0 &&
-              rooms.map((room) => (
-                <Link to={`/post/${room._id}`} key={room._id}>
-                  <Cards post={room} />
-                </Link>
-              ))}
+            {rooms.map((room) => (
+              <Link to={`/post/${room._id}`} key={room._id}>
+                <Cards post={room} />
+              </Link>
+            ))}
           </Slider>
         </div>
       </div>
@@ -148,12 +160,28 @@ function Featured() {
         </h2>
         <div className="slider-container relative w-full">
           <Slider {...settings}>
-            {vehicles.length > 0 &&
-              vehicles.map((vehicle) => (
-                <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
-                  <Cards post={vehicle} />
-                </Link>
-              ))}
+            {vehicles.map((vehicle) => (
+              <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
+                <Cards post={vehicle} />
+              </Link>
+            ))}
+          </Slider>
+        </div>
+      </div>
+
+      {/* Recommended Places Section */}
+      <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          Recommended Places
+        </h2>
+        <div className="slider-container relative w-full">
+          <Slider {...settings}>
+            {places && places.map((place) => (
+              
+              <Link to={`/post/${place._id}`} key={place._id}>
+                <Cards post={place} />
+              </Link>
+            ))}
           </Slider>
         </div>
       </div>
