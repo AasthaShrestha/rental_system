@@ -147,26 +147,27 @@ const NavBar = () => {
               </NavLink>
             ))}
 
-            {authUser && (
-              <NavLink
-                key={"Post for Free"}
-                to={"/postforfree"}
-                style={({ isActive }) => ({
-                  textDecoration: "none",
-                  color: "white",
-                  fontWeight: 500,
-                  marginRight: "16px",
-                  borderBottom: isActive ? "3px solid #ff4c93" : "none",
-                  paddingBottom: isActive ? "4px" : "0",
-                  transition: "all 0.3s ease",
-                })}
-              >
-                <span style={{ display: "flex", alignItems: "center" }}>
-                  <FaPlus />
-                  <span style={{ marginLeft: "5px" }}>Post for Free</span>
-                </span>
-              </NavLink>
-            )}
+{authUser && (
+  <NavLink
+    key={"Post for Free"}
+    to={authUser?.kycVerified ? "/postforfree" : "/kyc"}
+    style={({ isActive }) => ({
+      textDecoration: "none",
+      color: "white",
+      fontWeight: 500,
+      marginRight: "16px",
+      borderBottom: isActive ? "3px solid #ff4c93" : "none",
+      paddingBottom: isActive ? "4px" : "0",
+      transition: "all 0.3s ease",
+    })}
+  >
+    <span style={{ display: "flex", alignItems: "center" }}>
+      <FaPlus />
+      <span style={{ marginLeft: "5px" }}>Post for Free</span>
+    </span>
+  </NavLink>
+)}
+
           </Box>
 
           {/* User Menu */}
