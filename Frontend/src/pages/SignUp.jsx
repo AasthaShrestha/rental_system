@@ -15,7 +15,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 // API call for signing up
-const signUp = async (data) => {
+const signsUp = async (data) => {
   const res = await axios.post("http://localhost:4001/user/signup", data);
   return res.data; // Return response data
 };
@@ -46,7 +46,7 @@ export default function SignUp() {
   });
 
   const mutation = useMutation({
-    mutationFn: signUp,
+    mutationFn: signsUp,
     onSuccess: () => {
       navigate("/login");
     },

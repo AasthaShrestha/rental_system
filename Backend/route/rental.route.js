@@ -8,6 +8,8 @@ import {
   getRentalById,
   getVehicleByCategory,
   getRoomByCategory,
+  updateProduct,
+  deleteProduct,
 } from "../controller/rental.controller.js";
 import validateUser from "../middleware/userAuth.middleware.js";
 
@@ -39,6 +41,11 @@ router.get("/rooms", (req, res) => getRoomByCategory("Real Estate", req, res));
 
 router.get("/latest", getLatestRentals);
 
+router.patch("/rooms/edit/:id", updateProduct);
+router.patch("/vehicles/edit/:id", updateProduct);
+
+router.delete("/rooms/:id", deleteProduct);
+router.delete("/vehicles/:id", deleteProduct);
 router.get("/:id", getRentalById);
 
 export default router;

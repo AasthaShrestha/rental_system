@@ -21,6 +21,7 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
+import DashRoomEdit from "../pages/dashboard/DashRoomEdit.jsx";
 
 const queryClient = new QueryClient();
 const AuthUserContext = createContext(null);
@@ -73,13 +74,17 @@ function Pathway() {
                 <Route index element={<h2>Dashboard section</h2>} />
                 <Route path="rooms" element={<DashboardRooms />} />
                 <Route path="vehicles" element={<DashboardVehicle />} />
+                <Route
+                  path="rooms/edit/:productId"
+                  element={<DashRoomEdit />}
+                />
               </Route>
             </Route>
 
             <Route path="/aboutus" element={<AboutUs />} />
             <Route path="/contactus" element={<ContactUs />} />
             <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogDetailsPage />}/>
+            <Route path="/blog/:id" element={<BlogDetailsPage />} />
             <Route path="/objectives" element={<Objectives />} />
             <Route path="/login" element={<LogIn />} />
             <Route path="/signup" element={<SignUp />} />

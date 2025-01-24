@@ -7,7 +7,7 @@ export default function Flex({ children, title, subtitle, image }) {
       {/* Background Image */}
       <img
         src={image}
-        className="absolute top-0 left-0 w-full h-full object-cover -z-10"
+        className="absolute top-0 left-0 w-full h-full object-cover -z-10 opacity-80"
         alt="background"
       />
 
