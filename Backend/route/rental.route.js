@@ -13,6 +13,7 @@ import {
   getAllExpiredRental,
   freeExpiredRentals,
   freeExpiredRentalsById,
+  getUserRentals,
 } from "../controller/rental.controller.js";
 import validateUser, { optionalValidation } from "../middleware/userAuth.middleware.js";
 
@@ -42,6 +43,8 @@ router.get("/free-expired-rentals",validateUser('any'),freeExpiredRentals)
 router.get("/free-expired-rentals-by-id/:rentalId",validateUser('any'),freeExpiredRentalsById)
 
 
+router.get("/mypost",validateUser('any'),getUserRentals);
+
 
 router.get("/vehicles", (req, res) =>
   getVehicleByCategory("Vehicles", req, res)
@@ -57,6 +60,8 @@ router.patch("/vehicles/edit/:id", updateProduct);
 router.delete("/rooms/:id", deleteProduct);
 router.delete("/vehicles/:id", deleteProduct);
 router.get("/:id", getRentalById);
+
+
 
 
 export default router;

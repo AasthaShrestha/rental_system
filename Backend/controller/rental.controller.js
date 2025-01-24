@@ -55,6 +55,18 @@ const getAllRentals = async (req, res) => {
   }
 };
 
+const getUserRentals = async (req, res) => {
+  const userId = req.user._id; // Assuming the user ID is passed as a route parameter
+  try {
+    // Find rentals where the user field matches the given user ID
+    const posts = await Rental.find({ user: userId });
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
 const getVehicleByCategory = async (category, req, res) => {
   try {
     const { order, subCategory, limit = 10, page = 1 } = req.query; // Get the order, subCategory, limit, and page parameters
@@ -354,5 +366,6 @@ export {
   deleteProduct,
   getAllExpiredRental,
   freeExpiredRentals,
-  freeExpiredRentalsById
+  freeExpiredRentalsById,
+  getUserRentals,
 };

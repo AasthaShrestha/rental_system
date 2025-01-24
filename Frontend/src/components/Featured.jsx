@@ -172,7 +172,7 @@ function Featured() {
       {/* Recommended Places Section */}
       <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          Recommended Places
+          Nearby you
         </h2>
         <div className="slider-container relative w-full">
           <Slider {...settings}>

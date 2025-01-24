@@ -84,6 +84,7 @@ function SinglePost() {
           product: post.name,
           amount: post.price,
           quantity: 1,
+          image:post.image,
           parentCategory: post.parentCategory,
           subCategory: post.subCategory,
           price: post.price,

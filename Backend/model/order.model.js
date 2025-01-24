@@ -24,6 +24,9 @@ const orderSchema = mongoose.Schema(
           required: true,
           default: 1,
         },
+        image:{
+          type:String,
+        },
         parentCategory: {
           type: String,
         },

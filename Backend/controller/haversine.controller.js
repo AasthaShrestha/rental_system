@@ -22,7 +22,6 @@ export const getRentalsByDistance = async (req, res) => {
           rental.latitude,
           rental.longitude,
         );
-        console.log(distance);
         
         return { ...rental.toObject(), distance }; // Add distance to rental object
       });
