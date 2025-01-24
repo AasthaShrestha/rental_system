@@ -4,7 +4,7 @@ import { calculateDistance } from "../utils/harversine.js";
 
 export const getRentalsByDistance = async (req, res) => {
     try {
-        const maxDistance=5;
+        const maxDistance=50;
         const user= await User.findOne({_id:req.user._id});
         const latitude=user.latitude;
         const longitude=user.longitude;
@@ -22,6 +22,7 @@ export const getRentalsByDistance = async (req, res) => {
           rental.latitude,
           rental.longitude,
         );
+        console.log(distance);
         
         return { ...rental.toObject(), distance }; // Add distance to rental object
       });
