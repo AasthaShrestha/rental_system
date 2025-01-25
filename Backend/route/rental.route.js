@@ -10,8 +10,14 @@ import {
   getRoomByCategory,
   updateProduct,
   deleteProduct,
+  getAllExpiredRental,
+  freeExpiredRentals,
+  freeExpiredRentalsById,
+  getUserRentals,
+  updateRentalPost,
+  deleteRentalPost,
 } from "../controller/rental.controller.js";
-import validateUser from "../middleware/userAuth.middleware.js";
+import validateUser, { optionalValidation } from "../middleware/userAuth.middleware.js";
 
 const router = express.Router();
 
@@ -33,6 +39,18 @@ router.get("/searchSection", searchRentals);
 
 router.get("/", getAllRentals);
 
+// expire
+router.get("/all-expired-rentals",validateUser('any'),getAllExpiredRental)
+router.get("/free-expired-rentals",validateUser('any'),freeExpiredRentals)
+router.get("/free-expired-rentals-by-id/:rentalId",validateUser('any'),freeExpiredRentalsById)
+
+
+router.get("/mypost",validateUser('any'),getUserRentals);
+
+router.patch("/mypost/:id", validateUser('any'),updateRentalPost);
+router.delete("/mypost/:id", validateUser('any'),deleteRentalPost);
+
+
 router.get("/vehicles", (req, res) =>
   getVehicleByCategory("Vehicles", req, res)
 );
@@ -47,5 +65,8 @@ router.patch("/vehicles/edit/:id", updateProduct);
 router.delete("/rooms/:id", deleteProduct);
 router.delete("/vehicles/:id", deleteProduct);
 router.get("/:id", getRentalById);
+
+
+
 
 export default router;

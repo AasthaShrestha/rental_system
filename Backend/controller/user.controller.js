@@ -23,6 +23,8 @@ const signUp = async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
+    latitude: req.body.latitude,
+    longitude: req.body.longitude,
   });
   res.status(201).json({
     message: "Signed Up successfully",
@@ -50,6 +52,7 @@ const logIn = async (req, res) => {
         _id: user._id,
         name: user.name,
         roles: user.roles,
+        kycVerified: user.kycVerified
       },
       JWT_ACCESS_SECRET,
       { expiresIn: "20d" }
@@ -74,4 +77,34 @@ const logIn = async (req, res) => {
   });
 };
 
-export { signUp, logIn };
+
+const imageUploader = async (req, res) => {
+  try {
+    const userId = req.user._id; // Assuming the user ID is available in req.user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { image: `/uploads/profile/${req.file.filename}` },
+      { new: true }
+    );
+
+    res.status(200).json({
+      message: "Image uploaded successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Error updating user image" });
+  }
+}
+
+
+const myData= async (req,res)=>{
+  const userId = req.user._id; 
+  const updatedUser = await User.findOne({_id:userId});
+  res.status(200).json({
+    message: " successfull",
+    data: updatedUser,
+  });
+}
+
+
+export { signUp, logIn ,imageUploader, myData};

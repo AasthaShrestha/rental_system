@@ -1,6 +1,9 @@
 import Rental from "../model/rental.model.js";
 import path from "path";
 import fs from "fs";
+import orderModel from "../model/order.model.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { pid } from "process";
 // Create a new rental
 const createRental = async (req, res) => {
   console.log(req.headers.token);
@@ -49,6 +52,87 @@ const getAllRentals = async (req, res) => {
     res.status(200).json({ success: true, data: posts });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const getUserRentals = async (req, res) => {
+  const userId = req.user._id; // Assuming the user ID is passed as a route parameter
+  try {
+    // Find rentals where the user field matches the given user ID
+    const posts = await Rental.find({ user: userId });
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+
+const updateRentalPost = async (req, res) => {
+  const { id } = req.params; // Rental post ID
+  const userId = req.user._id; // Authenticated user ID from middleware
+  const updateData = req.body; // Data to update
+
+  try {
+    // Find the rental post by ID
+    const rentalPost = await Rental.findById(id);
+
+    // Check if the post exists
+    if (!rentalPost) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+    console.log(rentalPost.user.toString())
+    console.log(userId)
+    // Check if the logged-in user is the owner of the post
+    if (!rentalPost.user.equals(userId)) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+
+    // Update the post with new data
+    const updatedRental = await Rental.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Post updated successfully",
+      data: updatedRental,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
+//deletee by user
+const deleteRentalPost = async (req, res) => {
+  const { id } = req.params; // Rental post ID
+  const userId = req.user._id; // Authenticated user ID from middleware
+
+  try {
+    // Find the rental post by ID
+    const rentalPost = await Rental.findById(id);
+
+    // Check if the post exists
+    if (!rentalPost) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+
+    // Check if the logged-in user is the owner of the post
+    if (!rentalPost.user.equals(userId)) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+    // Delete the rental post
+    await Rental.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
   }
 };
 
@@ -212,6 +296,133 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const getAllExpiredRental = async (req,res) => {
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    const currentDate = new Date();
+    console.log(currentDate)
+
+    const expiredRentals = await orderModel.find({
+      "products.0.endDate": { $lt: currentDate },
+    }).lean();
+    const ids = []
+    expiredRentals.forEach(exp => {
+      const prodId = exp.products[0].productId
+      ids.push(prodId)
+    });
+    console.log(ids)
+
+    // const occupiedExpiredRentals = await Rental.find(
+    //   { _id: { $in: ids } ,occupied:true }, // Match rentals where `_id` is in the `ids` array
+    // ).lean();    
+
+    // const prodIds = []
+    // occupiedExpiredRentals.forEach(prod => {
+    //   const prodId = prod.orderId
+    //   prodIds.push(prodId)
+    // });
+    
+
+    // const finalExpiredRentals = await orderModel.find({
+    //   _id : { $in: prodIds }
+    // });
+
+    const occupiedExpiredRentals = await Rental.aggregate([
+      {
+        $match: {
+          _id: { $in: ids },
+          occupied: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'orders',  // Assuming the orders collection is named 'orders'
+          localField: 'orderId', // Field in `Rental` that links to `orderModel`
+          foreignField: '_id', // Field in `orderModel` that matches `orderId`
+          as: 'order' // Alias for the joined data
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',  // Assuming the orders collection is named 'orders'
+          localField: 'order.user', // Field in `Rental` that links to `orderModel`
+          foreignField: '_id', // Field in `orderModel` that matches `orderId`
+          as: 'userDetail' // Alias for the joined data
+        }
+      },
+      {
+        $unwind: {
+          path: '$order', // Unwind the 'order' array to have a single order object
+          preserveNullAndEmptyArrays: true // To handle cases where no order is found
+        }
+      }
+    ]);
+    
+
+    
+
+    res.json(new ApiResponse(200, "Expired rentals fetched successfully", occupiedExpiredRentals));
+  } catch (error) {
+    console.log(error)
+    res.json(new ApiResponse(500, "Failed to fetch expired rentals"));
+
+  }
+}
+
+const freeExpiredRentals = async (req,res) => {
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    const currentDate = new Date();
+
+    const expiredRentals = await orderModel.find({
+      "products.0.endDate": { $lt: currentDate },
+    });
+
+    const ids = []
+    expiredRentals.forEach(exp => {
+      const prodId = exp.products[0].productId
+      ids.push(prodId)
+    });
+    
+    const freed = await Rental.updateMany(
+      { _id: { $in: ids } ,occupied:true }, // Match rentals where `_id` is in the `ids` array
+      { $set: { occupied: false } } // Set `occupied` to `false`
+    );
+
+    res.json(new ApiResponse(200, ` ${freed.modifiedCount } Expired rentals freed successfully` ,freed));
+  } catch (error) {
+    res.json(new ApiResponse(500, "Failed to free expired rentals"));
+
+  }
+}
+
+const freeExpiredRentalsById = async (req,res) => {
+  const rentalId  = req.params.rentalId;
+
+  if (!req.user?.roles.includes("Admin")) {
+    return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
+  }
+  try {
+    
+    
+    const freed = await Rental.updateOne(
+      { _id: rentalId }, // Match rentals where `_id` is in the `ids` array
+      { $set: { occupied: false } } // Set `occupied` to `false`
+    );
+
+    res.json(new ApiResponse(200, `Expired rentals freed successfully` ,freed));
+  } catch (error) {
+    res.json(new ApiResponse(500, "Failed to free expired rentals"));
+
+  }
+}
+
+
+
 export {
   createRental,
   searchRentals,
@@ -222,4 +433,10 @@ export {
   getRentalById,
   updateProduct,
   deleteProduct,
+  getAllExpiredRental,
+  freeExpiredRentals,
+  freeExpiredRentalsById,
+  getUserRentals,
+  updateRentalPost,
+  deleteRentalPost,
 };

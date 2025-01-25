@@ -21,9 +21,13 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
-import AllowAddress from "../pages/Allowaddress.jsx";
+import Kyc from '../pages/Kyc.jsx'
+import DashboardKyc from '../pages/dashboard/DashboardKyc.jsx';
+import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
+import DashboardQuery from "../pages/dashboard/DashboardQuery.jsx";
+// import ValidUserForm from "../components/Validuserform.jsx";
 
-const queryClient = new QueryClient();
+
 const AuthUserContext = createContext(null);
 
 export const useAuthUser = () => {
@@ -57,7 +61,7 @@ function Pathway() {
 
   return (
     <AuthUserContext.Provider value={{ authUser, setAuthUser }}>
-      <QueryClientProvider client={queryClient}>
+      
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -74,6 +78,9 @@ function Pathway() {
                 <Route index element={<h2>Dashboard section</h2>} />
                 <Route path="rooms" element={<DashboardRooms />} />
                 <Route path="vehicles" element={<DashboardVehicle />} />
+                <Route path="kycs" element = {<DashboardKyc/>} />
+                <Route path="expiredRentals" element = {<DashboardExpiredRentals/>} />
+                <Route path="userquery" element = {<DashboardQuery/>} />
               </Route>
             </Route>
 
@@ -86,12 +93,11 @@ function Pathway() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profileDetails" element={<ProfileDetails />} />
-            <Route path="/allowaddress" element={<AllowAddress/>} />
+            <Route path="/kyc" element={<Kyc/>} />
 
             <Route path="*" element={<Error />} />
           </Routes>
         </BrowserRouter>
-      </QueryClientProvider>
     </AuthUserContext.Provider>
   );
 }

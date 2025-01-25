@@ -10,6 +10,8 @@ import esewaRoutes from "./route/esewa.route.js";
 import userRouter from "./route/userRoute.js";
 import cookieParser from "cookie-parser";
 import suggestRoute from "./route/suggestion.route.js";
+import haversineRoute from "./route/havesine.route.js";
+import denialRoute from "./route/denial.route.js";
 dotenv.config();
 const app = express();
 
@@ -40,6 +42,9 @@ app.use("/user", userRouter);
 app.use("/api/orders", orderRoutes); // Order management routes
 app.use("/api/esewa", esewaRoutes); // eSewa payment routes
 app.use("/api/suggest", suggestRoute);
+app.use("/api/haversine", haversineRoute);
+app.use("/api/denial", denialRoute);
+
 
 app.use("/uploads", express.static("uploads"));
 

@@ -61,6 +61,8 @@ export default function DashboardVehicle() {
   if (query.isError) return <div>Error loading vehicles!</div>;
   if (query.isLoading) return <div>Loading...</div>;
   return (
+    <Box>
+    <Typography variant="h5" gutterBottom>List of Vehicles</Typography>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -116,5 +118,6 @@ export default function DashboardVehicle() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </TableContainer>
+    </Box>
   );
 }
