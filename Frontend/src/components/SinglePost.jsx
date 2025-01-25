@@ -60,26 +60,38 @@ function SinglePost() {
       const days = Math.ceil((endDate - startDate) / (1000 * 3600 * 24)); // Calculate days difference
       const price = post.price * days; // Base price multiplied by the number of days
       setTotalPrice(price);
-      setDays(days); // Update the days for the dropdown
+      setDays(days); 
     } else {
-      setTotalPrice(0); // Reset if either date is not selected
-      setDays(null); // Reset days if dates are not selected
+      setTotalPrice(0); 
+      setDays(null); 
     }
   }, [startDate, endDate, post]);
 
   // Handle payment logic
   const handlePayment = async () => {
-    console.log("Book Now button clicked!"); // Debug log
+    console.log("Book Now button clicked!");
 
     if (!post || !startDate || !endDate) {
-      console.log("Missing required fields!"); // Debug log
+      console.log("Missing required fields!");
       return;
     }
 
     const url = "http://localhost:4001/api/orders/create";
     const data = {
       amount: totalPrice,
-      products: [{ product: post.name, amount: totalPrice, quantity: 1, startDate, endDate }],
+      products: [
+        {
+          product: post.name,
+          amount: post.price,
+          quantity: 1,
+          parentCategory: post.parentCategory,
+          subCategory: post.subCategory,
+          price: post.price,
+          address: post.address,
+          productId: post._id,
+          startDate,endDate
+        },
+      ],
       payment_method: "esewa",
     };
 

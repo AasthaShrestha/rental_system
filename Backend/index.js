@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
 import router from "./route/rental.route.js"; // Importing routes
-import suggestionRoute from "./route/suggestion.route.js";
+import contactRoute from "./route/contact.route.js";
 import orderRoutes from "./route/order.route.js";
 import esewaRoutes from "./route/esewa.route.js";
 import userRouter from "./route/userRoute.js";
@@ -35,7 +35,7 @@ mongoose
 
 // Define routes
 app.use("/api/posts", router);
-app.use(suggestionRoute);
+app.use("/api/contact",contactRoute);
 app.use("/user", userRouter);
 app.use("/api/orders", orderRoutes); // Order management routes
 app.use("/api/esewa", esewaRoutes); // eSewa payment routes

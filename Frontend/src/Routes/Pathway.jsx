@@ -21,7 +21,7 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
-import DashRoomEdit from "../pages/dashboard/DashRoomEdit.jsx";
+import AllowAddress from "../pages/Allowaddress.jsx";
 
 const queryClient = new QueryClient();
 const AuthUserContext = createContext(null);
@@ -64,7 +64,7 @@ function Pathway() {
             <Route path="/post/:id" element={<SinglePost />} />
             <Route path="/rooms" element={<Rooms />} />
             <Route path="/vehicles" element={<Vehicles />} />
-
+            {/* <Route path="/validuserform" element={<ValidUserForm />} /> */}
             {/* <Route element={<ProtectedRoutes />}> */}
             <Route path="/postforfree" element={<PostFree />} />
             {/* </Route> */}
@@ -74,10 +74,6 @@ function Pathway() {
                 <Route index element={<h2>Dashboard section</h2>} />
                 <Route path="rooms" element={<DashboardRooms />} />
                 <Route path="vehicles" element={<DashboardVehicle />} />
-                <Route
-                  path="rooms/edit/:productId"
-                  element={<DashRoomEdit />}
-                />
               </Route>
             </Route>
 
@@ -90,6 +86,7 @@ function Pathway() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/profileDetails" element={<ProfileDetails />} />
+            <Route path="/allowaddress" element={<AllowAddress/>} />
 
             <Route path="*" element={<Error />} />
           </Routes>
