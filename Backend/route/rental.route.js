@@ -14,6 +14,8 @@ import {
   freeExpiredRentals,
   freeExpiredRentalsById,
   getUserRentals,
+  updateRentalPost,
+  deleteRentalPost,
 } from "../controller/rental.controller.js";
 import validateUser, { optionalValidation } from "../middleware/userAuth.middleware.js";
 
@@ -44,6 +46,9 @@ router.get("/free-expired-rentals-by-id/:rentalId",validateUser('any'),freeExpir
 
 
 router.get("/mypost",validateUser('any'),getUserRentals);
+
+router.patch("/mypost/:id", validateUser('any'),updateRentalPost);
+router.delete("/mypost/:id", validateUser('any'),deleteRentalPost);
 
 
 router.get("/vehicles", (req, res) =>

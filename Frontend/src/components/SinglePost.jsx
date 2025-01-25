@@ -75,6 +75,7 @@ function SinglePost() {
       console.log("Missing required fields!");
       return;
     }
+   
 
     const url = "http://localhost:4001/api/orders/create";
     const data = {
@@ -84,7 +85,7 @@ function SinglePost() {
           product: post.name,
           amount: post.price,
           quantity: 1,
-          image:post.image,
+          image:post.images[0],
           parentCategory: post.parentCategory,
           subCategory: post.subCategory,
           price: post.price,

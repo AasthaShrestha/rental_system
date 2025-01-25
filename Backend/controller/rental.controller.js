@@ -67,6 +67,75 @@ const getUserRentals = async (req, res) => {
 };
 
 
+const updateRentalPost = async (req, res) => {
+  const { id } = req.params; // Rental post ID
+  const userId = req.user._id; // Authenticated user ID from middleware
+  const updateData = req.body; // Data to update
+
+  try {
+    // Find the rental post by ID
+    const rentalPost = await Rental.findById(id);
+
+    // Check if the post exists
+    if (!rentalPost) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+    console.log(rentalPost.user.toString())
+    console.log(userId)
+    // Check if the logged-in user is the owner of the post
+    if (!rentalPost.user.equals(userId)) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+
+    // Update the post with new data
+    const updatedRental = await Rental.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Post updated successfully",
+      data: updatedRental,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
+//deletee by user
+const deleteRentalPost = async (req, res) => {
+  const { id } = req.params; // Rental post ID
+  const userId = req.user._id; // Authenticated user ID from middleware
+
+  try {
+    // Find the rental post by ID
+    const rentalPost = await Rental.findById(id);
+
+    // Check if the post exists
+    if (!rentalPost) {
+      return res.status(404).json({ success: false, message: "Post not found" });
+    }
+
+    // Check if the logged-in user is the owner of the post
+    if (!rentalPost.user.equals(userId)) {
+      return res.status(403).json({ success: false, message: "Unauthorized action" });
+    }
+
+    // Delete the rental post
+    await Rental.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Post deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Server error", error: error.message });
+  }
+};
+
 const getVehicleByCategory = async (category, req, res) => {
   try {
     const { order, subCategory, limit = 10, page = 1 } = req.query; // Get the order, subCategory, limit, and page parameters
@@ -368,4 +437,6 @@ export {
   freeExpiredRentals,
   freeExpiredRentalsById,
   getUserRentals,
+  updateRentalPost,
+  deleteRentalPost,
 };

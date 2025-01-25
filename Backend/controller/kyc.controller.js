@@ -39,18 +39,18 @@ const addKyc = async (req, res, next) => {
 
 const getAllUnverifiedKyc = async (req,res)=> {
     try {
-        console.log(req.user)
+        
         if (req.user.roles.includes("Admin")) {
 
         
             const users = await User.find({kycVerified:false,kycFilled:true});
-            console.log(users)
+            
             return res.json(new ApiResponse(200,"Pending verificaiton Users:",users))
         }else{
             return res.json(new ApiResponse(403,"Forbidded route. Only for admin"))
         }
     } catch (error) {
-        console.log(error)
+        
         throw new ApiError(500,"Something went wrong ")
     }
 }

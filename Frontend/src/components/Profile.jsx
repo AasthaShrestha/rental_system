@@ -23,6 +23,11 @@ const UserProfile = () => {
   const [errorOrders, setErrorOrders] = useState(null);
   const [listedItemsPage, setListedItemsPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
+  
+  const [userData, setUserData] = useState(() => {
+    const storedUser = localStorage.getItem("authUser");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
   useEffect(() => {
     const fetchListedItems = async () => {
@@ -80,7 +85,6 @@ const UserProfile = () => {
       return <Typography>No items listed yet.</Typography>;
     }
 
-    // Pagination logic
     const itemsPerPage = 5;
     const startIndex = (listedItemsPage - 1) * itemsPerPage;
     const currentPageItems = listedItems.slice(startIndex, startIndex + itemsPerPage);
@@ -133,7 +137,6 @@ const UserProfile = () => {
       return <Typography>No items booked yet.</Typography>;
     }
 
-    // Pagination logic
     const itemsPerPage = 5;
     const startIndex = (ordersPage - 1) * itemsPerPage;
     const currentPageOrders = orders.slice(startIndex, startIndex + itemsPerPage);
@@ -203,14 +206,12 @@ const UserProfile = () => {
           sx={{ width: 100, height: 100, mb: 2 }}
         />
         <Typography variant="h5" fontWeight="bold" color="text.primary" gutterBottom>
-          John Doe
+          {userData?.name || "Guest User"}
         </Typography>
         <Typography variant="body1" color="text.primary" gutterBottom>
-          john.doe@example.com
+          {userData?.email || "No email available"}
         </Typography>
-        <Button variant="contained" sx={{ mt: 2 }}>
-          Add More Information
-        </Button>
+        
       </Box>
 
       <Grid container spacing={4}>
@@ -221,7 +222,6 @@ const UserProfile = () => {
                 Items Booked
               </Typography>
               {renderBookedItems()}
-              {/* Pagination for Booked Items */}
               <Pagination
                 count={Math.ceil(orders.length / 5)}
                 page={ordersPage}
@@ -239,7 +239,6 @@ const UserProfile = () => {
                 Items Listed
               </Typography>
               {renderListedItems()}
-              {/* Pagination for Listed Items */}
               <Pagination
                 count={Math.ceil(listedItems.length / 5)}
                 page={listedItemsPage}
