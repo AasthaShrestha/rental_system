@@ -20,10 +20,21 @@ const getExpiredRentals = async () => {
   return res.data;
 };
 
-// Function to free expired rentals
+// Function to free all expired rentals
 const freeExpiredRentals = async () => {
   const token = localStorage.getItem("token");
   const res = await axios.get("http://localhost:4001/api/posts/free-expired-rentals", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};
+
+// Function to free a single expired rental by ID
+const freeExpiredRentalById = async (rentalId) => {
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`http://localhost:4001/api/posts/free-expired-rentals-by-id/${rentalId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -38,17 +49,30 @@ const DashboardExpiredRentals = () => {
     queryFn: getExpiredRentals,
   });
 
-  // Mutation for freeing expired rentals
-  const { mutate: FreeExpiredRentals } = useMutation({
+  // Mutation for freeing all expired rentals
+  const { mutate: freeAllExpiredRentals } = useMutation({
     mutationFn: freeExpiredRentals,
     onSuccess: () => {
       query.refetch(); // Refetch data after freeing rentals
     },
   });
 
-  // Handle freeing rentals
-  const handleFreeRentals = () => {
-    FreeExpiredRentals();
+  // Mutation for freeing a single expired rental
+  const { mutate: freeSingleExpiredRental } = useMutation({
+    mutationFn: freeExpiredRentalById,
+    onSuccess: () => {
+      query.refetch(); // Refetch data after freeing rental
+    },
+  });
+
+  // Handle freeing all rentals
+  const handleFreeAllRentals = () => {
+    freeAllExpiredRentals();
+  };
+
+  // Handle freeing a single rental
+  const handleFreeSingleRental = (rentalId) => {
+    freeSingleExpiredRental(rentalId);
   };
 
   return (
@@ -59,10 +83,10 @@ const DashboardExpiredRentals = () => {
       <Button
         variant="contained"
         color="primary"
-        onClick={handleFreeRentals}
+        onClick={handleFreeAllRentals}
         style={{ marginBottom: "20px" }}
       >
-        Free Expired Rentals
+        Free All Expired Rentals
       </Button>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="expired rentals table">
@@ -73,6 +97,7 @@ const DashboardExpiredRentals = () => {
               <TableCell>End Date</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Photo</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -100,6 +125,15 @@ const DashboardExpiredRentals = () => {
                     ) : (
                       "No Photo"
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={() => handleFreeSingleRental(rental._id)}
+                    >
+                      Free
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

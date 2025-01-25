@@ -9,6 +9,11 @@ import {
   CardContent,
   CardMedia,
   Pagination,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import axios from "axios";
 import NavBar from "./Navbar";
@@ -17,17 +22,70 @@ import Footer from "./Footer";
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [updatedListedItems, setUpdatedListedItems] = useState([]);
   const [loadingListedItems, setLoadingListedItems] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [errorListedItems, setErrorListedItems] = useState(null);
   const [errorOrders, setErrorOrders] = useState(null);
   const [listedItemsPage, setListedItemsPage] = useState(1);
   const [ordersPage, setOrdersPage] = useState(1);
+
+
+  const [userData, setUserData] = useState(null);
+
+
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(userData?.image || "");
+
+  // For updating item
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
+  const [updatedName, setUpdatedName] = useState("");
+  const [updatedDescription, setUpdatedDescription] = useState("");
+
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get("http://localhost:4001/user/mydata", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          },
+        });
+        setUserData(response.data.data); // Update state with fetched data
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+      }
+    };
   
-  const [userData, setUserData] = useState(() => {
-    const storedUser = localStorage.getItem("authUser");
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
+    fetchUserData(); // Call the function to fetch user data on mount
+  }, []);
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file)); // Preview the selected image
+    }
+  };
+
+  const handleImageUpload = async () => {
+    const formData = new FormData();
+    formData.append("image", image);
+
+    try {
+      const response = await axios.post("http://localhost:4001/user/upload-image", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      window.location.reload();
+      setUserData({ ...userData, image: response.data.imageUrl }); // Update user data with the new image URL
+      setImagePreview(response.data.imageUrl); // Update image preview
+    } catch (err) {
+      console.error("Error uploading image:", err);
+    }
+  };
 
   useEffect(() => {
     const fetchListedItems = async () => {
@@ -70,6 +128,64 @@ const UserProfile = () => {
 
   const handleOrdersPageChange = (event, value) => {
     setOrdersPage(value);
+  };
+
+  const renderKYCDetails = () => {
+    if (!userData?.kycFilled) {
+      return <Typography color="error">KYC not filled.</Typography>;
+    }
+    return (
+      <Box sx={{ mt: 2, p: 2, border: "1px solid", borderColor: "primary.main", borderRadius: 2 }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+          KYC Details:
+        </Typography>
+        <Typography color="text.primary">
+          <strong>Status:</strong> {userData.kycVerified ? "Verified" : "Not Verified"}
+        </Typography>
+      </Box>
+    );
+  };
+  const handleUpdate = (item) => {
+    setCurrentItem(item);
+    setUpdatedName(item.name);
+    setUpdatedDescription(item.description);
+    setOpenUpdateDialog(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:4001/api/posts/mypost/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setListedItems((prevItems) => prevItems.filter((item) => item._id !== id));
+    } catch (err) {
+      console.error("Error deleting item:", err);
+    }
+  };
+
+  const handleSubmitUpdate = async () => {
+    try {
+      const updatedItem = {
+        name: updatedName,
+        description: updatedDescription,
+      };
+      await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      window.location.reload();
+
+      setUpdatedListedItems((prevItems) =>
+        prevItems.map((item) => (item._id === currentItem._id ? { ...item, ...updatedItem } : item))
+      ); // Update the state with the updated item
+
+      setOpenUpdateDialog(false);
+    } catch (err) {
+      console.error("Error updating item:", err);
+    }
   };
 
   const renderListedItems = () => {
@@ -117,6 +233,14 @@ const UserProfile = () => {
               <Typography variant="body2" color="text.primary">
                 <strong>Category:</strong> {item.parentCategory} - {item.subCategory}
               </Typography>
+              <Box sx={{ mt: 2 }}>
+                <Button variant="outlined" color="primary" onClick={() => handleUpdate(item)} sx={{ mr: 2 }}>
+                  Update
+                </Button>
+                <Button variant="outlined" color="error" onClick={() => handleDelete(item._id)}>
+                  Delete
+                </Button>
+              </Box>
             </CardContent>
           </Grid>
         </Grid>
@@ -186,71 +310,120 @@ const UserProfile = () => {
   };
 
   return (
-    <Box sx={{ p: 4, maxWidth: "1200px", margin: "0 auto" }}>
+    <>
       <NavBar />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          mb: 4,
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 3,
-          bgcolor: "background.paper",
-        }}
-      >
-        <Avatar
-          src="https://via.placeholder.com/150"
-          alt="User Profile Picture"
-          sx={{ width: 100, height: 100, mb: 2 }}
-        />
-        <Typography variant="h5" fontWeight="bold" color="text.primary" gutterBottom>
-          {userData?.name || "Guest User"}
-        </Typography>
-        <Typography variant="body1" color="text.primary" gutterBottom>
-          {userData?.email || "No email available"}
-        </Typography>
-        
+      <Box sx={{ p: 4, maxWidth: "1200px", margin: "0 auto" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            mb: 4,
+            p: 2,
+            borderRadius: 2,
+            boxShadow: 3,
+            bgcolor: "background.paper",
+          }}
+        >
+          <Avatar
+            alt="abc"
+            src={"http://localhost:4001" + userData?.image}
+            sx={{ width: 100, height: 100, mb: 2 }}
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={handleImageUpload}
+            disabled={!image}
+          >
+            Upload Image
+          </Button>
+
+          <Typography variant="h5" fontWeight="bold" sx={{ color: "#000000" }} gutterBottom>
+            {userData?.name || "Guest User"}
+          </Typography>
+          <Typography variant="body1" sx={{ color: "#000000" }} gutterBottom>
+            {userData?.email || "No email available"}
+          </Typography>
+          {renderKYCDetails()}
+        </Box>
+
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6}>
+            <Card sx={{ boxShadow: 3 }}>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+                  Items Booked
+                </Typography>
+                {renderBookedItems()}
+                <Pagination
+                  count={Math.ceil(orders.length / 5)}
+                  page={ordersPage}
+                  onChange={handleOrdersPageChange}
+                  color="primary"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Card sx={{ boxShadow: 3 }}>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+                  Items Listed
+                </Typography>
+                {renderListedItems()}
+                <Pagination
+                  count={Math.ceil(listedItems.length / 5)}
+                  page={listedItemsPage}
+                  onChange={handleListedItemsPageChange}
+                  color="primary"
+                />
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Box>
 
-      <Grid container spacing={4}>
-        <Grid item xs={12} md={6}>
-          <Card sx={{ boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
-                Items Booked
-              </Typography>
-              {renderBookedItems()}
-              <Pagination
-                count={Math.ceil(orders.length / 5)}
-                page={ordersPage}
-                onChange={handleOrdersPageChange}
-                color="primary"
-              />
-            </CardContent>
-          </Card>
-        </Grid>
+      {/* Update Dialog */}
+      <Dialog open={openUpdateDialog} onClose={() => setOpenUpdateDialog(false)}>
+        <DialogTitle>Update Item</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Name"
+            fullWidth
+            value={updatedName}
+            onChange={(e) => setUpdatedName(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Description"
+            fullWidth
+            value={updatedDescription}
+            onChange={(e) => setUpdatedDescription(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenUpdateDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleSubmitUpdate(currentItem._id)} color="primary">
+            Update
+          </Button>
 
-        <Grid item xs={12} md={6}>
-          <Card sx={{ boxShadow: 3 }}>
-            <CardContent>
-              <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
-                Items Listed
-              </Typography>
-              {renderListedItems()}
-              <Pagination
-                count={Math.ceil(listedItems.length / 5)}
-                page={listedItemsPage}
-                onChange={handleListedItemsPageChange}
-                color="primary"
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+
+        </DialogActions>
+      </Dialog>
+
       <Footer />
-    </Box>
+    </>
   );
 };
 
