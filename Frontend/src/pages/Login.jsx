@@ -15,15 +15,9 @@ import axios from "axios";
 import { axiosInstance } from "../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 import { useAuthUser } from "../Routes/Pathway";
+import { useEffect, useState } from "react";
 
-const logIn = async (data) => {
-  const res = await axiosInstance.post(
-    "http://localhost:4001/user/login",
-    data
-  );
 
-  return res.data;
-};
 
 // Validation schema using Yup
 const schema = yup
@@ -36,6 +30,8 @@ const schema = yup
 export default function LogIn() {
   const { setAuthUser } = useAuthUser();
   const navigate = useNavigate();
+  const [ipAddress, setIpAddress] = useState('');
+  const [geoInfo, setGeoInfo] = useState({});
   const {
     register,
     handleSubmit,
@@ -43,6 +39,42 @@ export default function LogIn() {
   } = useForm({
     resolver: yupResolver(schema),
   });
+
+  const logIn = async (data) => {
+    const res = await axiosInstance.post(
+      "http://localhost:4001/user/login", { ...data, latitude: geoInfo.lat, longitude: geoInfo.lon }
+    );
+    return res.data;
+  };
+  
+  useEffect(() => {
+    getVisitorIP();
+  }, []);
+
+  useEffect(() => {
+    fetchIPInfo();
+  }, [ipAddress]);
+
+  const getVisitorIP = async () => {
+    try {
+      const response = await fetch('https://api.ipify.org/');
+      const data = await response.text();
+      setIpAddress(data);
+    } catch (error) {
+      console.error('Failed to fetch IP:', error);
+    }
+  };
+
+  const fetchIPInfo = async () => {
+    try {
+      const response = await fetch(`http://ip-api.com/json/${ipAddress}`);
+      const data = await response.json();
+      setGeoInfo(data);
+    } catch (error) {
+      console.error('Failed to location info:', error);
+    }
+  };
+
 
   const mutation = useMutation({
     mutationFn: logIn,
@@ -87,7 +119,7 @@ export default function LogIn() {
             textAlign: "center",
             fontWeight: "bold",
             fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
-            color: "pink.main", 
+            color: "pink.main",
           }}
         >
           Welcome to YatriKuti

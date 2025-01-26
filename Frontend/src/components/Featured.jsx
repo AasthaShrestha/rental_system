@@ -13,7 +13,7 @@ function Featured() {
   const [rooms, setRooms] = useState([]);
   const [places, setPlaces] = useState([]); // New state for places
   const token = localStorage.getItem("token");
-
+  const authUser= localStorage.getItem('authUser');
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -27,6 +27,8 @@ function Featured() {
         console.error("Error fetching posts:", error);
       }
     };
+
+    
 
     const fetchRooms = async () => {
       try {
@@ -138,6 +140,7 @@ function Featured() {
       </div>
 
       {/* Recommended Rooms Section */}
+      {authUser!=='null' && 
       <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
           Recommended Rooms
@@ -152,22 +155,23 @@ function Featured() {
           </Slider>
         </div>
       </div>
-
+    }
       {/* Recommended Vehicles Section */}
+      {authUser!=='null' &&
       <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          Recommended Vehicles
-        </h2>
-        <div className="slider-container relative w-full">
-          <Slider {...settings}>
-            {vehicles.map((vehicle) => (
-              <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
-                <Cards post={vehicle} />
-              </Link>
-            ))}
-          </Slider>
-        </div>
+      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+        Recommended Vehicles
+      </h2>
+      <div className="slider-container relative w-full">
+        <Slider {...settings}>
+          {vehicles.map((vehicle) => (
+            <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
+              <Cards post={vehicle} />
+            </Link>
+          ))}
+        </Slider>
       </div>
+    </div>}
 
       {/* Recommended Places Section */}
       <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">

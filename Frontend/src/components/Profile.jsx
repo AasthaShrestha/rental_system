@@ -19,6 +19,7 @@ import axios from "axios";
 import NavBar from "./Navbar";
 import Footer from "./Footer";
 
+
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -42,6 +43,9 @@ const UserProfile = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedDescription, setUpdatedDescription] = useState("");
+  const [updatedPrice, setUpdatedPrice] = useState("");
+  
+
 
 
   useEffect(() => {
@@ -130,6 +134,7 @@ const UserProfile = () => {
     setOrdersPage(value);
   };
 
+
   const renderKYCDetails = () => {
     if (!userData?.kycFilled) {
       return <Typography color="error">KYC not filled.</Typography>;
@@ -149,6 +154,7 @@ const UserProfile = () => {
     setCurrentItem(item);
     setUpdatedName(item.name);
     setUpdatedDescription(item.description);
+    setUpdatedPrice(item.price);
     setOpenUpdateDialog(true);
   };
 
@@ -166,27 +172,32 @@ const UserProfile = () => {
   };
 
   const handleSubmitUpdate = async () => {
-    try {
-      const updatedItem = {
-        name: updatedName,
-        description: updatedDescription,
-      };
-      await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      window.location.reload();
+  try {
+    const updatedItem = {
+      name: updatedName,
+      description: updatedDescription,
+      price: updatedPrice,
+    };
+    
+    await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    });
+    
+    // Reload the page or update state directly to reflect the changes
+    setListedItems((prevItems) =>
+      prevItems.map((item) =>
+        item._id === currentItem._id ? { ...item, ...updatedItem } : item
+      )
+    );
 
-      setUpdatedListedItems((prevItems) =>
-        prevItems.map((item) => (item._id === currentItem._id ? { ...item, ...updatedItem } : item))
-      ); // Update the state with the updated item
+    setOpenUpdateDialog(false);
+  } catch (err) {
+    console.error("Error updating item:", err);
+  }
+};
 
-      setOpenUpdateDialog(false);
-    } catch (err) {
-      console.error("Error updating item:", err);
-    }
-  };
 
   const renderListedItems = () => {
     if (loadingListedItems) {
@@ -400,7 +411,7 @@ const UserProfile = () => {
             fullWidth
             value={updatedName}
             onChange={(e) => setUpdatedName(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{ mt: 2 ,mb:2}}
           />
           <TextField
             label="Description"
@@ -409,6 +420,16 @@ const UserProfile = () => {
             onChange={(e) => setUpdatedDescription(e.target.value)}
             sx={{ mb: 2 }}
           />
+          <TextField
+              label="Price"
+              type="number"
+              value={updatedPrice}
+              onChange={(e) => setUpdatedPrice(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+           
+           
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenUpdateDialog(false)} color="primary">
