@@ -18,6 +18,8 @@ import {
 import axios from "axios";
 import NavBar from "./Navbar";
 import Footer from "./Footer";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
@@ -248,67 +250,119 @@ const UserProfile = () => {
     ));
   };
 
+  const downloadSingleBookedItemAsPDF = (order, product) => {
+    const doc = new jsPDF();
+  
+    // Add a title
+    doc.setFontSize(18);
+    doc.text("Booked Item Details", 14, 20);
+  
+    // Add item details
+    const itemDetails = [
+      ["Order ID", order._id],
+      ["Product", product.product],
+      ["Address", product.address],
+      ["Price", `Rs ${product.price}`],
+      ["Start Date", new Date(product.startDate).toLocaleDateString()],
+      ["End Date", new Date(product.endDate).toLocaleDateString()],
+      ["Category", `${product.parentCategory} - ${product.subCategory}`],
+    ];
+    console.log(typeof product.price);  // Should be "number"
+
+  
+    // Add table
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: itemDetails,
+      startY: 30,
+    });
+  
+    // Optionally add an image
+    if (product.image) {
+      const imageUrl = `http://localhost:4001/${product.image}`;
+      const imgWidth = 50;
+      const imgHeight = 50;
+      doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
+    }
+  
+    // Save the PDF
+    doc.save(`${product.product}_details.pdf`);
+  };
+
   const renderBookedItems = () => {
     if (loadingOrders) {
       return <Typography>Loading...</Typography>;
     }
-
+  
     if (errorOrders) {
       return <Typography color="error">Error: {errorOrders}</Typography>;
     }
-
+  
     if (orders.length === 0) {
       return <Typography>No items booked yet.</Typography>;
     }
-
+  
     const itemsPerPage = 5;
     const startIndex = (ordersPage - 1) * itemsPerPage;
     const currentPageOrders = orders.slice(startIndex, startIndex + itemsPerPage);
-
-    return currentPageOrders.map((order) => (
-      <Box key={order._id} sx={{ mb: 2 }}>
-        <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
-          <strong>Order ID:</strong> {order._id}
-        </Typography>
-        {order.products.map((product, index) => (
-          <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
-            <CardContent>
-              <Grid container spacing={2}>
-                <Grid item xs={4}>
-                  <img
-                    src={`http://localhost:4001/${product.image}`}
-                    alt={product.product}
-                    style={{ width: "100%", height: "auto" }}
-                  />
-                </Grid>
-                <Grid item xs={8}>
-                  <Typography variant="h6" color="text.primary">
-                    {product.product}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <strong>Address:</strong> {product.address}
-                  </Typography>
-                  <Typography variant="body1" color="text.primary">
-                    <strong>Price:</strong> रु {product.price}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <strong>Start Date:</strong> {new Date(product.startDate).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <strong>End Date:</strong> {new Date(product.endDate).toLocaleDateString()}
-                  </Typography>
-                  <Typography variant="body2" color="text.primary">
-                    <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
+  
+    return (
+      <>
+        {currentPageOrders.map(order => (
+          <Box key={order._id} sx={{ mb: 2 }}>
+            <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+              <strong>Order ID:</strong> {order._id}
+            </Typography>
+            {order.products.map((product, index) => (
+              <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
+                <CardContent>
+                  <Grid container spacing={2}>
+                    <Grid item xs={4}>
+                      <img
+                        src={`http://localhost:4001/${product.image}`}
+                        alt={product.product}
+                        style={{ width: "100%", height: "auto" }}
+                      />
+                    </Grid>
+                    <Grid item xs={8}>
+                      <Typography variant="h6" color="text.primary">
+                        {product.product}
+                      </Typography>
+                      <Typography variant="body2" color="text.primary">
+                        <strong>Address:</strong> {product.address}
+                      </Typography>
+                      <Typography variant="body1" color="text.primary">
+                        <strong>Price:</strong> रु {product.price}
+                      </Typography>
+                      <Typography variant="body2" color="text.primary">
+                        <strong>Start Date:</strong> {new Date(product.startDate).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2" color="text.primary">
+                        <strong>End Date:</strong> {new Date(product.endDate).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2" color="text.primary">
+                        <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
+                      </Typography>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => downloadSingleBookedItemAsPDF(order, product)}
+                        sx={{ mt: 1 }}
+                      >
+                        Download as PDF
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
         ))}
-      </Box>
-    ));
+      </>
+    );
   };
-
+  
+  
   return (
     <>
       <NavBar />
