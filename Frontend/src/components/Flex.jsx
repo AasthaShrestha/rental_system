@@ -36,7 +36,7 @@ export default function Flex({ children, title, subtitle, image }) {
       </div>
 
       {/* Decorative Element */}
-      <div className="absolute bottom-10 w-full text-center">
+      <div className="absolute bottom-20 w-full text-center">
         <p className="text-sm text-gray-300 animate-bounce">
           Scroll down for more &darr;
         </p>

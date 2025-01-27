@@ -44,7 +44,7 @@ const UserProfile = () => {
   const [updatedName, setUpdatedName] = useState("");
   const [updatedDescription, setUpdatedDescription] = useState("");
   const [updatedPrice, setUpdatedPrice] = useState("");
-  
+
 
 
 
@@ -61,7 +61,7 @@ const UserProfile = () => {
         console.error("Error fetching user data:", err);
       }
     };
-  
+
     fetchUserData(); // Call the function to fetch user data on mount
   }, []);
   const handleImageChange = (event) => {
@@ -172,31 +172,31 @@ const UserProfile = () => {
   };
 
   const handleSubmitUpdate = async () => {
-  try {
-    const updatedItem = {
-      name: updatedName,
-      description: updatedDescription,
-      price: updatedPrice,
-    };
-    
-    await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-    
-    // Reload the page or update state directly to reflect the changes
-    setListedItems((prevItems) =>
-      prevItems.map((item) =>
-        item._id === currentItem._id ? { ...item, ...updatedItem } : item
-      )
-    );
+    try {
+      const updatedItem = {
+        name: updatedName,
+        description: updatedDescription,
+        price: updatedPrice,
+      };
 
-    setOpenUpdateDialog(false);
-  } catch (err) {
-    console.error("Error updating item:", err);
-  }
-};
+      await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      // Reload the page or update state directly to reflect the changes
+      setListedItems((prevItems) =>
+        prevItems.map((item) =>
+          item._id === currentItem._id ? { ...item, ...updatedItem } : item
+        )
+      );
+
+      setOpenUpdateDialog(false);
+    } catch (err) {
+      console.error("Error updating item:", err);
+    }
+  };
 
 
   const renderListedItems = () => {
@@ -337,21 +337,33 @@ const UserProfile = () => {
           }}
         >
           <Avatar
-            alt="abc"
+            alt="User Profile"
             src={"http://localhost:4001" + userData?.image}
-            sx={{ width: 100, height: 100, mb: 2 }}
+            sx={{ width: 100, height: 100, mb: 2, cursor: "pointer" }}
+            onClick={() => document.getElementById("upload-button").click()} // Trigger file input click
           />
           <input
+            id="upload-button"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            style={{ marginBottom: "20px" }}
+            style={{ display: "none" }}
           />
+          {imagePreview && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1, textAlign: "center", wordBreak: "break-word" }}
+            >
+              {image?.name || "Selected file preview"}
+            </Typography>
+          )}
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={handleImageUpload}
             disabled={!image}
+            sx={{ mt: 2 }}
           >
             Upload Image
           </Button>
@@ -364,6 +376,7 @@ const UserProfile = () => {
           </Typography>
           {renderKYCDetails()}
         </Box>
+
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
@@ -411,7 +424,7 @@ const UserProfile = () => {
             fullWidth
             value={updatedName}
             onChange={(e) => setUpdatedName(e.target.value)}
-            sx={{ mt: 2 ,mb:2}}
+            sx={{ mt: 2, mb: 2 }}
           />
           <TextField
             label="Description"
@@ -421,15 +434,15 @@ const UserProfile = () => {
             sx={{ mb: 2 }}
           />
           <TextField
-              label="Price"
-              type="number"
-              value={updatedPrice}
-              onChange={(e) => setUpdatedPrice(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
-           
-           
+            label="Price"
+            type="number"
+            value={updatedPrice}
+            onChange={(e) => setUpdatedPrice(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenUpdateDialog(false)} color="primary">
