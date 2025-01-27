@@ -25,6 +25,7 @@ import Kyc from '../pages/Kyc.jsx'
 import DashboardKyc from '../pages/dashboard/DashboardKyc.jsx';
 import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
 import DashboardQuery from "../pages/dashboard/DashboardQuery.jsx";
+import DashboardOrders from "../pages/dashboard/DashboardOrders.jsx";
 // import ValidUserForm from "../components/Validuserform.jsx";
 
 
@@ -81,6 +82,7 @@ function Pathway() {
                 <Route path="kycs" element = {<DashboardKyc/>} />
                 <Route path="expiredRentals" element = {<DashboardExpiredRentals/>} />
                 <Route path="userquery" element = {<DashboardQuery/>} />
+                <Route path="orderdetail" element = {<DashboardOrders/>} />
               </Route>
             </Route>
 
