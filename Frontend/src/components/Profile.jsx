@@ -253,11 +253,8 @@ const UserProfile = () => {
   const downloadSingleBookedItemAsPDF = (order, product) => {
     const doc = new jsPDF();
   
-    // Add a title
     doc.setFontSize(18);
     doc.text("Booked Item Details", 14, 20);
-  
-    // Add item details
     const itemDetails = [
       ["Order ID", order._id],
       ["Product", product.product],
@@ -267,8 +264,6 @@ const UserProfile = () => {
       ["End Date", new Date(product.endDate).toLocaleDateString()],
       ["Category", `${product.parentCategory} - ${product.subCategory}`],
     ];
-    console.log(typeof product.price);  // Should be "number"
-
   
     // Add table
     doc.autoTable({
@@ -276,7 +271,6 @@ const UserProfile = () => {
       body: itemDetails,
       startY: 30,
     });
-  
     // Optionally add an image
     if (product.image) {
       const imageUrl = `http://localhost:4001/${product.image}`;
@@ -284,7 +278,6 @@ const UserProfile = () => {
       const imgHeight = 50;
       doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
     }
-  
     // Save the PDF
     doc.save(`${product.product}_details.pdf`);
   };
