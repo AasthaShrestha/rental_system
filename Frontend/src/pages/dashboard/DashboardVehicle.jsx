@@ -61,6 +61,8 @@ export default function DashboardVehicle() {
   if (query.isError) return <div>Error loading vehicles!</div>;
   if (query.isLoading) return <div>Loading...</div>;
   return (
+    <Box>
+    <Typography variant="h5" gutterBottom>List of Vehicles</Typography>
     <TableContainer component={Paper}>
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
@@ -71,14 +73,14 @@ export default function DashboardVehicle() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {query.data.data.map(({ _id, name, price, image }) => (
+          {query.data.data.map(({ _id, name, price, images }) => (
             <TableRow
               key={_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
                 <Box sx={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                  <Avatar src={`http://localhost:3000/${image}`} alt={name} />
+                  <Avatar src={`http://localhost:4001/${images[0]}`} alt={name} />
                   <Typography>{name}</Typography>
                 </Box>
               </TableCell>
@@ -116,5 +118,6 @@ export default function DashboardVehicle() {
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </TableContainer>
+    </Box>
   );
 }

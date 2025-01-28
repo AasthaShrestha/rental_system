@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Flex({ children, title, subtitle, image }) {
   return (
-    <div className="relative w-full h-screen bg-cover bg-center overflow-hidden">
+    <div className="relative w-full h-full py-[10rem] bg-cover bg-center overflow-hidden">
       {/* Background Image */}
       <img
         src={image}
@@ -11,8 +11,8 @@ export default function Flex({ children, title, subtitle, image }) {
         alt="background"
       />
 
-      {/* Light Blur Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-30 backdrop-blur-[1px] -z-5"></div>
+      
+      <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 "></div>
 
       {/* Content */}
       <div className="flex flex-col items-center justify-center h-full text-center px-6 md:px-12 space-y-8">

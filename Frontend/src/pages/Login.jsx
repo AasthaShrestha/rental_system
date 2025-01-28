@@ -87,7 +87,7 @@ export default function LogIn() {
             textAlign: "center",
             fontWeight: "bold",
             fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
-            color: "pink.main", // Change blue to pink
+            color: "pink.main", 
           }}
         >
           Welcome to YatriKuti
@@ -95,7 +95,7 @@ export default function LogIn() {
         {mutation.error && (
           <Alert sx={{ my: 2 }} severity="error">
             {mutation.error.response?.data?.message ??
-              "Something went wrong. Please try again."}
+              "Invalid email or password"}
           </Alert>
         )}
         <Box

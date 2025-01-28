@@ -3,16 +3,14 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
-import cookieParser from "cookie-parser";
-
-// Importing routes
-import router from "./route/rental.route.js";
-import suggestionRoute from "./route/suggestion.route.js";
+import router from "./route/rental.route.js"; // Importing routes
+import contactRoute from "./route/contact.route.js";
 import orderRoutes from "./route/order.route.js";
 import esewaRoutes from "./route/esewa.route.js";
 import userRouter from "./route/userRoute.js";
-import suggestRoute from "./route/cosine.routes.js";
-
+import cookieParser from "cookie-parser";
+import suggestRoute from "./route/suggestion.route.js";
+import haversineRoute from "./route/havesine.route.js";
 dotenv.config();
 
 const app = express();
@@ -44,11 +42,12 @@ connectDB();
 
 // Define routes
 app.use("/api/posts", router);
-app.use(suggestionRoute);
+app.use("/api/contact",contactRoute);
 app.use("/user", userRouter);
 app.use("/api/orders", orderRoutes);
 app.use("/api/esewa", esewaRoutes);
 app.use("/api/suggest", suggestRoute);
+app.use("/api/haversine", haversineRoute);
 
 app.use("/uploads", express.static("uploads"));
 

@@ -1,5 +1,7 @@
 // esewa.controller.js
 
+import orderModel from "../model/order.model.js";
+import Rental from "../model/rental.model.js";
 import { createSignature } from "./order.controller.js"; // Make sure the path is correct
 
 export const handleEsewaSuccess = async (req, res, next) => {
@@ -31,6 +33,15 @@ export const handleEsewaSuccess = async (req, res, next) => {
 
     req.transaction_uuid = decodedData.transaction_uuid;
     req.transaction_code = decodedData.transaction_code;
+
+    // console.log(req.transaction_uuid,req.transaction_code)
+    const selectedOrder = await orderModel.findOne({_id: req.transaction_uuid})
+    const selectedRental = await Rental.findOne({_id: selectedOrder.products[0].productId})
+    selectedRental.occupied = true;
+    selectedRental.orderId = req.transaction_uuid;
+    await selectedRental.save();
+
+
     next();
   } catch (err) {
     console.log(err);

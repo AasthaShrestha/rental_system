@@ -21,9 +21,12 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
-import DashRoomEdit from "../pages/dashboard/DashRoomEdit.jsx";
+import Kyc from "../pages/Kyc.jsx";
+import DashboardKyc from "../pages/dashboard/DashboardKyc.jsx";
+import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
+import DashboardQuery from "../pages/dashboard/DashboardQuery.jsx";
+// import ValidUserForm from "../components/Validuserform.jsx";
 
-const queryClient = new QueryClient();
 const AuthUserContext = createContext(null);
 
 export const useAuthUser = () => {
@@ -57,44 +60,45 @@ function Pathway() {
 
   return (
     <AuthUserContext.Provider value={{ authUser, setAuthUser }}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/post/:id" element={<SinglePost />} />
-            <Route path="/rooms" element={<Rooms />} />
-            <Route path="/vehicles" element={<Vehicles />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/post/:id" element={<SinglePost />} />
+          <Route path="/rooms" element={<Rooms />} />
+          <Route path="/vehicles" element={<Vehicles />} />
+          {/* <Route path="/validuserform" element={<ValidUserForm />} /> */}
+          {/* <Route element={<ProtectedRoutes />}> */}
+          <Route path="/postforfree" element={<PostFree />} />
+          {/* </Route> */}
 
-            {/* <Route element={<ProtectedRoutes />}> */}
-            <Route path="/postforfree" element={<PostFree />} />
-            {/* </Route> */}
-
-            <Route element={<AdminRoutes />}>
-              <Route path="/dashboard" element={<Dashboard />}>
-                <Route index element={<h2>Dashboard section</h2>} />
-                <Route path="rooms" element={<DashboardRooms />} />
-                <Route path="vehicles" element={<DashboardVehicle />} />
-                <Route
-                  path="rooms/edit/:productId"
-                  element={<DashRoomEdit />}
-                />
-              </Route>
+          <Route element={<AdminRoutes />}>
+            <Route path="/dashboard" element={<Dashboard />}>
+              <Route index element={<h2>Dashboard section</h2>} />
+              <Route path="rooms" element={<DashboardRooms />} />
+              <Route path="vehicles" element={<DashboardVehicle />} />
+              <Route path="kycs" element={<DashboardKyc />} />
+              <Route
+                path="expiredRentals"
+                element={<DashboardExpiredRentals />}
+              />
+              <Route path="userquery" element={<DashboardQuery />} />
             </Route>
+          </Route>
 
-            <Route path="/aboutus" element={<AboutUs />} />
-            <Route path="/contactus" element={<ContactUs />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:id" element={<BlogDetailsPage />} />
-            <Route path="/objectives" element={<Objectives />} />
-            <Route path="/login" element={<LogIn />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profileDetails" element={<ProfileDetails />} />
+          <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/contactus" element={<ContactUs />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogDetailsPage />} />
+          <Route path="/objectives" element={<Objectives />} />
+          <Route path="/login" element={<LogIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profileDetails" element={<ProfileDetails />} />
+          <Route path="/kyc" element={<Kyc />} />
 
-            <Route path="*" element={<Error />} />
-          </Routes>
-        </BrowserRouter>
-      </QueryClientProvider>
+          <Route path="*" element={<Error />} />
+        </Routes>
+      </BrowserRouter>
     </AuthUserContext.Provider>
   );
 }
