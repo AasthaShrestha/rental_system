@@ -83,14 +83,20 @@ export const createSignature = (message) => {
 };
 
 const getMyOrders = async (req, res) => {
-  console.log(req.user);
-  if (req.user.roles.includes["Admin"]) {
-    const orders = await Order.find();
-    return res.json(new ApiResponse(200, "All Orders of all user", orders));
-  } else {
-    const orders = await Order.find({ user: req.user._id });
-    return res.json(new ApiResponse(200, "Your orders only.", orders));
+  try {
+    console.log(req.user);
+    if (req.user.roles.includes("Admin")) {
+      const orders = await Order.find({ status: "paid" });
+      return res.json(new ApiResponse(200, "All paid orders of all users", orders));
+    } else {
+      const orders = await Order.find({ user: req.user._id, status: "paid" });
+      return res.json(new ApiResponse(200, "Your paid orders only", orders));
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json(new ApiResponse(500, "An error occurred while fetching orders"));
   }
 };
+
 
 export { getMyOrders };

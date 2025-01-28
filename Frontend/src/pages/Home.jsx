@@ -11,9 +11,8 @@ function Home() {
     <>
       <Navbar />
       <Flex
-        title="Hello, welcome to YatriKuti!"
-        subtitle="Whether you're looking for a cozy place to stay or the  perfect ride for your adventure, we have you covered. Explore our range of rooms and vehicles designed to fit your lifestyle and make your journey
-        unforgettable."
+        title="Hello, welcome to Multi Category Rental Platform!"
+        subtitle="Multi Category Rental Platform(YatriKuti) provide a wide range of rental services. Real Estate and Vehicles, Real Estate includes: Single Room, Double Room, Flat, House and Vehicles includes: Bike, Car , Escooter and Scooter. "
         image={main0}
         children="Start your Journey"
       />

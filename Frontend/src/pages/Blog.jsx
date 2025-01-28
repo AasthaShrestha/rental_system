@@ -32,8 +32,10 @@ const blogData = [
 
 const Blog = () => {
   return (
+    <>
+    <Navbar/>
     <div className="max-w-screen-xl mx-auto px-4 py-12">
-        <Navbar/>
+       
       <h1 className="text-4xl font-bold text-center pt-10 mb-8">YatriKuti Blog</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {blogData.map((blog) => (
@@ -64,6 +66,7 @@ const Blog = () => {
       </div>
       <Footer/>
     </div>
+    </>
   );
 };
 

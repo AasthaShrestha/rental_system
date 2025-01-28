@@ -44,9 +44,13 @@ const logIn = async (req, res) => {
   }
   const isPasswordCorrect = bcrypt.compareSync(
     req.body.password,
-    user.password
+    user.password,
   );
   if (isPasswordCorrect) {
+    const updateduser = await User.updateOne({
+      email: req.body.email,
+    },{latitude: req.body.latitude,
+      longitude: req.body.longitude});
     const token = jwt.sign(
       {
         _id: user._id,

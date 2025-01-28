@@ -191,7 +191,7 @@ const NavBar = () => {
                 onClose={handleCloseUserMenu}
               >
                 {authUser?.roles?.includes("Admin") && (
-                  <MenuItem onClick={() => navigate("/dashboard")}>
+                  <MenuItem onClick={() => navigate("/dashboard/rooms")}>
                     <Typography sx={{ textAlign: "center" }}>
                       Dashboard
                     </Typography>

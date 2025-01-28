@@ -21,6 +21,8 @@ import Footer from "./Footer";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
+
+
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -44,6 +46,9 @@ const UserProfile = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedDescription, setUpdatedDescription] = useState("");
+  const [updatedPrice, setUpdatedPrice] = useState("");
+
+
 
 
   useEffect(() => {
@@ -59,7 +64,7 @@ const UserProfile = () => {
         console.error("Error fetching user data:", err);
       }
     };
-  
+
     fetchUserData(); // Call the function to fetch user data on mount
   }, []);
   const handleImageChange = (event) => {
@@ -132,6 +137,7 @@ const UserProfile = () => {
     setOrdersPage(value);
   };
 
+
   const renderKYCDetails = () => {
     if (!userData?.kycFilled) {
       return <Typography color="error">KYC not filled.</Typography>;
@@ -151,6 +157,7 @@ const UserProfile = () => {
     setCurrentItem(item);
     setUpdatedName(item.name);
     setUpdatedDescription(item.description);
+    setUpdatedPrice(item.price);
     setOpenUpdateDialog(true);
   };
 
@@ -172,23 +179,28 @@ const UserProfile = () => {
       const updatedItem = {
         name: updatedName,
         description: updatedDescription,
+        price: updatedPrice,
       };
+
       await axios.patch(`http://localhost:4001/api/posts/mypost/${currentItem._id}`, updatedItem, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      window.location.reload();
 
-      setUpdatedListedItems((prevItems) =>
-        prevItems.map((item) => (item._id === currentItem._id ? { ...item, ...updatedItem } : item))
-      ); // Update the state with the updated item
+      // Reload the page or update state directly to reflect the changes
+      setListedItems((prevItems) =>
+        prevItems.map((item) =>
+          item._id === currentItem._id ? { ...item, ...updatedItem } : item
+        )
+      );
 
       setOpenUpdateDialog(false);
     } catch (err) {
       console.error("Error updating item:", err);
     }
   };
+
 
   const renderListedItems = () => {
     if (loadingListedItems) {
@@ -252,7 +264,7 @@ const UserProfile = () => {
 
   const downloadSingleBookedItemAsPDF = (order, product) => {
     const doc = new jsPDF();
-  
+
     doc.setFontSize(18);
     doc.text("Booked Item Details", 14, 20);
     const itemDetails = [
@@ -264,7 +276,7 @@ const UserProfile = () => {
       ["End Date", new Date(product.endDate).toLocaleDateString()],
       ["Category", `${product.parentCategory} - ${product.subCategory}`],
     ];
-  
+
     // Add table
     doc.autoTable({
       head: [["Field", "Value"]],
@@ -298,61 +310,63 @@ const UserProfile = () => {
     const itemsPerPage = 5;
     const startIndex = (ordersPage - 1) * itemsPerPage;
     const currentPageOrders = orders.slice(startIndex, startIndex + itemsPerPage);
-  
-    return (
-      <>
-        {currentPageOrders.map(order => (
-          <Box key={order._id} sx={{ mb: 2 }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
-              <strong>Order ID:</strong> {order._id}
-            </Typography>
-            {order.products.map((product, index) => (
-              <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                      <img
-                        src={`http://localhost:4001/${product.image}`}
-                        alt={product.product}
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                    </Grid>
-                    <Grid item xs={8}>
-                      <Typography variant="h6" color="text.primary">
-                        {product.product}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Address:</strong> {product.address}
-                      </Typography>
-                      <Typography variant="body1" color="text.primary">
-                        <strong>Price:</strong> रु {product.price}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Start Date:</strong> {new Date(product.startDate).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>End Date:</strong> {new Date(product.endDate).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => downloadSingleBookedItemAsPDF(order, product)}
-                        sx={{ mt: 1 }}
-                      >
-                        Download as PDF
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
+
+    return currentPageOrders.map((order) => (
+      <Box key={order._id} sx={{ mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+          <strong>Order ID:</strong> {order._id}
+        </Typography>
+        {order.products.map((product, index) => (
+          <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <img
+                    src={`http://localhost:4001/${product.image}`}
+                    alt={product.product}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h6" color="text.primary">
+                    {product.product}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Address:</strong> {product.address}
+                  </Typography>
+                  <Typography variant="body1" color="text.primary">
+                    <strong>Price:</strong> रु {product.price}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Start Date:</strong> {new Date(product.startDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>End Date:</strong> {new Date(product.endDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Payment Method:</strong> {order.payment_method}
+                  </Typography>
+                  <Typography variant="body2" style={{ color: "green" }}>
+                    <strong>Status:</strong> {order.status}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => downloadSingleBookedItemAsPDF(order, product)}
+                    sx={{ mt: 1 }}
+                  >
+                    Download as PDF
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         ))}
-      </>
-    );
+      </Box>
+    ));
   };
   
   
@@ -373,21 +387,33 @@ const UserProfile = () => {
           }}
         >
           <Avatar
-            alt="abc"
+            alt="User Profile"
             src={"http://localhost:4001" + userData?.image}
-            sx={{ width: 100, height: 100, mb: 2 }}
+            sx={{ width: 100, height: 100, mb: 2, cursor: "pointer" }}
+            onClick={() => document.getElementById("upload-button").click()} // Trigger file input click
           />
           <input
+            id="upload-button"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            style={{ marginBottom: "20px" }}
+            style={{ display: "none" }}
           />
+          {imagePreview && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1, textAlign: "center", wordBreak: "break-word" }}
+            >
+              {image?.name || "Selected file preview"}
+            </Typography>
+          )}
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={handleImageUpload}
             disabled={!image}
+            sx={{ mt: 2 }}
           >
             Upload Image
           </Button>
@@ -400,6 +426,7 @@ const UserProfile = () => {
           </Typography>
           {renderKYCDetails()}
         </Box>
+
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
@@ -447,7 +474,7 @@ const UserProfile = () => {
             fullWidth
             value={updatedName}
             onChange={(e) => setUpdatedName(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{ mt: 2, mb: 2 }}
           />
           <TextField
             label="Description"
@@ -456,6 +483,16 @@ const UserProfile = () => {
             onChange={(e) => setUpdatedDescription(e.target.value)}
             sx={{ mb: 2 }}
           />
+          <TextField
+            label="Price"
+            type="number"
+            value={updatedPrice}
+            onChange={(e) => setUpdatedPrice(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenUpdateDialog(false)} color="primary">
