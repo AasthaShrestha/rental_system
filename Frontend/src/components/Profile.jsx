@@ -18,6 +18,9 @@ import {
 import axios from "axios";
 import NavBar from "./Navbar";
 import Footer from "./Footer";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
 
 
 const UserProfile = () => {
@@ -259,6 +262,38 @@ const UserProfile = () => {
     ));
   };
 
+  const downloadSingleBookedItemAsPDF = (order, product) => {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text("Booked Item Details", 14, 20);
+    const itemDetails = [
+      ["Order ID", order._id],
+      ["Product", product.product],
+      ["Address", product.address],
+      ["Price", `Rs ${product.price}`],
+      ["Start Date", new Date(product.startDate).toLocaleDateString()],
+      ["End Date", new Date(product.endDate).toLocaleDateString()],
+      ["Category", `${product.parentCategory} - ${product.subCategory}`],
+    ];
+
+    // Add table
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: itemDetails,
+      startY: 30,
+    });
+    // Optionally add an image
+    if (product.image) {
+      const imageUrl = `http://localhost:4001/${product.image}`;
+      const imgWidth = 50;
+      const imgHeight = 50;
+      doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
+    }
+    // Save the PDF
+    doc.save(`${product.product}_details.pdf`);
+  };
+
   const renderBookedItems = () => {
     if (loadingOrders) {
       return <Typography>Loading...</Typography>;
@@ -311,6 +346,20 @@ const UserProfile = () => {
                   <Typography variant="body2" color="text.primary">
                     <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
                   </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Payment Method:</strong> {order.payment_method}
+                  </Typography>
+                  <Typography variant="body2" style={{ color: "green" }}>
+                    <strong>Status:</strong> {order.status}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => downloadSingleBookedItemAsPDF(order, product)}
+                    sx={{ mt: 1 }}
+                  >
+                    Download as PDF
+                  </Button>
                 </Grid>
               </Grid>
             </CardContent>
