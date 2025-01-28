@@ -49,7 +49,7 @@ function Featured() {
     const fetchVehicles = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4001/api/suggest/vehicle?numberOfResult=5",
+          "http://localhost:4001/api/suggest/vehicle?numberOfResult=3",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -64,12 +64,13 @@ function Featured() {
       }
     };
 
-    const fetchPlaces = async () => { // Fetching data from haversine API
+    const fetchPlaces = async () => {
+      // Fetching data from haversine API
       try {
         const response = await axiosInstance.get(
           "http://localhost:4001/api/haversine"
         );
-          setPlaces(response.data);
+        setPlaces(response.data);
       } catch (error) {
         console.error("Error fetching places:", error);
       }
@@ -176,12 +177,12 @@ function Featured() {
         </h2>
         <div className="slider-container relative w-full">
           <Slider {...settings}>
-            {places && places.map((place) => (
-              
-              <Link to={`/post/${place._id}`} key={place._id}>
-                <Cards post={place} />
-              </Link>
-            ))}
+            {places &&
+              places.map((place) => (
+                <Link to={`/post/${place._id}`} key={place._id}>
+                  <Cards post={place} />
+                </Link>
+              ))}
           </Slider>
         </div>
       </div>

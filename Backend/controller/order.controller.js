@@ -20,7 +20,7 @@ export const getAllOrders = async (req, res) => {
 export const createOrder = async (req, res) => {
   try {
     console.log(req.body);
-    console.log("user is ",req.user._id)
+    console.log("user is ", req.user._id);
     const order = await orderService.save({ ...req.body, user: req.user._id });
 
     const signature = createSignature(
@@ -71,7 +71,7 @@ export const updateOrderAfterPayment = async (req, res, next) => {
 
 // Create a signature for eSewa payment verification
 export const createSignature = (message) => {
-  const secret = "8gBm/:&EnhH.1/q"; 
+  const secret = "8gBm/:&EnhH.1/q";
 
   // Create an HMAC-SHA256 hash
   const hmac = crypto.createHmac("sha256", secret);
@@ -88,7 +88,7 @@ const getMyOrders = async (req, res) => {
     const orders = await Order.find();
     return res.json(new ApiResponse(200, "All Orders of all user", orders));
   } else {
-    const orders = await Order.find({ user: req.user._id });
+    const orders = await Order.find({ user: req.user._id, status: "paid" });
     return res.json(new ApiResponse(200, "Your orders only.", orders));
   }
 };

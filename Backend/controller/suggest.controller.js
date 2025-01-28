@@ -12,25 +12,29 @@ import {
 const getSuggestedRoom = asynchHandler(async (req, res) => {
   const numberOfResult = req.query.numberOfResult;
 
-
-  const userRentals = await Order.find({ user: req.user._id,  products: {
-    $elemMatch: { parentCategory: "Real Estate" }, 
-  }, }).sort({
+  const userRentals = await Order.find({
+    user: req.user._id,
+    products: {
+      $elemMatch: { parentCategory: "Real Estate" },
+    },
+  }).sort({
     createdAt: -1,
   });
-  
-    // res.json(new ApiResponse(200, "take it " + req.user._id, userRentals));
-    // return;
+
+  // res.json(new ApiResponse(200, "take it " + req.user._id, userRentals));
+  // return;
 
   if (userRentals.length == 0) {
     // if user has 0 purchased.
-    const suggestions = await Rental.find({parentCategory:"Real Estate"}).sort({ createdAt: 1 });
+    const suggestions = await Rental.find({
+      parentCategory: "Real Estate",
+    }).sort({ createdAt: 1 });
     return res.json(new ApiResponse(200, "Suggested Rentals", []));
   } else {
     const latestRental = userRentals[0];
     const rentals = await Rental.find({
       _id: { $ne: latestRental.products[0]?.productId },
-      parentCategory:"Real Estate"
+      parentCategory: "Real Estate",
     });
     const allPrices = rentals.map((obj) => obj.price);
     const minPrice = Math.min(...allPrices);
@@ -49,18 +53,14 @@ const getSuggestedRoom = asynchHandler(async (req, res) => {
       const subCategorySimilarity =
         latestRental.subCategory === rental.subCategory ? 1 : 0;
 
-      const normPriceOfLatestCourse = normalizeValue(
+      const normPriceOfLatestRent = normalizeValue(
         latestRental.products[0].price,
         minPrice,
         maxPrice
       );
-      const normPriceOfCourse = normalizeValue(
-        rental.price,
-        minPrice,
-        maxPrice
-      );
+      const normPriceOfRent = normalizeValue(rental.price, minPrice, maxPrice);
       const priceDifference =
-        1 - Math.abs(normPriceOfLatestCourse - normPriceOfCourse);
+        1 - Math.abs(normPriceOfLatestRent - normPriceOfRent);
 
       const weights = {
         text: 0.4,
@@ -95,9 +95,12 @@ const getSuggestedVehicle = asynchHandler(async (req, res) => {
   const numberOfResult = req.query.numberOfResult;
   const type = req.query.type;
 
-  const userRentals = await Order.find({ user: req.user._id,  products: {
-    $elemMatch: { parentCategory: "Vehicles" }, 
-  }, }).sort({
+  const userRentals = await Order.find({
+    user: req.user._id,
+    products: {
+      $elemMatch: { parentCategory: "Vehicles" },
+    },
+  }).sort({
     createdAt: -1,
   });
 
@@ -106,14 +109,15 @@ const getSuggestedVehicle = asynchHandler(async (req, res) => {
 
   if (userRentals.length == 0) {
     // if user has 0 purchased.
-    const suggestions = await Rental.find({parentCategory:"Vehicles"}).sort({ createdAt: 1 });
+    const suggestions = await Rental.find({ parentCategory: "Vehicles" }).sort({
+      createdAt: 1,
+    });
     return res.json(new ApiResponse(200, "Suggested Rentals", []));
   } else {
     const latestRental = userRentals[0];
     const rentals = await Rental.find({
       _id: { $ne: latestRental.products[0]?.productId },
-      parentCategory:"Vehicles"
-
+      parentCategory: "Vehicles",
     });
     const allPrices = rentals.map((obj) => obj.price);
     const minPrice = Math.min(...allPrices);
@@ -132,24 +136,20 @@ const getSuggestedVehicle = asynchHandler(async (req, res) => {
       const subCategorySimilarity =
         latestRental.subCategory === rental.subCategory ? 1 : 0;
 
-      const normPriceOfLatestCourse = normalizeValue(
+      const normPriceOfLatestRent = normalizeValue(
         latestRental.products[0].price,
         minPrice,
         maxPrice
       );
-      const normPriceOfCourse = normalizeValue(
-        rental.price,
-        minPrice,
-        maxPrice
-      );
+      const normPriceOfRent = normalizeValue(rental.price, minPrice, maxPrice);
       const priceDifference =
-        1 - Math.abs(normPriceOfLatestCourse - normPriceOfCourse);
+        1 - Math.abs(normPriceOfLatestRent - normPriceOfRent);
 
       const weights = {
-        text: 0.4,
-        price: 0.1,
+        text: 0.3,
+        price: 0.2,
         parentCategorySimilarity: 0.3,
-        subCategorySimilarity: 0.4,
+        subCategorySimilarity: 0.7,
       };
 
       const overallSimilarity =
