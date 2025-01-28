@@ -46,7 +46,7 @@ export default function SignUp() {
   });
 
   const mutation = useMutation({
-    mutationFn: signsUp,
+    mutationFn: signUp,
     onSuccess: () => {
       navigate("/login");
     },
