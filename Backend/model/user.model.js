@@ -60,11 +60,18 @@ const userSchema = new mongoose.Schema(
     },
     image:{
       type:String,
-    }
+    },
+    publicKey: {
+      type: String,
+    },
+    privateKey: {
+      type: String,
+    },
   },
   {
     timestamps: true,
   }
+  
 );
 
 const User = mongoose.model("User", userSchema);

@@ -206,19 +206,22 @@ const UserProfile = () => {
     if (loadingListedItems) {
       return <Typography>Loading...</Typography>;
     }
-
+  
     if (errorListedItems) {
       return <Typography color="error">Error: {errorListedItems}</Typography>;
     }
-
+  
     if (listedItems.length === 0) {
       return <Typography>No items listed yet.</Typography>;
     }
-
+  
+    // Sort listed items by createdAt in descending order (latest first)
+    const sortedListedItems = [...listedItems].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
     const itemsPerPage = 5;
     const startIndex = (listedItemsPage - 1) * itemsPerPage;
-    const currentPageItems = listedItems.slice(startIndex, startIndex + itemsPerPage);
-
+    const currentPageItems = sortedListedItems.slice(startIndex, startIndex + itemsPerPage);
+  
     return currentPageItems.map((item) => (
       <Card key={item._id} sx={{ mb: 3, boxShadow: 3 }}>
         <Grid container>
@@ -247,6 +250,9 @@ const UserProfile = () => {
               <Typography variant="body2" color="text.primary">
                 <strong>Category:</strong> {item.parentCategory} - {item.subCategory}
               </Typography>
+              <Typography variant="body2" color="text.primary">
+                <strong>Occupied:</strong> {item.occupied ? "Yes" : "No"}
+              </Typography>
               <Box sx={{ mt: 2 }}>
                 <Button variant="outlined" color="primary" onClick={() => handleUpdate(item)} sx={{ mr: 2 }}>
                   Update
@@ -261,6 +267,7 @@ const UserProfile = () => {
       </Card>
     ));
   };
+  
 
   const downloadSingleBookedItemAsPDF = (order, product) => {
     const doc = new jsPDF();
@@ -269,12 +276,15 @@ const UserProfile = () => {
     doc.text("Booked Item Details", 14, 20);
     const itemDetails = [
       ["Order ID", order._id],
-      ["Product", product.product],
-      ["Address", product.address],
-      ["Price", `Rs ${product.price}`],
-      ["Start Date", new Date(product.startDate).toLocaleDateString()],
-      ["End Date", new Date(product.endDate).toLocaleDateString()],
+      ["Product", order.payload.split(";;")[0]],
+      ["Address", order.payload.split(";;")[1]],
+      ["Price", `Rs ${order.payload.split(";;")[2]}`],
+      ["Start Date", new Date(order.payload.split(";;")[3]).toLocaleDateString()],
+      ["End Date", new Date(order.payload.split(";;")[4]).toLocaleDateString()],
       ["Category", `${product.parentCategory} - ${product.subCategory}`],
+      // ["Signature", order.signature],
+      // ["Payload", order.payload],
+      
     ];
 
     // Add table
@@ -290,27 +300,38 @@ const UserProfile = () => {
       const imgHeight = 50;
       doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
     }
-    // Save the PDF
+    const linkText = "Verify";
+    const linkX = 100; // X position
+    const linkY = 150; // Y position
+    const linkUrl = `http://localhost:4001/api/denial/verify?payload=${encodeURIComponent(order.payload)}&signature=${encodeURIComponent(order.signature)}&order_Id=${order._id}`;
+  
+    doc.setFontSize(12);
+  doc.setTextColor(0, 0, 255); // Set text color to blue (indicates link)
+  doc.textWithLink(linkText, linkX, linkY, { url: linkUrl }); 
     doc.save(`${product.product}_details.pdf`);
+
   };
 
   const renderBookedItems = () => {
     if (loadingOrders) {
       return <Typography>Loading...</Typography>;
     }
-
+  
     if (errorOrders) {
       return <Typography color="error">Error: {errorOrders}</Typography>;
     }
-
+  
     if (orders.length === 0) {
       return <Typography>No items booked yet.</Typography>;
     }
-
+  
+    // Sort orders by createdAt in descending order (latest first)
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  
     const itemsPerPage = 5;
     const startIndex = (ordersPage - 1) * itemsPerPage;
-    const currentPageOrders = orders.slice(startIndex, startIndex + itemsPerPage);
-
+    const currentPageOrders = sortedOrders.slice(startIndex, startIndex + itemsPerPage);
+  
     return currentPageOrders.map((order) => (
       <Box key={order._id} sx={{ mb: 2 }}>
         <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
@@ -349,6 +370,9 @@ const UserProfile = () => {
                   <Typography variant="body2" color="text.primary">
                     <strong>Payment Method:</strong> {order.payment_method}
                   </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Transaction Code:</strong> {order.transaction_code}
+                  </Typography>
                   <Typography variant="body2" style={{ color: "green" }}>
                     <strong>Status:</strong> {order.status}
                   </Typography>
@@ -368,6 +392,8 @@ const UserProfile = () => {
       </Box>
     ));
   };
+  
+
 
   return (
     <>

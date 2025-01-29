@@ -1,5 +1,6 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
@@ -10,6 +11,18 @@ const signUp = async (req, res) => {
   const userExist = await User.findOne({
     email: req.body.email,
   });
+  //keyPair.publicKey or keyPair.privateKey
+      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+          modulusLength: 2048,
+          publicKeyEncoding: {
+              type: 'spki',
+              format: 'der',
+          },
+          privateKeyEncoding: {
+              type: 'pkcs8',
+              format: 'der',
+          }
+      })
   if (userExist) {
     res.status(400).json({
       message: "User already exist. Please sign in.",
@@ -25,6 +38,8 @@ const signUp = async (req, res) => {
     password: hashedPassword,
     latitude: req.body.latitude,
     longitude: req.body.longitude,
+    privateKey:privateKey.toString('base64'),
+    publicKey:publicKey.toString('base64'),
   });
   res.status(201).json({
     message: "Signed Up successfully",
