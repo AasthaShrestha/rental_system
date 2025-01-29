@@ -26,11 +26,11 @@ function PostFree() {
   const autocompleteRef = useRef(null);
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
-  const [latitude, setLatitude] = useState(null);  // Added latitude state
-  const [longitude, setLongitude] = useState(null);  // Added longitude state
+  const [latitude, setLatitude] = useState(null);  
+  const [longitude, setLongitude] = useState(null);  
   const [mapCenter, setMapCenter] = useState({ lat: 27.7172, lng: 85.324 });
   const [termsAccepted, setTermsAccepted] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const subcategories = {
     "Real Estate": ["Single Room", "Double Room", "Flat", "House"],
@@ -45,7 +45,7 @@ function PostFree() {
       return;
     }
 
-    const formData = new FormData(); // Use FormData for file upload
+    const formData = new FormData(); 
     formData.append("name", productName);
     formData.append("description", productDescription);
     formData.append("address", address);
@@ -57,7 +57,7 @@ function PostFree() {
 
     // Append all images to the FormData
     file.forEach((image) => {
-      formData.append(`images`, image); // Ensure these are File objects
+      formData.append(`images`, image); 
     });
 
     try {
@@ -74,17 +74,17 @@ function PostFree() {
   };
 
   const handleImageUpload = (e) => {
-    const uploadedFiles = Array.from(e.target.files); // Convert FileList to array
+    const uploadedFiles = Array.from(e.target.files); 
     if (uploadedFiles.length > 0) {
-      setFile(uploadedFiles); // Save all files to state
+      setFile(uploadedFiles);
 
       // Loop over each file and read them
       uploadedFiles.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {
-          setImages((prevImages) => [...prevImages, reader.result]); // Add each image to state
+          setImages((prevImages) => [...prevImages, reader.result]); 
         };
-        reader.readAsDataURL(file); // Read each file as data URL
+        reader.readAsDataURL(file); 
       });
     }
   };
@@ -110,8 +110,8 @@ function PostFree() {
     }
   };
 
-  const openModal = () => setIsModalOpen(true); // Open modal
-  const closeModal = () => setIsModalOpen(false); // Close modal
+  const openModal = () => setIsModalOpen(true); 
+  const closeModal = () => setIsModalOpen(false); 
 
   if (!isLoaded) {
     return <div>Loading...</div>;

@@ -6,11 +6,13 @@ import axios from "axios";
 
 function Vehicles() {
   const [posts, setPosts] = useState([]);
-  const [sortOrder, setSortOrder] = useState(""); // Sorting order state
-  const [selectedSubCategories, setSelectedSubCategories] = useState([]); 
-  const [showFilter, setShowFilter] = useState(false); 
+  const [sortOrder, setSortOrder] = useState(""); 
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
 
-  // Fetch posts with sorting and filtering
+  // Fetch posts with sorting, filtering, and pagination
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -18,39 +20,50 @@ function Vehicles() {
           params: {
             order: sortOrder,
             subCategory: selectedSubCategories.join(","),
+            limit: 9,  // Set limit to 9
+            page: currentPage,  // Pass current page
           },
         });
-
+  
         if (response.data.success) {
           setPosts(response.data.data);
+          setTotalPages(response.data.totalPages); 
         }
       } catch (error) {
         console.error("Error fetching vehicles:", error);
       }
     };
-
+  
     fetchPosts();
-  }, [sortOrder, selectedSubCategories]); 
+  }, [sortOrder, selectedSubCategories, currentPage]); 
+  
 
   // Handle checkbox change for subcategories
   const handleCheckboxChange = (e) => {
     const value = e.target.value;
     setSelectedSubCategories((prevSelected) => {
       if (prevSelected.includes(value)) {
-        return prevSelected.filter((item) => item !== value); // Remove from selected
+        return prevSelected.filter((item) => item !== value); 
       } else {
-        return [...prevSelected, value]; // Add to selected
+        return [...prevSelected, value]; 
       }
     });
   };
 
-  // Handle checkbox change for sorting (with "untick" functionality)
+  // Handle checkbox change for sorting
   const handleSortChange = (e) => {
     const value = e.target.value;
     if (value === "clear") {
       setSortOrder(""); 
     } else {
       setSortOrder(value);
+    }
+  };
+
+  // Handle page change
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage); 
     }
   };
 
@@ -144,6 +157,28 @@ function Vehicles() {
           <Cards key={post._id} post={post} />
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center gap-4 py-4">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
+          Previous
+        </button>
+        <span className="self-center text-lg">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+        >
+          Next
+        </button>
+      </div>
+
       <Footer />
     </>
   );

@@ -22,27 +22,31 @@ const signUp = async (data) => {
 
 // Validation schema using Yup
 const schema = yup
-    .object({
-      name: yup.string().required("Name is required."),
-      email: yup
-        .string()
-        .email("Invalid email format.")
-        .required("Email is required."),
-      password: yup
-        .string()
-        .min(7, "Password must be at least 7 characters long.")
-        .test(
-          "is-strong",
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-          (value) =>
-            /[A-Z]/.test(value) &&
-            /[a-z]/.test(value) &&
-            /[0-9]/.test(value) &&
-            /[^A-Za-z0-9]/.test(value)
-        )
-        .required("Password is required."),
-    })
-    .required();
+  .object({
+    name: yup.string().required("Name is required."),
+    email: yup
+      .string()
+      .matches(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Invalid email format."
+      )
+      .required("Email is required."),
+    password: yup
+      .string()
+      .min(7, "Password must be at least 7 characters long.")
+      .matches(
+        /[A-Z]/,
+        "Password must contain at least one uppercase letter."
+      )
+      .matches(/[a-z]/, "Password must contain at least one lowercase letter.")
+      .matches(/[0-9]/, "Password must contain at least one number.")
+      .matches(
+        /[^A-Za-z0-9]/,
+        "Password must contain at least one special character."
+      )
+      .required("Password is required."),
+  })
+  .required();
 
 export default function SignUp() {
   const navigate = useNavigate();

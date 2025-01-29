@@ -5,32 +5,44 @@ import Cards from "../components/Cards";
 import axios from "axios";
 
 function Rooms() {
-  const [posts, setPosts] = useState([]);
-  const [sortOrder, setSortOrder] = useState(""); // Sorting order state
+  const [posts, setPosts] = useState([]); 
+  const [sortOrder, setSortOrder] = useState(""); 
   const [selectedSubCategories, setSelectedSubCategories] = useState([]); 
   const [showFilter, setShowFilter] = useState(false); 
+  const [currentPage, setCurrentPage] = useState(1); 
+  const [totalPages, setTotalPages] = useState(1); 
 
-  // Fetch posts with sorting and filtering
+  // Fetch posts with sorting, filtering, and pagination
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        console.log("Fetching posts with params:", {
+          order: sortOrder,
+          subCategory: selectedSubCategories.join(","),
+          limit: 9,  
+          page: currentPage, 
+        });
         const response = await axios.get("http://localhost:4001/api/posts/rooms", {
           params: {
             order: sortOrder,
             subCategory: selectedSubCategories.join(","),
+            limit: 9,
+            page: currentPage,
           },
         });
-
+    
         if (response.data.success) {
           setPosts(response.data.data);
+          setTotalPages(response.data.totalPages);
         }
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
     };
+    
 
     fetchPosts();
-  }, [sortOrder, selectedSubCategories]); 
+  }, [sortOrder, selectedSubCategories, currentPage]); 
 
   // Handle checkbox change for subcategories
   const handleCheckboxChange = (e) => {
@@ -51,6 +63,13 @@ function Rooms() {
       setSortOrder(""); 
     } else {
       setSortOrder(value);
+    }
+  };
+
+  // Handle pagination (previous/next page)
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber > 0 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber); // Set current page
     }
   };
 
@@ -144,6 +163,24 @@ function Rooms() {
           <Cards key={post._id} post={post} />
         ))}
       </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-6">
+        <button 
+          onClick={() => handlePageChange(currentPage - 1)} 
+          disabled={currentPage === 1} 
+          className="px-4 py-2 bg-gray-300 text-white rounded mr-2">
+          Previous
+        </button>
+        <span className="px-4 py-2">{`Page ${currentPage} of ${totalPages}`}</span>
+        <button 
+          onClick={() => handlePageChange(currentPage + 1)} 
+          disabled={currentPage === totalPages} 
+          className="px-4 py-2 bg-gray-300 text-white rounded ml-2">
+          Next
+        </button>
+      </div>
+
       <Footer />
     </>
   );
