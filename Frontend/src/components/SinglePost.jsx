@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css"; // Import CSS for DatePicke
 
 function SinglePost() {
   const { id } = useParams();
+  const navigate= useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -69,6 +70,13 @@ function SinglePost() {
 
   // Handle payment logic
   const handlePayment = async () => {
+
+    const authUser = JSON.parse(localStorage.getItem("authUser"));
+    if (!authUser) {
+      console.log("User not logged in! Redirecting to login page.");
+      navigate("/login");
+      return;
+    }
     console.log("Book Now button clicked!");
 
     if (!post || !startDate || !endDate) {

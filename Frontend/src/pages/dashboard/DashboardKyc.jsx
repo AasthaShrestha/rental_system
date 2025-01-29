@@ -98,7 +98,7 @@ const DashboardKyc = () => {
             const baseUrl = "http://localhost:4001/";
             const imageUrl = kyc?.kycDetails?.photoUrl?.[0];
 
-            // Safely handle undefined or empty imageUrl
+            
             if (!imageUrl) {
               return null;
             }
