@@ -16,10 +16,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import PeopleOutlineIcon from "@mui/icons-material/PeopleOutline";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
+import BikeScooterIcon from '@mui/icons-material/BikeScooter';
+import RequestPageIcon from '@mui/icons-material/RequestPage';
 import { Outlet, useNavigate } from "react-router";
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import ShopIcon from '@mui/icons-material/Shop';
+import HomeIcon from "@mui/icons-material/Home";
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -117,32 +122,32 @@ export default function Dashboard() {
     {
       label: "Rooms",
       route: "/dashboard/rooms",
-      icon: <ShoppingCartIcon />,
+      icon: <MeetingRoomIcon />,
     },
     {
       label: "Vehicles",
       route: "/dashboard/vehicles",
-      icon: <ShoppingBagIcon />,
-    },
-    {
-      label: "Users",
-      route: "/dashboard/users",
-      icon: <PeopleOutlineIcon />,
+      icon: <BikeScooterIcon />,
     },
     {
       label:"KYC Request",
       route:"/dashboard/kycs",
-      icon:<PeopleOutlineIcon/>,
+      icon:<RequestPageIcon/>,
     },
     {
       label:"Free Rentals",
       route:"/dashboard/expiredRentals",
-      icon:<PeopleOutlineIcon/>
+      icon:<AccessTimeIcon/>
     },
     {
       label:"Query Detials",
       route:"/dashboard/userquery",
-      icon:<PeopleOutlineIcon/>
+      icon:<QuestionMarkIcon/>
+    },
+    {
+      label:"Order details",
+      route:"/dashboard/orderdetail",
+      icon:<ShopIcon/>
     },
   ];
 
@@ -166,7 +171,19 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Mini variant drawer
+            Details 
+          </Typography>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{
+              cursor: "pointer",
+              paddingLeft: 2,
+              fontWeight: "bold",
+            }}
+            onClick={() => naviagte("/")}
+          >
+            Home
           </Typography>
         </Toolbar>
       </AppBar>

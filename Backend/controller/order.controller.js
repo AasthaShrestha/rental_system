@@ -84,7 +84,7 @@ export const createSignature = (message) => {
 
 const getMyOrders = async (req, res) => {
   console.log(req.user);
-  if (req.user.roles.includes["Admin"]) {
+  if (req.user.roles.includes("Admin")) {
     const orders = await Order.find();
     return res.json(new ApiResponse(200, "All Orders of all user", orders));
   } else {

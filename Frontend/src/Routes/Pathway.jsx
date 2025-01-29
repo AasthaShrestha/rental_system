@@ -25,6 +25,7 @@ import Kyc from "../pages/Kyc.jsx";
 import DashboardKyc from "../pages/dashboard/DashboardKyc.jsx";
 import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
 import DashboardQuery from "../pages/dashboard/DashboardQuery.jsx";
+import DashboardOrders from "../pages/dashboard/DashboardOrders.jsx";
 // import ValidUserForm from "../components/Validuserform.jsx";
 
 const AuthUserContext = createContext(null);
@@ -71,19 +72,17 @@ function Pathway() {
           <Route path="/postforfree" element={<PostFree />} />
           {/* </Route> */}
 
-          <Route element={<AdminRoutes />}>
-            <Route path="/dashboard" element={<Dashboard />}>
-              <Route index element={<h2>Dashboard section</h2>} />
-              <Route path="rooms" element={<DashboardRooms />} />
-              <Route path="vehicles" element={<DashboardVehicle />} />
-              <Route path="kycs" element={<DashboardKyc />} />
-              <Route
-                path="expiredRentals"
-                element={<DashboardExpiredRentals />}
-              />
-              <Route path="userquery" element={<DashboardQuery />} />
+            <Route element={<AdminRoutes />}>
+              <Route path="/dashboard" element={<Dashboard />}>
+                <Route index element={<h2>Dashboard section</h2>} />
+                <Route path="rooms" element={<DashboardRooms />} />
+                <Route path="vehicles" element={<DashboardVehicle />} />
+                <Route path="kycs" element = {<DashboardKyc/>} />
+                <Route path="expiredRentals" element = {<DashboardExpiredRentals/>} />
+                <Route path="userquery" element = {<DashboardQuery/>} />
+                <Route path="orderdetail" element = {<DashboardOrders/>} />
+              </Route>
             </Route>
-          </Route>
 
           <Route path="/aboutus" element={<AboutUs />} />
           <Route path="/contactus" element={<ContactUs />} />

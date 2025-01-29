@@ -18,9 +18,8 @@ import {
 import axios from "axios";
 import NavBar from "./Navbar";
 import Footer from "./Footer";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import "jspdf-autotable";
-import html2canvas from "html2canvas";
 
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
@@ -43,6 +42,7 @@ const UserProfile = () => {
   const [currentItem, setCurrentItem] = useState(null);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedDescription, setUpdatedDescription] = useState("");
+  const [updatedPrice, setUpdatedPrice] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -173,6 +173,7 @@ const UserProfile = () => {
     setCurrentItem(item);
     setUpdatedName(item.name);
     setUpdatedDescription(item.description);
+    setUpdatedPrice(item.price);
     setOpenUpdateDialog(true);
   };
 
@@ -196,7 +197,9 @@ const UserProfile = () => {
       const updatedItem = {
         name: updatedName,
         description: updatedDescription,
+        price: updatedPrice,
       };
+
       await axios.patch(
         `http://localhost:4001/api/posts/mypost/${currentItem._id}`,
         updatedItem,
@@ -206,13 +209,13 @@ const UserProfile = () => {
           },
         }
       );
-      window.location.reload();
 
-      setUpdatedListedItems((prevItems) =>
+      // Reload the page or update state directly to reflect the changes
+      setListedItems((prevItems) =>
         prevItems.map((item) =>
           item._id === currentItem._id ? { ...item, ...updatedItem } : item
         )
-      ); // Update the state with the updated item
+      );
 
       setOpenUpdateDialog(false);
     } catch (err) {
@@ -293,103 +296,103 @@ const UserProfile = () => {
     ));
   };
 
-  // const downloadSingleBookedItemAsPDF = (order, product) => {
-  //   const doc = new jsPDF();
-
-  //   doc.setFontSize(18);
-  //   doc.text("Booked Item Details", 14, 20);
-  //   const itemDetails = [
-  //     ["Order ID", order._id],
-  //     ["Product", product.product],
-  //     ["Address", product.address],
-  //     ["Price", `Rs ${product.price}`],
-  //     ["Start Date", new Date(product.startDate).toLocaleDateString()],
-  //     ["End Date", new Date(product.endDate).toLocaleDateString()],
-  //     ["Category", `${product.parentCategory} - ${product.subCategory}`],
-  //   ];
-
-  //   // Add table
-  //   doc.autoTable({
-  //     head: [["Field", "Value"]],
-  //     body: itemDetails,
-  //     startY: 30,
-  //   });
-  //   // Optionally add an image
-  //   if (product.image) {
-  //     const imageUrl = `http://localhost:4001/${product.image}`;
-  //     const imgWidth = 50;
-  //     const imgHeight = 50;
-  //     doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
-  //   }
-  //   // Save the PDF
-  //   doc.save(`${product.product}_details.pdf`);
-  // };
-
   const downloadSingleBookedItemAsPDF = (order, product) => {
-    // Create a container to hold the content for the PDF
-    const contentContainer = document.createElement("div");
-    contentContainer.style.width = "210mm"; // A4 width
-    contentContainer.style.height = "297mm"; // A4 height
-    contentContainer.style.padding = "20px";
-    contentContainer.style.fontFamily = "Arial, sans-serif";
-    contentContainer.style.fontSize = "14px";
-    contentContainer.style.backgroundColor = "#FFFFFF";
-    contentContainer.style.color = "rgb(120, 120, 120)";
+    const doc = new jsPDF();
 
-    // Add the text and table content
-    contentContainer.innerHTML = `
-    <h2>Booked Item Details</h2>
-    <table>
-      <tr><td><strong>Order ID</strong></td><td>${order._id}</td></tr>
-      <tr><td><strong>Product</strong></td><td>${product.product}</td></tr>
-      <tr><td><strong>Address</strong></td><td>${product.address}</td></tr>
-      <tr><td><strong>Price</strong></td><td>Rs ${product.price}</td></tr>
-      <tr><td><strong>Start Date</strong></td><td>${new Date(
-        product.startDate
-      ).toLocaleDateString()}</td></tr>
-      <tr><td><strong>End Date</strong></td><td>${new Date(
-        product.endDate
-      ).toLocaleDateString()}</td></tr>
-      <tr><td><strong>Category</strong></td><td>${product.parentCategory} - ${
-      product.subCategory
-    }</td></tr>
-    </table>
-  `;
+    doc.setFontSize(18);
+    doc.text("Booked Item Details", 14, 20);
+    const itemDetails = [
+      ["Order ID", order._id],
+      ["Product", product.product],
+      ["Address", product.address],
+      ["Price", `Rs ${product.price}`],
+      ["Start Date", new Date(product.startDate).toLocaleDateString()],
+      ["End Date", new Date(product.endDate).toLocaleDateString()],
+      ["Category", `${product.parentCategory} - ${product.subCategory}`],
+    ];
 
-    // Optionally add an image if available
+    // Add table
+    doc.autoTable({
+      head: [["Field", "Value"]],
+      body: itemDetails,
+      startY: 30,
+    });
+    // Optionally add an image
     if (product.image) {
-      const img = document.createElement("img");
-      img.src = `http://localhost:4001/${product.image}`;
-      img.width = 100; // Adjust size
-      img.height = 100; // Adjust size
-      contentContainer.appendChild(img);
+      const imageUrl = `http://localhost:4001/${product.image}`;
+      const imgWidth = 50;
+      const imgHeight = 50;
+      doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
     }
-
-    // Append the content to the body to render it off-screen
-    document.body.appendChild(contentContainer);
-
-    // Use html2canvas to convert the content into an image
-    html2canvas(contentContainer)
-      .then((canvas) => {
-        // Create a PDF from the image
-        const imgData = canvas.toDataURL("image/png");
-
-        // Create a jsPDF instance
-        const doc = new jsPDF();
-
-        // Add the image to the PDF (fits A4 size)
-        doc.addImage(imgData, "PNG", 0, 0, 210, 297);
-
-        // Save the PDF
-        doc.save(`${product.product}_details.pdf`);
-
-        // Clean up by removing the content container
-        document.body.removeChild(contentContainer);
-      })
-      .catch((err) => {
-        console.error("Error generating the PDF:", err);
-      });
+    // Save the PDF
+    doc.save(`${product.product}_details.pdf`);
   };
+
+  // const downloadSingleBookedItemAsPDF = (order, product) => {
+  //   // Create a container to hold the content for the PDF
+  //   const contentContainer = document.createElement("div");
+  //   contentContainer.style.width = "210mm"; // A4 width
+  //   contentContainer.style.height = "297mm"; // A4 height
+  //   contentContainer.style.padding = "20px";
+  //   contentContainer.style.fontFamily = "Arial, sans-serif";
+  //   contentContainer.style.fontSize = "14px";
+  //   contentContainer.style.backgroundColor = "#FFFFFF";
+  //   contentContainer.style.color = "rgb(120, 120, 120)";
+
+  //   // Add the text and table content
+  //   contentContainer.innerHTML = `
+  //   <h2>Booked Item Details</h2>
+  //   <table>
+  //     <tr><td><strong>Order ID</strong></td><td>${order._id}</td></tr>
+  //     <tr><td><strong>Product</strong></td><td>${product.product}</td></tr>
+  //     <tr><td><strong>Address</strong></td><td>${product.address}</td></tr>
+  //     <tr><td><strong>Price</strong></td><td>Rs ${product.price}</td></tr>
+  //     <tr><td><strong>Start Date</strong></td><td>${new Date(
+  //       product.startDate
+  //     ).toLocaleDateString()}</td></tr>
+  //     <tr><td><strong>End Date</strong></td><td>${new Date(
+  //       product.endDate
+  //     ).toLocaleDateString()}</td></tr>
+  //     <tr><td><strong>Category</strong></td><td>${product.parentCategory} - ${
+  //     product.subCategory
+  //   }</td></tr>
+  //   </table>
+  // `;
+
+  //   // Optionally add an image if available
+  //   if (product.image) {
+  //     const img = document.createElement("img");
+  //     img.src = `http://localhost:4001/${product.image}`;
+  //     img.width = 100; // Adjust size
+  //     img.height = 100; // Adjust size
+  //     contentContainer.appendChild(img);
+  //   }
+
+  //   // Append the content to the body to render it off-screen
+  //   document.body.appendChild(contentContainer);
+
+  //   // Use html2canvas to convert the content into an image
+  //   html2canvas(contentContainer)
+  //     .then((canvas) => {
+  //       // Create a PDF from the image
+  //       const imgData = canvas.toDataURL("image/png");
+
+  //       // Create a jsPDF instance
+  //       const doc = new jsPDF();
+
+  //       // Add the image to the PDF (fits A4 size)
+  //       doc.addImage(imgData, "PNG", 0, 0, 210, 297);
+
+  //       // Save the PDF
+  //       doc.save(`${product.product}_details.pdf`);
+
+  //       // Clean up by removing the content container
+  //       document.body.removeChild(contentContainer);
+  //     })
+  //     .catch((err) => {
+  //       console.error("Error generating the PDF:", err);
+  //     });
+  // };
 
   const renderBookedItems = () => {
     if (loadingOrders) {
@@ -494,21 +497,33 @@ const UserProfile = () => {
           }}
         >
           <Avatar
-            alt="abc"
+            alt="User Profile"
             src={"http://localhost:4001" + userData?.image}
-            sx={{ width: 100, height: 100, mb: 2 }}
+            sx={{ width: 100, height: 100, mb: 2, cursor: "pointer" }}
+            onClick={() => document.getElementById("upload-button").click()} // Trigger file input click
           />
           <input
+            id="upload-button"
             type="file"
             accept="image/*"
             onChange={handleImageChange}
-            style={{ marginBottom: "20px" }}
+            style={{ display: "none" }}
           />
+          {imagePreview && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1, textAlign: "center", wordBreak: "break-word" }}
+            >
+              {image?.name || "Selected file preview"}
+            </Typography>
+          )}
           <Button
-            variant="outlined"
+            variant="contained"
             color="primary"
             onClick={handleImageUpload}
             disabled={!image}
+            sx={{ mt: 2 }}
           >
             Upload Image
           </Button>
@@ -586,7 +601,7 @@ const UserProfile = () => {
             fullWidth
             value={updatedName}
             onChange={(e) => setUpdatedName(e.target.value)}
-            sx={{ mb: 2 }}
+            sx={{ mt: 2, mb: 2 }}
           />
           <TextField
             label="Description"
@@ -594,6 +609,14 @@ const UserProfile = () => {
             value={updatedDescription}
             onChange={(e) => setUpdatedDescription(e.target.value)}
             sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Price"
+            type="number"
+            value={updatedPrice}
+            onChange={(e) => setUpdatedPrice(e.target.value)}
+            fullWidth
+            margin="normal"
           />
         </DialogContent>
         <DialogActions>
