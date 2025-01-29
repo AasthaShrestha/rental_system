@@ -53,14 +53,18 @@ const getSuggestedRoom = asynchHandler(async (req, res) => {
       const subCategorySimilarity =
         latestRental.subCategory === rental.subCategory ? 1 : 0;
 
-      const normPriceOfLatestRent = normalizeValue(
+      const normPriceOfLatestRental = normalizeValue(
         latestRental.products[0].price,
         minPrice,
         maxPrice
       );
-      const normPriceOfRent = normalizeValue(rental.price, minPrice, maxPrice);
+      const normPriceOfRental = normalizeValue(
+        rental.price,
+        minPrice,
+        maxPrice
+      );
       const priceDifference =
-        1 - Math.abs(normPriceOfLatestRent - normPriceOfRent);
+        1 - Math.abs(normPriceOfLatestRental - normPriceOfRental);
 
       const weights = {
         text: 0.1,
@@ -136,14 +140,18 @@ const getSuggestedVehicle = asynchHandler(async (req, res) => {
       const subCategorySimilarity =
         latestRental.subCategory === rental.subCategory ? 1 : 0;
 
-      const normPriceOfLatestRent = normalizeValue(
+      const normPriceOfLatestVehicle = normalizeValue(
         latestRental.products[0].price,
         minPrice,
         maxPrice
       );
-      const normPriceOfRent = normalizeValue(rental.price, minPrice, maxPrice);
+      const normPriceOfVehicle = normalizeValue(
+        rental.price,
+        minPrice,
+        maxPrice
+      );
       const priceDifference =
-        1 - Math.abs(normPriceOfLatestRent - normPriceOfRent);
+        1 - Math.abs(normPriceOfLatestVehicle - normPriceOfVehicle);
 
       const weights = {
         text: 0.3,

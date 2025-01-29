@@ -21,12 +21,14 @@ import Dashboard from "../pages/dashboard/Dashboard.jsx";
 import DashboardRooms from "../pages/dashboard/DashboardRooms.jsx";
 import { Outlet } from "react-router-dom";
 import DashboardVehicle from "../pages/dashboard/DashboardVehicle.jsx";
-import Kyc from "../pages/Kyc.jsx";
-import DashboardKyc from "../pages/dashboard/DashboardKyc.jsx";
+import Kyc from '../pages/Kyc.jsx'
+import DashboardKyc from '../pages/dashboard/DashboardKyc.jsx';
 import DashboardExpiredRentals from "../pages/dashboard/DashboardRenewal.jsx";
 import DashboardQuery from "../pages/dashboard/DashboardQuery.jsx";
 import DashboardOrders from "../pages/dashboard/DashboardOrders.jsx";
+import Search from "../pages/Search.jsx";
 // import ValidUserForm from "../components/Validuserform.jsx";
+
 
 const AuthUserContext = createContext(null);
 
@@ -84,20 +86,20 @@ function Pathway() {
               </Route>
             </Route>
 
-          <Route path="/aboutus" element={<AboutUs />} />
-          <Route path="/contactus" element={<ContactUs />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/blog/:id" element={<BlogDetailsPage />} />
-          <Route path="/objectives" element={<Objectives />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/profileDetails" element={<ProfileDetails />} />
-          <Route path="/kyc" element={<Kyc />} />
-
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </BrowserRouter>
+            <Route path="/aboutus" element={<AboutUs />} />
+            <Route path="/contactus" element={<ContactUs />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogDetailsPage />} />
+            <Route path="/objectives" element={<Objectives />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profileDetails" element={<ProfileDetails />} />
+            <Route path="/kyc" element={<Kyc/>} />
+            <Route path="/searchall" element = {<Search/>} />
+            <Route path="*" element={<Error />} />
+          </Routes>
+        </BrowserRouter>
     </AuthUserContext.Provider>
   );
 }

@@ -13,48 +13,30 @@ import * as yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+
+// API call for signing up
+const signUp = async (data) => {
+  const res = await axios.post("http://localhost:4001/user/signup", data);
+  return res.data; // Return response data
+};
+
+// Validation schema using Yup
+const schema = yup
+  .object({
+    name: yup.string().required("Name is required."),
+    email: yup
+      .string()
+      .email("Invalid email format.")
+      .required("Email is required."),
+    password: yup
+      .string()
+      .min(6, "Password must be at least 6 characters long.")
+      .required("Password is required."),
+  })
+  .required();
 
 export default function SignUp() {
   const navigate = useNavigate();
-
-  const [ipAddress, setIpAddress] = useState("");
-  const [geoInfo, setGeoInfo] = useState({});
-
-  // API call for signing up
-  const signUp = async (data) => {
-    const res = await axios.post("http://localhost:4001/user/signup", {
-      ...data,
-      latitude: geoInfo.lat,
-      longitude: geoInfo.lon,
-    });
-    return res.data; // Return response data
-  };
-
-  // Validation schema using Yup
-  const schema = yup
-    .object({
-      name: yup.string().required("Name is required."),
-      email: yup
-        .string()
-        .email("Invalid email format.")
-        .required("Email is required."),
-      password: yup
-        .string()
-        .min(7, "Password must be at least 7 characters long.")
-        .test(
-          "is-strong",
-          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
-          (value) =>
-            /[A-Z]/.test(value) &&
-            /[a-z]/.test(value) &&
-            /[0-9]/.test(value) &&
-            /[^A-Za-z0-9]/.test(value)
-        )
-        .required("Password is required."),
-    })
-    .required();
-
   const {
     register,
     handleSubmit,
@@ -72,34 +54,6 @@ export default function SignUp() {
 
   const onSubmit = (data) => {
     mutation.mutate(data);
-  };
-
-  useEffect(() => {
-    getVisitorIP();
-  }, []);
-
-  useEffect(() => {
-    fetchIPInfo();
-  }, [ipAddress]);
-
-  const getVisitorIP = async () => {
-    try {
-      const response = await fetch("https://api.ipify.org/");
-      const data = await response.text();
-      setIpAddress(data);
-    } catch (error) {
-      console.error("Failed to fetch IP:", error);
-    }
-  };
-
-  const fetchIPInfo = async () => {
-    try {
-      const response = await fetch(`http://ip-api.com/json/${ipAddress}`);
-      const data = await response.json();
-      setGeoInfo(data);
-    } catch (error) {
-      console.error("Failed to location info:", error);
-    }
   };
 
   return (

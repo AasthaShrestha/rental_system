@@ -1,114 +1,124 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Cards from "../components/Cards";
 import axios from "axios";
+import { TablePagination } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchVehicles = async (page, limit, sortOrder, selectedSubCategories) => {
+  try {
+    const response = await axios.get(
+      "http://localhost:4001/api/posts/vehicles",
+      {
+        params: {
+          order: sortOrder,
+          subCategory: selectedSubCategories.join(","),
+          page, // Ensure this is the correct page number
+          limit, // Ensure this is the correct limit per page
+        },
+      }
+    );
+
+    console.log("API Response:", response.data); // Debugging
+
+    if (response.data.success) {
+      return response.data; // `{ data: [...], total: 50 }`
+    }
+  } catch (error) {
+    console.error("Error fetching vehicles:", error);
+    return { data: [], total: 0 };
+  }
+};
 
 function Vehicles() {
-  const [posts, setPosts] = useState([]);
-  const [sortOrder, setSortOrder] = useState(""); // Sorting order state
-  const [selectedSubCategories, setSelectedSubCategories] = useState([]); 
-  const [showFilter, setShowFilter] = useState(false); 
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(6); // Track rowsPerPage separately
+  const [sortOrder, setSortOrder] = useState("");
+  const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+  const [showFilter, setShowFilter] = useState(false);
 
-  // Fetch posts with sorting and filtering
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get("http://localhost:4001/api/posts/vehicles", {
-          params: {
-            order: sortOrder,
-            subCategory: selectedSubCategories.join(","),
-          },
-        });
+  const rowsPerPageOptions = [6, 12, 18];
 
-        if (response.data.success) {
-          setPosts(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching vehicles:", error);
-      }
-    };
+  // Fetch vehicles with pagination, sorting, and filtering
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["vehicles", page, rowsPerPage, sortOrder, selectedSubCategories],
+    queryFn: () =>
+      fetchVehicles(page + 1, rowsPerPage, sortOrder, selectedSubCategories),
+    keepPreviousData: true,
+  });
 
-    fetchPosts();
-  }, [sortOrder, selectedSubCategories]); 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
-  // Handle checkbox change for subcategories
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to first page when changing rows per page
+  };
+
   const handleCheckboxChange = (e) => {
     const value = e.target.value;
-    setSelectedSubCategories((prevSelected) => {
-      if (prevSelected.includes(value)) {
-        return prevSelected.filter((item) => item !== value); // Remove from selected
-      } else {
-        return [...prevSelected, value]; // Add to selected
-      }
-    });
+    setSelectedSubCategories(
+      (prevSelected) =>
+        prevSelected.includes(value)
+          ? prevSelected.filter((item) => item !== value) // Remove
+          : [...prevSelected, value] // Add
+    );
   };
 
-  // Handle checkbox change for sorting (with "untick" functionality)
   const handleSortChange = (e) => {
-    const value = e.target.value;
-    if (value === "clear") {
-      setSortOrder(""); 
-    } else {
-      setSortOrder(value);
-    }
+    setSortOrder(e.target.value === "clear" ? "" : e.target.value);
   };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data!</div>;
 
   return (
     <>
       <Navbar />
       <div className="pt-10 pb-6 px-4">
-        {/* Button to Toggle Filter and Sort Options */}
         <button
           onClick={() => setShowFilter(!showFilter)}
           className="bg-blue-500 text-white py-2 px-4 rounded mb-4"
         >
-          {showFilter ? "Hide Filter & Sort Options" : "Show Filter & Sort Options"}
+          {showFilter
+            ? "Hide Filter & Sort Options"
+            : "Show Filter & Sort Options"}
         </button>
 
-        {/* Show filter and sort options only if showFilter is true */}
         {showFilter && (
           <div>
-            {/* Sorting Section */}
             <div className="mb-6">
-              <h3 className="font-semibold text-xl text-gray-700 mb-3">Sort by:</h3>
+              <h3 className="font-semibold text-xl text-gray-700 mb-3">
+                Sort by:
+              </h3>
               <div className="flex gap-6 items-center">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value="asc"
-                    checked={sortOrder === "asc"}
-                    onChange={handleSortChange}
-                    className="h-5 w-5"
-                  />
-                  <span className="text-lg">Price: Low to High</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value="desc"
-                    checked={sortOrder === "desc"}
-                    onChange={handleSortChange}
-                    className="h-5 w-5"
-                  />
-                  <span className="text-lg">Price: High to Low</span>
-                </label>
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value="clear"
-                    checked={sortOrder === ""}
-                    onChange={handleSortChange}
-                    className="h-5 w-5"
-                  />
-                  <span className="text-lg">Clear Sorting</span>
-                </label>
+                {["asc", "desc", "clear"].map((value) => (
+                  <label key={value} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      value={value}
+                      checked={sortOrder === value}
+                      onChange={handleSortChange}
+                      className="h-5 w-5"
+                    />
+                    <span className="text-lg">
+                      {value === "asc"
+                        ? "Price: Low to High"
+                        : value === "desc"
+                        ? "Price: High to Low"
+                        : "Clear Sorting"}
+                    </span>
+                  </label>
+                ))}
               </div>
             </div>
 
-            {/* Subcategory Filter Section */}
             <div className="mb-6">
-              <h3 className="font-semibold text-xl text-gray-700 mb-3">Filter by Subcategory:</h3>
+              <h3 className="font-semibold text-xl text-gray-700 mb-3">
+                Filter by Subcategory:
+              </h3>
               <div className="flex gap-6 flex-wrap">
                 {["Bike", "Scooter", "Car", "E-Scooter"].map((option) => (
                   <label key={option} className="flex items-center space-x-2">
@@ -139,11 +149,26 @@ function Vehicles() {
       </div>
 
       {/* Cards Section */}
-      <div className={`pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 ${showFilter ? 'mt-4' : ''}`}>
-        {posts.map((post) => (
+      <div
+        className={`pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 ${
+          showFilter ? "mt-4" : ""
+        }`}
+      >
+        {data?.data?.map((post) => (
           <Cards key={post._id} post={post} />
         ))}
       </div>
+
+      {/* Pagination */}
+      <TablePagination
+        component="div"
+        count={data?.total || 0}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage} // Fix for rows per page selection
+        rowsPerPageOptions={rowsPerPageOptions}
+      />
       <Footer />
     </>
   );

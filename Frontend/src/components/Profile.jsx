@@ -18,8 +18,10 @@ import {
 import axios from "axios";
 import NavBar from "./Navbar";
 import Footer from "./Footer";
-import { jsPDF } from "jspdf";
+import jsPDF from "jspdf";
 import "jspdf-autotable";
+
+
 
 const UserProfile = () => {
   const [listedItems, setListedItems] = useState([]);
@@ -303,12 +305,15 @@ const UserProfile = () => {
     doc.text("Booked Item Details", 14, 20);
     const itemDetails = [
       ["Order ID", order._id],
-      ["Product", product.product],
-      ["Address", product.address],
-      ["Price", `Rs ${product.price}`],
-      ["Start Date", new Date(product.startDate).toLocaleDateString()],
-      ["End Date", new Date(product.endDate).toLocaleDateString()],
+      ["Product", order.payload.split(";;")[0]],
+      ["Address", order.payload.split(";;")[1]],
+      ["Price", `Rs ${order.payload.split(";;")[2]}`],
+      ["Start Date", new Date(order.payload.split(";;")[3]).toLocaleDateString()],
+      ["End Date", new Date(order.payload.split(";;")[4]).toLocaleDateString()],
       ["Category", `${product.parentCategory} - ${product.subCategory}`],
+      // ["Signature", order.signature],
+      // ["Payload", order.payload],
+      
     ];
 
     // Add table
@@ -324,75 +329,17 @@ const UserProfile = () => {
       const imgHeight = 50;
       doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
     }
-    // Save the PDF
+    const linkText = "Verify";
+    const linkX = 100; // X position
+    const linkY = 150; // Y position
+    const linkUrl = `http://localhost:4001/api/denial/verify?payload=${encodeURIComponent(order.payload)}&signature=${encodeURIComponent(order.signature)}&order_Id=${order._id}`;
+  
+    doc.setFontSize(12);
+  doc.setTextColor(0, 0, 255); // Set text color to blue (indicates link)
+  doc.textWithLink(linkText, linkX, linkY, { url: linkUrl }); 
     doc.save(`${product.product}_details.pdf`);
+
   };
-
-  // const downloadSingleBookedItemAsPDF = (order, product) => {
-  //   // Create a container to hold the content for the PDF
-  //   const contentContainer = document.createElement("div");
-  //   contentContainer.style.width = "210mm"; // A4 width
-  //   contentContainer.style.height = "297mm"; // A4 height
-  //   contentContainer.style.padding = "20px";
-  //   contentContainer.style.fontFamily = "Arial, sans-serif";
-  //   contentContainer.style.fontSize = "14px";
-  //   contentContainer.style.backgroundColor = "#FFFFFF";
-  //   contentContainer.style.color = "rgb(120, 120, 120)";
-
-  //   // Add the text and table content
-  //   contentContainer.innerHTML = `
-  //   <h2>Booked Item Details</h2>
-  //   <table>
-  //     <tr><td><strong>Order ID</strong></td><td>${order._id}</td></tr>
-  //     <tr><td><strong>Product</strong></td><td>${product.product}</td></tr>
-  //     <tr><td><strong>Address</strong></td><td>${product.address}</td></tr>
-  //     <tr><td><strong>Price</strong></td><td>Rs ${product.price}</td></tr>
-  //     <tr><td><strong>Start Date</strong></td><td>${new Date(
-  //       product.startDate
-  //     ).toLocaleDateString()}</td></tr>
-  //     <tr><td><strong>End Date</strong></td><td>${new Date(
-  //       product.endDate
-  //     ).toLocaleDateString()}</td></tr>
-  //     <tr><td><strong>Category</strong></td><td>${product.parentCategory} - ${
-  //     product.subCategory
-  //   }</td></tr>
-  //   </table>
-  // `;
-
-  //   // Optionally add an image if available
-  //   if (product.image) {
-  //     const img = document.createElement("img");
-  //     img.src = `http://localhost:4001/${product.image}`;
-  //     img.width = 100; // Adjust size
-  //     img.height = 100; // Adjust size
-  //     contentContainer.appendChild(img);
-  //   }
-
-  //   // Append the content to the body to render it off-screen
-  //   document.body.appendChild(contentContainer);
-
-  //   // Use html2canvas to convert the content into an image
-  //   html2canvas(contentContainer)
-  //     .then((canvas) => {
-  //       // Create a PDF from the image
-  //       const imgData = canvas.toDataURL("image/png");
-
-  //       // Create a jsPDF instance
-  //       const doc = new jsPDF();
-
-  //       // Add the image to the PDF (fits A4 size)
-  //       doc.addImage(imgData, "PNG", 0, 0, 210, 297);
-
-  //       // Save the PDF
-  //       doc.save(`${product.product}_details.pdf`);
-
-  //       // Clean up by removing the content container
-  //       document.body.removeChild(contentContainer);
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error generating the PDF:", err);
-  //     });
-  // };
 
   const renderBookedItems = () => {
     if (loadingOrders) {
@@ -414,71 +361,64 @@ const UserProfile = () => {
       startIndex + itemsPerPage
     );
 
-    return (
-      <>
-        {currentPageOrders.map((order) => (
-          <Box key={order._id} sx={{ mb: 2 }}>
-            <Typography
-              variant="h6"
-              fontWeight="bold"
-              gutterBottom
-              color="text.primary"
-            >
-              <strong>Order ID:</strong> {order._id}
-            </Typography>
-            {order.products.map((product, index) => (
-              <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={4}>
-                      <img
-                        src={`http://localhost:4001/${product.image}`}
-                        alt={product.product}
-                        style={{ width: "100%", height: "auto" }}
-                      />
-                    </Grid>
-                    <Grid item xs={8}>
-                      <Typography variant="h6" color="text.primary">
-                        {product.product}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Address:</strong> {product.address}
-                      </Typography>
-                      <Typography variant="body1" color="text.primary">
-                        <strong>Price:</strong> रु {product.price}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Start Date:</strong>{" "}
-                        {new Date(product.startDate).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>End Date:</strong>{" "}
-                        {new Date(product.endDate).toLocaleDateString()}
-                      </Typography>
-                      <Typography variant="body2" color="text.primary">
-                        <strong>Category:</strong> {product.parentCategory} -{" "}
-                        {product.subCategory}
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() =>
-                          downloadSingleBookedItemAsPDF(order, product)
-                        }
-                        sx={{ mt: 1 }}
-                      >
-                        Download as PDF
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
+    return currentPageOrders.map((order) => (
+      <Box key={order._id} sx={{ mb: 2 }}>
+        <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
+          <strong>Order ID:</strong> {order._id}
+        </Typography>
+        {order.products.map((product, index) => (
+          <Card key={index} sx={{ mb: 2, boxShadow: 3 }}>
+            <CardContent>
+              <Grid container spacing={2}>
+                <Grid item xs={4}>
+                  <img
+                    src={`http://localhost:4001/${product.image}`}
+                    alt={product.product}
+                    style={{ width: "100%", height: "auto" }}
+                  />
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="h6" color="text.primary">
+                    {product.product}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Address:</strong> {product.address}
+                  </Typography>
+                  <Typography variant="body1" color="text.primary">
+                    <strong>Price:</strong> रु {product.price}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Start Date:</strong> {new Date(product.startDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>End Date:</strong> {new Date(product.endDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Category:</strong> {product.parentCategory} - {product.subCategory}
+                  </Typography>
+                  <Typography variant="body2" color="text.primary">
+                    <strong>Payment Method:</strong> {order.payment_method}
+                  </Typography>
+                  <Typography variant="body2" style={{ color: "green" }}>
+                    <strong>Status:</strong> {order.status}
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => downloadSingleBookedItemAsPDF(order, product)}
+                    sx={{ mt: 1 }}
+                  >
+                    Download as PDF
+                  </Button>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
         ))}
-      </>
-    );
+      </Box>
+    ));
   };
+
 
   return (
     <>

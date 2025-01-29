@@ -21,22 +21,20 @@ export const submitSuggestion = async (req, res) => {
       enquiryType,
     });
 
-    await suggestionRecord.save();
-    res.status(200).json({ message: "Thank you for your suggestion!" });
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Error saving suggestion: ${error.message}` });
-  }
+        await suggestionRecord.save();
+        res.status(200).json({ message: "Thank you for your suggestion!" });
+    } catch (error) {
+        res.status(500).json({ message: `Error saving suggestion: ${error.message}` });
+    }
+    
 };
 // Controller function to fetch all suggestions
 export const getSuggestions = async (req, res) => {
-  try {
-    const suggestions = await Suggestion.find();
-    res.status(200).json(suggestions);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: `Error retrieving suggestions: ${error.message}` });
-  }
+    try {
+        
+        const suggestions = await Suggestion.find();
+        res.status(200).json(suggestions); 
+    } catch (error) {
+        res.status(500).json({ message: `Error retrieving suggestions: ${error.message}` });
+    }
 };

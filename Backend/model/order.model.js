@@ -50,6 +50,12 @@ const orderSchema = mongoose.Schema(
         },
       },
     ],
+    signature:{
+      type: String,
+    },
+    payload:{
+      type: String,
+    },
     status: {
       type: String,
       required: true,

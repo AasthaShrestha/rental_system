@@ -23,6 +23,7 @@ const rentalSchema = mongoose.Schema({
     type:Schema.Types.ObjectId,
     ref:'User'
   },
+  // isApproved:{ type: Boolean, default: false },
 });
 
 const Rental = mongoose.model("RentalInfo", rentalSchema);
