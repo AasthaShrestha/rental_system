@@ -11,9 +11,9 @@ function Featured() {
   const [posts, setPosts] = useState([]);
   const [vehicles, setVehicles] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const [places, setPlaces] = useState([]); // New state for places
+  const [places, setPlaces] = useState([]);
   const token = localStorage.getItem("token");
-  const authUser= localStorage.getItem('authUser');
+  const authUser = localStorage.getItem('authUser');
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -28,7 +28,7 @@ function Featured() {
       }
     };
 
-    
+
 
     const fetchRooms = async () => {
       try {
@@ -71,7 +71,7 @@ function Featured() {
         const response = await axiosInstance.get(
           "http://localhost:4001/api/haversine"
         );
-          setPlaces(response.data);
+        setPlaces(response.data);
       } catch (error) {
         console.error("Error fetching places:", error);
       }
@@ -140,55 +140,56 @@ function Featured() {
       </div>
 
       {/* Recommended Rooms Section */}
-      {authUser!=='null' && 
-      <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          Recommended Rooms
-        </h2>
-        <div className="slider-container relative w-full">
-          <Slider {...settings}>
-            {rooms.map((room) => (
-              <Link to={`/post/${room._id}`} key={room._id}>
-                <Cards post={room} />
-              </Link>
-            ))}
-          </Slider>
+      {authUser !== 'null' &&
+        <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            Recommended Rooms
+          </h2>
+          <div className="slider-container relative w-full">
+            <Slider {...settings}>
+              {rooms.map((room) => (
+                <Link to={`/post/${room._id}`} key={room._id}>
+                  <Cards post={room} />
+                </Link>
+              ))}
+            </Slider>
+          </div>
         </div>
-      </div>
-    }
+      }
       {/* Recommended Vehicles Section */}
-      {authUser!=='null' &&
-      <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-        Recommended Vehicles
-      </h2>
-      <div className="slider-container relative w-full">
-        <Slider {...settings}>
-          {vehicles.map((vehicle) => (
-            <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
-              <Cards post={vehicle} />
-            </Link>
-          ))}
-        </Slider>
-      </div>
-    </div>}
+      {authUser !== 'null' &&
+        <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            Recommended Vehicles
+          </h2>
+          <div className="slider-container relative w-full">
+            <Slider {...settings}>
+              {vehicles.map((vehicle) => (
+                <Link to={`/post/${vehicle._id}`} key={vehicle._id}>
+                  <Cards post={vehicle} />
+                </Link>
+              ))}
+            </Slider>
+          </div>
+        </div>}
 
       {/* Recommended Places Section */}
-      <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-          Nearby you
-        </h2>
-        <div className="slider-container relative w-full">
-          <Slider {...settings}>
-            {places && places.map((place) => (
-              
-              <Link to={`/post/${place._id}`} key={place._id}>
-                <Cards post={place} />
-              </Link>
-            ))}
-          </Slider>
-        </div>
-      </div>
+      {authUser != 'null' &&
+        <div className="w-full flex flex-col gap-6 items-center mb-8 sm:mb-10 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+            Nearby you
+          </h2>
+          <div className="slider-container relative w-full">
+            <Slider {...settings}>
+              {places && places.map((place) => (
+
+                <Link to={`/post/${place._id}`} key={place._id}>
+                  <Cards post={place} />
+                </Link>
+              ))}
+            </Slider>
+          </div>
+        </div>}
     </div>
   );
 }
