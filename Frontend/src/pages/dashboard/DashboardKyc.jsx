@@ -8,6 +8,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Paper from "@mui/material/Paper";
+import { Dialog, DialogTitle, DialogActions, DialogContent } from "@mui/material"; 
+import { useState } from "react";
 
 // Function to fetch pending KYC requests
 const getKyc = async () => {
@@ -66,14 +68,40 @@ const DashboardKyc = () => {
     },
   });
 
+  const [openModal, setOpenModal]= useState(false);
+  const [selectedKyc, setSelectedKyc]= useState(null);
+
   // Handle accept KYC
   const handleAcceptKyc = (id) => {
-    VerifyKyc(id);
+    setSelectedKyc(id);  // Set selected KYC request
+    setOpenModal(true);  // Open the modal
   };
 
   // Handle decline KYC
   const handleDeclineKyc = (id) => {
-    DeclineKyc(id);
+    setSelectedKyc(id);  // Set selected KYC request
+    setOpenModal(true);  // Open the modal
+  };
+
+  // Handle confirmation to accept KYC
+  const handleConfirmAccept = () => {
+    if (selectedKyc) {
+      VerifyKyc(selectedKyc);  // Call mutation to verify KYC
+      setOpenModal(false);  // Close the modal
+    }
+  };
+   // Handle confirmation to decline KYC
+   const handleConfirmDecline = () => {
+    if (selectedKyc) {
+      DeclineKyc(selectedKyc);  // Call mutation to decline KYC
+      setOpenModal(false);  // Close the modal
+    }
+  };
+
+  // Close modal without action
+  const handleCloseModal = () => {
+    setOpenModal(false);  // Close the modal
+    setSelectedKyc(null);  // Clear selected KYC request
   };
 
   return (
@@ -148,6 +176,30 @@ const DashboardKyc = () => {
         </TableBody>
       </Table>
     </TableContainer>
+{/* Modal for KYC Action */}
+<Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>{selectedKyc ? "Confirm Action" : ""}</DialogTitle>
+        <DialogContent>
+          {selectedKyc && (
+            <Typography>
+              Are you sure you want to{" "}
+              {query?.data?.data?.find((kyc) => kyc._id === selectedKyc)?.kycDetails?.status === 'pending' ? "accept" : "decline"} the KYC request?
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Cancel
+          </Button>
+          <Button
+            onClick={selectedKyc ? handleConfirmAccept : handleConfirmDecline}
+            color="secondary"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 };
