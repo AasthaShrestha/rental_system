@@ -5,6 +5,7 @@ import Rental from "../model/rental.model.js";
 import { createSignature } from "./order.controller.js";
 import userModel from "../model/user.model.js";
 import crypto from "crypto";
+import { signPayload } from "./rsa.controller.js";
 
 export const handleEsewaSuccess = async (req, res, next) => {
   try {
@@ -46,20 +47,12 @@ export const handleEsewaSuccess = async (req, res, next) => {
     const selectedUser = await userModel.findOne({ _id: selectedOrder.user })
     // const payload = 'abcd'
     const payload = `${selectedRental.name};;${selectedRental.address};;${selectedRental.price};;${selectedOrder.products[0].startDate};;${selectedOrder.products[0].endDate}`
-    const sign = crypto.createSign('SHA256')
-    sign.update(payload)
-    sign.end()
-    let privateKey = crypto.createPrivateKey({
-      key: Buffer.from(selectedUser.privateKey, 'base64'),
-      type: 'pkcs8',
-      format: 'der',
-    })
-    const DocSignature = sign.sign(privateKey).toString('base64')
-    selectedOrder.signature = DocSignature
+    const sign = await signPayload(payload, selectedUser.privateKey)
+    
+    selectedOrder.signature = sign
     selectedOrder.payload = payload
     await selectedOrder.save();
-    console.log(selectedUser.publicKey)
-    console.log(selectedUser.privateKey)
+
     next();
   } catch (err) {
     console.log(err);
