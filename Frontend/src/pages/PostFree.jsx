@@ -78,7 +78,7 @@ function PostFree() {
     if (uploadedFiles.length > 0) {
       setFile(uploadedFiles);
 
-      // Loop over each file and read them
+     
       uploadedFiles.forEach((file) => {
         const reader = new FileReader();
         reader.onloadend = () => {

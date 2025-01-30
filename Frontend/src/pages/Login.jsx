@@ -1,3 +1,13 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { axiosInstance } from "../api/axiosInstance";
+import { useAuthUser } from "../Routes/Pathway";
+
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FormLabel from "@mui/material/FormLabel";
@@ -7,31 +17,24 @@ import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
 import Alert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { axiosInstance } from "../api/axiosInstance";
-import { useNavigate } from "react-router-dom";
-import { useAuthUser } from "../Routes/Pathway";
-import { useEffect, useState } from "react";
-
-
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 // Validation schema using Yup
-const schema = yup
-  .object({
-    email: yup.string().email().required(),
-    password: yup.string().required(),
-  })
-  .required();
+const schema = yup.object({
+  email: yup.string().email().required(),
+  password: yup.string().required(),
+}).required();
 
 export default function LogIn() {
   const { setAuthUser } = useAuthUser();
   const navigate = useNavigate();
-  const [ipAddress, setIpAddress] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [ipAddress, setIpAddress] = useState("");
   const [geoInfo, setGeoInfo] = useState({});
+
   const {
     register,
     handleSubmit,
@@ -42,26 +45,29 @@ export default function LogIn() {
 
   const logIn = async (data) => {
     const res = await axiosInstance.post(
-      "http://localhost:4001/user/login", { ...data, latitude: geoInfo.lat, longitude: geoInfo.lon }
+      "http://localhost:4001/user/login",
+      { ...data, latitude: geoInfo.lat, longitude: geoInfo.lon }
     );
     return res.data;
   };
-  
+
   useEffect(() => {
     getVisitorIP();
   }, []);
 
   useEffect(() => {
-    fetchIPInfo();
+    if (ipAddress) {
+      fetchIPInfo();
+    }
   }, [ipAddress]);
 
   const getVisitorIP = async () => {
     try {
-      const response = await fetch('https://api.ipify.org/');
+      const response = await fetch("https://api.ipify.org/");
       const data = await response.text();
       setIpAddress(data);
     } catch (error) {
-      console.error('Failed to fetch IP:', error);
+      console.error("Failed to fetch IP:", error);
     }
   };
 
@@ -71,10 +77,9 @@ export default function LogIn() {
       const data = await response.json();
       setGeoInfo(data);
     } catch (error) {
-      console.error('Failed to location info:', error);
+      console.error("Failed to fetch location info:", error);
     }
   };
-
 
   const mutation = useMutation({
     mutationFn: logIn,
@@ -90,6 +95,11 @@ export default function LogIn() {
   const onSubmit = (data) => {
     mutation.mutate(data);
   };
+
+  const handleTogglePassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Box
       sx={{
@@ -126,8 +136,7 @@ export default function LogIn() {
         </Typography>
         {mutation.error && (
           <Alert sx={{ my: 2 }} severity="error">
-            {mutation.error.response?.data?.message ??
-              "Invalid email or password"}
+            {mutation.error.response?.data?.message ?? "Invalid email or password"}
           </Alert>
         )}
         <Box
@@ -140,6 +149,7 @@ export default function LogIn() {
             gap: 3,
           }}
         >
+          {/* Email Field */}
           <FormControl fullWidth>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
@@ -152,28 +162,43 @@ export default function LogIn() {
               {...register("email")}
             />
           </FormControl>
+
+          {/* Password Field with Show/Hide Option */}
           <FormControl fullWidth>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
               id="password"
-              type="password"
+              type={showPassword ? "text" : "password"} 
               placeholder="Enter your password"
               variant="outlined"
               fullWidth
               error={Boolean(errors.password)}
               helperText={errors.password?.message}
               {...register("password")}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleTogglePassword} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </FormControl>
+
+          {/* Login Button */}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             size="large"
-            className="w-full py-3  text-white  rounded-lg focus:outline-none transform transition duration-200 ease-in-out hover:scale-105"
+            className="w-full py-3 text-white rounded-lg focus:outline-none transform transition duration-200 ease-in-out hover:scale-105"
           >
             Log In
           </Button>
+
+          {/* Sign Up Link */}
           <Typography sx={{ textAlign: "center", mt: 2 }}>
             Don't have an account?{" "}
             <Link to="/signup" className="text-indigo-500 hover:underline">

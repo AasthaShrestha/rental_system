@@ -8,21 +8,21 @@ const router = express.Router();
 router.get('/', function (req, res, next) {
     res.render('denial.route', { title: 'Express' });
 });
-router.get('/generate-key-pair', (req, res) => {
-    //keyPair.publicKey or keyPair.privateKey
-    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'der',
-        },
-        privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'der',
-        }
-    })
-    res.send({ publicKey: publicKey.toString('base64'), privateKey: privateKey.toString('base64') })
-})
+// router.get('/generate-key-pair', (req, res) => {
+//     //keyPair.publicKey or keyPair.privateKey
+//     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+//         modulusLength: 2048,
+//         publicKeyEncoding: {
+//             type: 'spki',
+//             format: 'der',
+//         },
+//         privateKeyEncoding: {
+//             type: 'pkcs8',
+//             format: 'der',
+//         }
+//     })
+//     res.send({ publicKey: publicKey.toString('base64'), privateKey: privateKey.toString('base64') })
+// })
 // router.post('/sign', (req, res) => {
 //     let data = req.body.data
 //     let privateKey = req.body.privateKey
@@ -58,8 +58,8 @@ router.get('/verify', async(req, res) => {
     verify.update(decodeURIComponent(payload))
     verify.end()
     let result=verify.verify(publicKey,Buffer.from(decodeURI(signature), 'base64'))
-    console.log(order.user.publicKey)
-    console.log(order.user.privateKey)
+    // console.log(order.user.publicKey)
+    // console.log(order.user.privateKey)
     res.send({verify:result})
 })
 // router.post('/verify', (req, res) => {

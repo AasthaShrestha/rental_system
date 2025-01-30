@@ -139,12 +139,12 @@ const deleteRentalPost = async (req, res) => {
 const getVehicleByCategory = async (category, req, res) => {
   try {
     const { order, subCategory, limit = 9, page = 1 } = req.query; // Get the order, subCategory, limit, and page parameters
-    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; // Set the sort order (null for random)
+    const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null; 
 
     // Set the filters
     const filters = { parentCategory: "Vehicles" };
     if (subCategory && subCategory !== "All") {
-      filters.subCategory = subCategory.split(","); // If subCategory is provided, filter by it
+      filters.subCategory = subCategory.split(","); 
     }
 
     // Create the base query
@@ -156,18 +156,18 @@ const getVehicleByCategory = async (category, req, res) => {
     }
 
     // Apply pagination (limit and skip)
-    const skip = (page - 1) * limit; // Skip the number of documents based on the page
+    const skip = (page - 1) * limit; 
     postsQuery = postsQuery.limit(parseInt(limit, 10)).skip(skip);
 
     // Get posts from the database
     const posts = await postsQuery;
 
-    // If no sorting is chosen, shuffle the results randomly
+
     if (!sortOrder) {
-      posts.sort(() => Math.random() - 0.5); // Randomize posts if no sorting is defined
+      posts.sort(() => Math.random() - 0.5); 
     }
 
-    // Get the total number of posts for pagination
+    
     const total = await Rental.countDocuments(filters);
 
     // Send the response with pagination data
@@ -176,7 +176,7 @@ const getVehicleByCategory = async (category, req, res) => {
       data: posts,
       total,
       currentPage: page,
-      totalPages: Math.ceil(total / limit), // Calculate total pages
+      totalPages: Math.ceil(total / limit), 
     });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -186,7 +186,7 @@ const getVehicleByCategory = async (category, req, res) => {
 
 const getRoomByCategory = async (category, req, res) => {
   try {
-    const { order, subCategory, limit = 9, page = 1 } = req.query; // Default limit = 10
+    const { order, subCategory, limit = 9, page = 1 } = req.query; 
     const sortOrder = order === "desc" ? -1 : order === "asc" ? 1 : null;
 
     // Set filters
@@ -203,7 +203,7 @@ const getRoomByCategory = async (category, req, res) => {
     }
 
     // Pagination logic
-    const skip = (page - 1) * limit; // Skip items based on the page
+    const skip = (page - 1) * limit; 
     postsQuery = postsQuery.limit(parseInt(limit)).skip(skip);
 
     // Fetch posts
@@ -346,10 +346,10 @@ const getAllExpiredRental = async (req,res) => {
       },
       {
         $lookup: {
-          from: 'users',  // Assuming the orders collection is named 'orders'
-          localField: 'order.user', // Field in `Rental` that links to `orderModel`
-          foreignField: '_id', // Field in `orderModel` that matches `orderId`
-          as: 'userDetail' // Alias for the joined data
+          from: 'users',  
+          localField: 'order.user', 
+          foreignField: '_id', 
+          as: 'userDetail' 
         }
       },
       {

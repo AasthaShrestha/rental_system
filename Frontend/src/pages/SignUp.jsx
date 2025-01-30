@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 // API call for signing up
 const signUp = async (data) => {
   const res = await axios.post("http://localhost:4001/user/signup", data);
-  return res.data; // Return response data
+  return res.data; 
 };
 
 // Validation schema using Yup
@@ -98,7 +98,7 @@ export default function SignUp() {
             textAlign: "center",
             fontWeight: "bold",
             fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
-            color: "pink.main", // Change blue to pink
+            color: "pink.main", 
           }}
         >
           Create an Account

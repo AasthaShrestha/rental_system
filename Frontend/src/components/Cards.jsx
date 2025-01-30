@@ -11,7 +11,7 @@ function Cards({ post }) {
   };
 
   const handleBookNow = (event) => {
-    event.stopPropagation(); // Prevent parent click event
+    event.stopPropagation(); 
     if (!post.occupied) {
       navigate(`/post/${post._id}`);
     }

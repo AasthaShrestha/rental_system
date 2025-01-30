@@ -22,11 +22,10 @@ export const getRentalsByDistance = async (req, res) => {
           rental.latitude,
           rental.longitude,
         );
-        return { ...rental.toObject(), distance }; // Add distance to rental object
+        return { ...rental.toObject(), distance }; 
       });
      
   
-      // Filter rentals within the maxDistance if provided
       const filteredRentals = maxDistance
         ? rentalsWithDistance.filter((rental) => rental.distance <= parseFloat(maxDistance))
         : rentalsWithDistance;

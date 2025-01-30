@@ -63,9 +63,9 @@ const getSuggestedRoom = asynchHandler(async (req, res) => {
         1 - Math.abs(normPriceOfLatestRental - normPriceOfRental);
 
       const weights = {
-        text: 0.1,
+        text: 0.3,
         price: 0.4,
-        parentCategorySimilarity: 0.3,
+        parentCategorySimilarity: 0.1,
         subCategorySimilarity: 0.2,
       };
 

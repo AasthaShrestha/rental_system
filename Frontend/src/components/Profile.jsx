@@ -87,8 +87,8 @@ const UserProfile = () => {
         },
       });
       window.location.reload();
-      setUserData({ ...userData, image: response.data.imageUrl }); // Update user data with the new image URL
-      setImagePreview(response.data.imageUrl); // Update image preview
+      setUserData({ ...userData, image: response.data.imageUrl });
+      setImagePreview(response.data.imageUrl);
     } catch (err) {
       console.error("Error uploading image:", err);
     }
@@ -206,22 +206,22 @@ const UserProfile = () => {
     if (loadingListedItems) {
       return <Typography>Loading...</Typography>;
     }
-  
+
     if (errorListedItems) {
       return <Typography color="error">Error: {errorListedItems}</Typography>;
     }
-  
+
     if (listedItems.length === 0) {
       return <Typography>No items listed yet.</Typography>;
     }
-  
+
     // Sort listed items by createdAt in descending order (latest first)
     const sortedListedItems = [...listedItems].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
+
     const itemsPerPage = 5;
     const startIndex = (listedItemsPage - 1) * itemsPerPage;
     const currentPageItems = sortedListedItems.slice(startIndex, startIndex + itemsPerPage);
-  
+
     return currentPageItems.map((item) => (
       <Card key={item._id} sx={{ mb: 3, boxShadow: 3 }}>
         <Grid container>
@@ -267,7 +267,7 @@ const UserProfile = () => {
       </Card>
     ));
   };
-  
+
 
   const downloadSingleBookedItemAsPDF = (order, product) => {
     const doc = new jsPDF();
@@ -284,7 +284,7 @@ const UserProfile = () => {
       ["Category", `${product.parentCategory} - ${product.subCategory}`],
       // ["Signature", order.signature],
       // ["Payload", order.payload],
-      
+
     ];
 
     // Add table
@@ -301,13 +301,13 @@ const UserProfile = () => {
       doc.addImage(imageUrl, "JPEG", 80, 100, imgWidth, imgHeight);
     }
     const linkText = "Verify";
-    const linkX = 100; // X position
-    const linkY = 150; // Y position
+    const linkX = 150;
+    const linkY = 200;
     const linkUrl = `http://localhost:4001/api/denial/verify?payload=${encodeURIComponent(order.payload)}&signature=${encodeURIComponent(order.signature)}&order_Id=${order._id}`;
-  
+
     doc.setFontSize(12);
-  doc.setTextColor(0, 0, 255); // Set text color to blue (indicates link)
-  doc.textWithLink(linkText, linkX, linkY, { url: linkUrl }); 
+    doc.setTextColor(0, 0, 255); // Set text color to blue (indicates link)
+    doc.textWithLink(linkText, linkX, linkY, { url: linkUrl });
     doc.save(`${product.product}_details.pdf`);
 
   };
@@ -316,22 +316,22 @@ const UserProfile = () => {
     if (loadingOrders) {
       return <Typography>Loading...</Typography>;
     }
-  
+
     if (errorOrders) {
       return <Typography color="error">Error: {errorOrders}</Typography>;
     }
-  
+
     if (orders.length === 0) {
       return <Typography>No items booked yet.</Typography>;
     }
-  
+
     // Sort orders by createdAt in descending order (latest first)
     const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  
+
     const itemsPerPage = 5;
     const startIndex = (ordersPage - 1) * itemsPerPage;
     const currentPageOrders = sortedOrders.slice(startIndex, startIndex + itemsPerPage);
-  
+
     return currentPageOrders.map((order) => (
       <Box key={order._id} sx={{ mb: 2 }}>
         <Typography variant="h6" fontWeight="bold" gutterBottom color="text.primary">
@@ -392,7 +392,7 @@ const UserProfile = () => {
       </Box>
     ));
   };
-  
+
 
 
   return (
@@ -415,7 +415,7 @@ const UserProfile = () => {
             alt="User Profile"
             src={"http://localhost:4001" + userData?.image}
             sx={{ width: 100, height: 100, mb: 2, cursor: "pointer" }}
-            onClick={() => document.getElementById("upload-button").click()} // Trigger file input click
+            onClick={() => document.getElementById("upload-button").click()} 
           />
           <input
             id="upload-button"

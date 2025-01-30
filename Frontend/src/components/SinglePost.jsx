@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
-import { FaHeart, FaCommentDots } from "react-icons/fa"; // Import icons
-import DatePicker from "react-datepicker"; // DatePicker for date selection
-import "react-datepicker/dist/react-datepicker.css"; // Import CSS for DatePicker
+
+import DatePicker from "react-datepicker"; 
+import "react-datepicker/dist/react-datepicker.css"; 
 
 function SinglePost() {
   const { id } = useParams();
@@ -13,10 +13,10 @@ function SinglePost() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [startDate, setStartDate] = useState(null); // Start date for booking (initially null)
-  const [endDate, setEndDate] = useState(null); // End date for booking (initially null)
-  const [totalPrice, setTotalPrice] = useState(0); // Total price for booking
-  const [days, setDays] = useState(null); // Set initial days to null for dynamic calculation
+  const [startDate, setStartDate] = useState(null); 
+  const [endDate, setEndDate] = useState(null); 
+  const [totalPrice, setTotalPrice] = useState(0); 
+  const [days, setDays] = useState(null); 
 
   // Fetch the post data when component mounts
   useEffect(() => {
@@ -41,8 +41,8 @@ function SinglePost() {
   const handleStartDateChange = (date) => {
     setStartDate(date);
     if (endDate && date > endDate) {
-      setEndDate(null); // Reset end date if start date is after it
-      setTotalPrice(0); // Reset price
+      setEndDate(null); 
+      setTotalPrice(0); 
     }
   };
 
@@ -50,8 +50,8 @@ function SinglePost() {
   const handleEndDateChange = (date) => {
     setEndDate(date);
     if (startDate && date < startDate) {
-      setStartDate(null); // Reset start date if end date is before it
-      setTotalPrice(0); // Reset price
+      setStartDate(null); 
+      setTotalPrice(0); 
     }
   };
 
