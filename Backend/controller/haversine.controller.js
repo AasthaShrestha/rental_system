@@ -9,27 +9,26 @@ export const getRentalsByDistance = async (req, res) => {
     const latitude = user.latitude;
     const longitude = user.longitude;
 
-    // Fetch all rentals
-    const rentals = await Rental.find();
-
-    // Calculate distances
-    const rentalsWithDistance = rentals.map((rental) => {
-      const distance = calculateDistance(
-        parseFloat(latitude),
-        parseFloat(longitude),
-        rental.latitude,
-        rental.longitude
-      );
-      // console.log("distance",distance);
-      return { ...rental.toObject(), distance }; // Add distance to rental object
-    });
-
-    // Filter rentals within the maxDistance if provided
-    const filteredRentals = maxDistance
-      ? rentalsWithDistance.filter(
-          (rental) => rental.distance <= parseFloat(maxDistance)
-        )
-      : rentalsWithDistance;
+      // Fetch all rentals
+      const rentals = await Rental.find();
+  
+      // Calculate distances
+      const rentalsWithDistance = rentals.map((rental) => {
+       
+        const distance = calculateDistance(
+          parseFloat(latitude),
+          parseFloat(longitude),
+          rental.latitude,
+          rental.longitude,
+        );
+        return { ...rental.toObject(), distance }; // Add distance to rental object
+      });
+     
+  
+      // Filter rentals within the maxDistance if provided
+      const filteredRentals = maxDistance
+        ? rentalsWithDistance.filter((rental) => rental.distance <= parseFloat(maxDistance))
+        : rentalsWithDistance;
 
     // Respond with the filtered rentals
     res.status(200).json(filteredRentals);

@@ -105,7 +105,7 @@ export default function DashboardRooms() {
                   <IconButton
                     aria-label="delete"
                     color="error"
-                    onClick={() => handleDelete(_id)} // Trigger delete action
+                    onClick={() => handleDelete(_id)}
                   >
                     <DeleteOutlineIcon />
                   </IconButton>

@@ -7,7 +7,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Dialog, DialogTitle, DialogActions, DialogContent } from "@mui/material"; 
 import Paper from "@mui/material/Paper";
+import { useState } from "react";
 
 // Function to fetch expired rentals
 const getExpiredRentals = async () => {
@@ -53,7 +55,8 @@ const DashboardExpiredRentals = () => {
   const { mutate: freeAllExpiredRentals } = useMutation({
     mutationFn: freeExpiredRentals,
     onSuccess: () => {
-      query.refetch(); // Refetch data after freeing rentals
+      query.refetch(); 
+      handleCloseModal();
     },
   });
 
@@ -61,18 +64,43 @@ const DashboardExpiredRentals = () => {
   const { mutate: freeSingleExpiredRental } = useMutation({
     mutationFn: freeExpiredRentalById,
     onSuccess: () => {
-      query.refetch(); // Refetch data after freeing rental
+      query.refetch(); 
+      handleCloseModal();
     },
   });
 
   // Handle freeing all rentals
   const handleFreeAllRentals = () => {
-    freeAllExpiredRentals();
+    setOpenAllModal(true);
   };
 
+  const [openModal, setOpenModal] = useState(false);
+  const [openAllModal, setOpenAllModal] = useState(false);
+  const [selectedRental, setSelectedRental] = useState(null);
+
+  const handleOpenModal = (rental) => {
+    setSelectedRental(rental); 
+    setOpenModal(true); 
+  };
+
+  // Handle closing the modal
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setOpenAllModal(false);
+    setSelectedRental(null); 
+  };
+
+
   // Handle freeing a single rental
-  const handleFreeSingleRental = (rentalId) => {
-    freeSingleExpiredRental(rentalId);
+  const handleFreeSingleRental = () => {
+    if (selectedRental) {
+      freeSingleExpiredRental(selectedRental._id);
+      handleCloseModal(); 
+    }
+  };
+
+  const handleFreeAllConfirmed = () => {
+    freeAllExpiredRentals(); 
   };
 
   return (
@@ -102,7 +130,7 @@ const DashboardExpiredRentals = () => {
           </TableHead>
           <TableBody>
             {query?.data?.data?.map((rental) => {
-              const photoUrl = rental.images[0]; // Assuming `photoUrl` exists in the product
+              const photoUrl = rental.images[0];
               const baseUrl = "http://localhost:4001/";
               const formattedUrl = photoUrl?.replace(/\\/g, "/");
               const finalPhotoUrl = formattedUrl ? baseUrl + formattedUrl : null;
@@ -130,7 +158,7 @@ const DashboardExpiredRentals = () => {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={() => handleFreeSingleRental(rental._id)}
+                      onClick={() => handleOpenModal(rental )}
                     >
                       Free
                     </Button>
@@ -141,6 +169,44 @@ const DashboardExpiredRentals = () => {
           </TableBody>
         </Table>
       </TableContainer>
+       {/* Confirmation Modal */}
+       <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Confirm Freeing Property</DialogTitle>
+        <DialogContent>
+          {selectedRental && (
+            <Typography>
+              Are you sure you want to free the property? This property expires on{" "}
+              {new Date(selectedRental.order?.products[0]?.endDate).toLocaleDateString()}.
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleFreeSingleRental} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+         {/* Confirmation Modal for Freeing All Rentals */}
+         <Dialog open={openAllModal} onClose={handleCloseModal}>
+        <DialogTitle>Confirm Freeing All Expired Rentals</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to free all expired rentals?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleFreeAllConfirmed} color="secondary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
