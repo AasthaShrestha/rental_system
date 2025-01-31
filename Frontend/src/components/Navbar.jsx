@@ -11,11 +11,13 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { Dialog, DialogTitle, DialogActions, DialogContent } from "@mui/material"; 
 import { useAuthUser } from "../Routes/Pathway";
 import { useNavigate } from "react-router";
 import { FaPlus } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import SearchOption from "./SearchOption";
+
 
 const NavBar = () => {
   const navItems = [
@@ -27,6 +29,8 @@ const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const [search, setSearch] = useState("");
+
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
   const navigate = useNavigate();
 
   const handleOpenNavMenu = (event) => {
@@ -46,11 +50,19 @@ const NavBar = () => {
   };
 
   const handleLogout = () => {
-    const confirmLogout = window.confirm("Do you want to logout?");
-    if (confirmLogout) {
-      setAuthUser(null);
-      navigate("/");
-    }
+    setAuthUser(null);
+    localStorage.removeItem("authUser");
+    localStorage.removeItem("token");
+    navigate("/");
+    handleCloseLogoutModal();
+  };
+
+  const handleOpenLogoutModal = () => {
+    setOpenLogoutModal(true); 
+  };
+
+  const handleCloseLogoutModal = () => {
+    setOpenLogoutModal(false); 
   };
 
   return (
@@ -198,7 +210,8 @@ const NavBar = () => {
                   </MenuItem>
                 )}
                 <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleOpenLogoutModal}>Logout</MenuItem>
+
               </Menu>
             </Box>
           )}
@@ -217,6 +230,25 @@ const NavBar = () => {
           )}
         </Toolbar>
       </Container>
+
+           {/* Confirmation Modal for logout */}
+      <Dialog open={openLogoutModal} onClose={handleCloseLogoutModal}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to log out?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseLogoutModal} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleLogout} color="secondary">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </AppBar>
   );
 };

@@ -1,28 +1,89 @@
 import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import bigInt from "big-integer";
 
 dotenv.config();
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+// Function to compute (base^exp) % mod (Modular Exponentiation)
+function modExp(base, exp, mod) {
+  let result = bigInt(1);
+  base = base.mod(mod);
+  while (exp.greater(0)) {
+      if (exp.isOdd()) {
+          result = result.multiply(base).mod(mod);
+      }
+      exp = exp.divide(2);
+      base = base.multiply(base).mod(mod);
+  }
+  return result;
+}
+
+// Extended Euclidean Algorithm to find modular inverse
+function modInverse(e, phi) {
+  let [a, b, x0, x1] = [phi, e, bigInt(0), bigInt(1)];
+  while (b.notEquals(0)) {
+      let q = a.divide(b);
+      [a, b] = [b, a.mod(b)];
+      [x0, x1] = [x1, x0.subtract(q.multiply(x1))];
+  }
+  return x0.lesser(0) ? x0.add(phi) : x0;
+}
+
+// Function to compute GCD
+function gcd(a, b) {
+  while (!b.equals(0)) {
+      [a, b] = [b, a.mod(b)];
+  }
+  return a;
+}
+
+// Generate large prime numbers
+function generateLargePrime(bits) {
+  while (true) {
+      let p = bigInt.randBetween(bigInt(2).pow(bits - 1), bigInt(2).pow(bits).subtract(1));
+      if (p.isPrime()) return p;
+  }
+}
+
+// Function to generate RSA key pair (2048-bit primes)
+function generateRSAKeys() {
+  let p = generateLargePrime(1024); // Generate first prime
+  let q = generateLargePrime(1024); // Generate second prime
+  let N = p.multiply(q);
+  let phi = p.subtract(1).multiply(q.subtract(1));
+
+  let e = bigInt(65537); // Common public exponent
+  while (gcd(e, phi).notEquals(1)) {
+      e = e.next(); // If gcd is not 1, find the next prime
+  }
+
+  let d = modInverse(e, phi); // Compute private exponent
+
+  return { publicKey: { e, N }, privateKey: { d, N } };
+}
+
 const signUp = async (req, res) => {
   //req.body={name,email,password}
   const userExist = await User.findOne({
     email: req.body.email,
   });
   //keyPair.publicKey or keyPair.privateKey
-      const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
-          modulusLength: 2048,
-          publicKeyEncoding: {
-              type: 'spki',
-              format: 'der',
-          },
-          privateKeyEncoding: {
-              type: 'pkcs8',
-              format: 'der',
-          }
-      })
+  // const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+  //   modulusLength: 2048,
+  //   publicKeyEncoding: {
+  //     type: 'spki',
+  //     format: 'der',
+  //   },
+  //   privateKeyEncoding: {
+  //     type: 'pkcs8',
+  //     format: 'der',
+  //   }
+  // })
+
+
+  const { publicKey, privateKey } = generateRSAKeys();
   if (userExist) {
     res.status(400).json({
       message: "User already exist. Please sign in.",
@@ -38,8 +99,8 @@ const signUp = async (req, res) => {
     password: hashedPassword,
     latitude: req.body.latitude,
     longitude: req.body.longitude,
-    privateKey:privateKey.toString('base64'),
-    publicKey:publicKey.toString('base64'),
+    privateKey: JSON.stringify(privateKey),
+    publicKey: JSON.stringify(publicKey),
   });
   res.status(201).json({
     message: "Signed Up successfully",
@@ -64,8 +125,10 @@ const logIn = async (req, res) => {
   if (isPasswordCorrect) {
     const updateduser = await User.updateOne({
       email: req.body.email,
-    },{latitude: req.body.latitude,
-      longitude: req.body.longitude});
+    }, {
+      latitude: req.body.latitude,
+      longitude: req.body.longitude
+    });
     const token = jwt.sign(
       {
         _id: user._id,
@@ -116,9 +179,9 @@ const imageUploader = async (req, res) => {
 }
 
 
-const myData= async (req,res)=>{
-  const userId = req.user._id; 
-  const updatedUser = await User.findOne({_id:userId});
+const myData = async (req, res) => {
+  const userId = req.user._id;
+  const updatedUser = await User.findOne({ _id: userId });
   res.status(200).json({
     message: " successfull",
     data: updatedUser,
@@ -126,4 +189,4 @@ const myData= async (req,res)=>{
 }
 
 
-export { signUp, logIn ,imageUploader, myData};
+export { signUp, logIn, imageUploader, myData };

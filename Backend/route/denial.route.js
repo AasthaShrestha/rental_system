@@ -41,10 +41,10 @@ router.get('/generate-key-pair', (req, res) => {
 router.get('/verify', async(req, res) => {
     let {  payload,signature ,order_Id} = req.query
     const order=await orderModel.findOne({_id:order_Id}).populate("user")
-    console.log("Payload matra:",payload)
-    console.log("Order ko payload",order.payload)
-    console.log("Signature matra:",signature)
-    console.log("Yo chai order ko signature",order.signature)
+    // console.log("Payload matra:",payload)
+    // console.log("Order ko payload",order.payload)
+    // console.log("Signature matra:",signature)
+    // console.log("Yo chai order ko signature",order.signature)
     // console.log(typeof decodeURI(payload))
     
 
